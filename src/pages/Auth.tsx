@@ -327,33 +327,6 @@ const Auth = () => {
             </TabsContent>
           </Tabs>
 
-          {/* Demo accounts — glowing box */}
-          <div className="mt-8">
-            <div className="rounded-lg border-2 border-dashed border-primary/40 p-4 bg-primary/5 shadow-[0_0_20px_hsl(var(--primary)/0.1)]">
-              <p className="text-center text-sm font-semibold text-primary mb-1">🧪 Quick Demo Access</p>
-              <p className="text-center text-xs text-muted-foreground mb-3">
-                Password for all: <span className="text-primary font-mono font-bold">Demo@1234</span>
-              </p>
-              <div className="grid grid-cols-3 gap-2">
-                {DEMO_ACCOUNTS.map(demo => (
-                  <Button
-                    key={demo.key}
-                    variant="outline"
-                    size="sm"
-                    className={`text-xs h-9 transition-all ${
-                      selectedDemo === demo.key
-                        ? 'border-primary shadow-[0_0_10px_hsl(var(--primary)/0.4)] bg-primary/10 text-primary'
-                        : ''
-                    }`}
-                    disabled={loading}
-                    onClick={() => handleDemoFill(demo)}
-                  >
-                    {demo.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </div>
 
           <p className="text-xs text-muted-foreground text-center mt-6">By signing in, you agree to our Terms of Service</p>
 
