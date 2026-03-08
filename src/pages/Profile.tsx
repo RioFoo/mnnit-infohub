@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Edit, Loader2, LogIn, Heart, MessageCircle, Camera, ImagePlus, Trash2, Star, Users } from 'lucide-react';
+import { Edit, Loader2, LogIn, Heart, MessageCircle, Camera, ImagePlus, Trash2, Star, Users, UserPlus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
@@ -254,6 +254,17 @@ const Profile = () => {
                 </span>
               </div>
               <p className="text-xs font-mono font-semibold text-foreground leading-tight">Favorites</p>
+            </motion.button>
+
+            {/* Find People button */}
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/explore?tab=people')}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/[0.06] border border-secondary/15 hover:bg-secondary/[0.1] hover:border-secondary/25 transition-all group cursor-pointer"
+            >
+              <UserPlus className="w-5 h-5 text-secondary group-hover:drop-shadow-[0_0_6px_hsl(var(--secondary)/0.5)] transition-all" />
+              <p className="text-xs font-mono font-semibold text-foreground leading-tight">Find People</p>
             </motion.button>
           </div>
 
