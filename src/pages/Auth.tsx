@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Loader2, Mail, UserPlus, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Zap, Loader2, Mail, UserPlus, Eye, EyeOff, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 const BRANCHES = ['CSE', 'ECE', 'EE', 'ME', 'CE', 'BioTech', 'Chem', 'Prod', 'GIS'];
@@ -20,7 +20,7 @@ const DEMO_ACCOUNTS = [
 ];
 
 const Auth = () => {
-  const { session, signIn, signUp, signInWithGoogle } = useAuth();
+  const { session, signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
@@ -28,6 +28,9 @@ const Auth = () => {
   const [userName, setUserName] = useState('');
   const [activeTab, setActiveTab] = useState('login');
   const [error, setError] = useState<string | null>(null);
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('');
