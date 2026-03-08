@@ -93,8 +93,10 @@ const AppLayout = () => {
           <header className="h-12 flex items-center justify-between px-4 md:px-6 sticky top-0 z-40 glass-panel border-b border-border/[0.06]">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="hidden md:flex text-muted-foreground hover:text-primary transition-colors" />
-              <div className="md:hidden flex items-center gap-2.5">
-                <img src={infohubIcon} alt="InfoHub" className="w-7 h-7 object-contain brand-icon-3d" />
+              <div className="md:hidden flex items-center gap-3">
+                <div className="brand-logo-3d p-1 rounded-xl">
+                  <img src={infohubIcon} alt="InfoHub" className="w-7 h-7 object-contain brand-icon-3d" />
+                </div>
                 <span className="font-display font-bold text-base tracking-tight brand-text-3d">INFOHUB</span>
               </div>
             </div>
