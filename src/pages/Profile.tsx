@@ -13,6 +13,11 @@ import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import MediaRenderer from '@/components/feed/MediaRenderer';
 
+const BRANCHES = ['CSE', 'ECE', 'EE', 'ME', 'CE', 'GIS'];
+const SECTIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+const SEMESTERS = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'];
+const BATCHES = ['Batch 1', 'Batch 2', 'Batch 3'];
+
 const Profile = () => {
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
@@ -21,13 +26,21 @@ const Profile = () => {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [gender, setGender] = useState('');
+  const [branch, setBranch] = useState('');
+  const [section, setSection] = useState('');
+  const [semester, setSemester] = useState('');
+  const [batch, setBatch] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (profile) {
       setName(profile.name || '');
       setBio(profile.bio || '');
-      setGender((profile as any).gender || '');
+      setGender(profile.gender || '');
+      setBranch(profile.branch || '');
+      setSection(profile.section || '');
+      setSemester(profile.semester || '');
+      setBatch(profile.batch || '');
     }
   }, [profile]);
 
@@ -46,7 +59,7 @@ const Profile = () => {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
-    const updates: Record<string, string> = { name, bio, gender };
+    const updates: Record<string, string> = { name, bio, gender, branch, section, semester, batch };
     const { error } = await (supabase.from as any)('profiles').update(updates).eq('id', user.id);
     if (error) toast.error(error.message);
     else { toast.success('Profile updated!'); await refreshProfile(); setEditOpen(false); }
@@ -109,8 +122,10 @@ const Profile = () => {
           <div className="flex items-center gap-2 mt-4 flex-wrap">
             <span className="tag-pill text-xs">{profile.branch || 'Branch'}</span>
             <span className="tag-pill text-xs">{profile.section ? `Section ${profile.section}` : 'Section'}</span>
+            {profile.semester && <span className="tag-pill text-xs">Sem {profile.semester}</span>}
+            {profile.batch && <span className="tag-pill text-xs">{profile.batch}</span>}
             <span className="tag-pill text-xs">{profile.role || 'Student'}</span>
-            {(profile as any).gender && <span className="tag-pill text-xs">{(profile as any).gender}</span>}
+            {profile.gender && <span className="tag-pill text-xs">{profile.gender}</span>}
           </div>
 
           <div className="flex gap-8 mt-6 pt-5">
@@ -132,14 +147,60 @@ const Profile = () => {
                 <DialogTitle className="text-lg font-display font-bold">Edit Profile</DialogTitle>
                 <p id="edit-profile-desc" className="text-sm text-muted-foreground">Update your profile information</p>
               </DialogHeader>
-              <div className="space-y-3 mt-2">
+              <div className="space-y-3 mt-2 max-h-[60vh] overflow-y-auto pr-1">
                 <div>
                   <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Name</label>
                   <Input value={name} onChange={e => setName(e.target.value)} maxLength={50} className="rounded-xl bg-muted/10 border-border/[0.06] mt-1" />
                 </div>
                 <div>
                   <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Bio</label>
-                  <Textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} maxLength={300} className="rounded-xl bg-muted/10 border-border/[0.06] mt-1 resize-none" />
+                  <Textarea value={bio} onChange={e => setBio(e.target.value)} rows={2} maxLength={300} className="rounded-xl bg-muted/10 border-border/[0.06] mt-1 resize-none" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Branch</label>
+                    <Select value={branch} onValueChange={setBranch}>
+                      <SelectTrigger className="rounded-xl bg-muted/10 border-border/[0.06] mt-1">
+                        <SelectValue placeholder="Branch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BRANCHES.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Section</label>
+                    <Select value={section} onValueChange={setSection}>
+                      <SelectTrigger className="rounded-xl bg-muted/10 border-border/[0.06] mt-1">
+                        <SelectValue placeholder="Section" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SECTIONS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Semester</label>
+                    <Select value={semester} onValueChange={setSemester}>
+                      <SelectTrigger className="rounded-xl bg-muted/10 border-border/[0.06] mt-1">
+                        <SelectValue placeholder="Semester" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SEMESTERS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Batch</label>
+                    <Select value={batch} onValueChange={setBatch}>
+                      <SelectTrigger className="rounded-xl bg-muted/10 border-border/[0.06] mt-1">
+                        <SelectValue placeholder="Batch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BATCHES.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <div>
                   <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Gender</label>
