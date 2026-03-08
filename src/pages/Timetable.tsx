@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { TIMETABLE_DATA, type ClassSession } from '@/data/infohub-data';
+import { TIMETABLE_DATA_BY_SEMESTER, type ClassSession } from '@/data/infohub-data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,7 +8,8 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/PageHeader';
 
-const sectionIds = Object.keys(TIMETABLE_DATA);
+const semesterIds = Object.keys(TIMETABLE_DATA_BY_SEMESTER);
+const defaultSemester = semesterIds[0] ?? '2';
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const DAY_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
@@ -19,8 +20,45 @@ const typeStyles: Record<string, { border: string; bg: string; text: string; dot
   WORKSHOP: { border: 'border-l-primary', bg: 'bg-primary/[0.06]', text: 'text-primary', dot: 'bg-primary' },
 };
 
+const parseTimeToMinutes = (time: string) => {
+  const normalized = time.trim().toUpperCase();
+
+  const twelveHourMatch = normalized.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/);
+  if (twelveHourMatch) {
+    const [, rawHour, rawMinute, period] = twelveHourMatch;
+    let hour = Number(rawHour) % 12;
+    const minute = Number(rawMinute);
+    if (period === 'PM') hour += 12;
+    return hour * 60 + minute;
+  }
+
+  const twentyFourHourMatch = normalized.match(/^(\d{1,2}):(\d{2})$/);
+  if (twentyFourHourMatch) {
+    const [, rawHour, rawMinute] = twentyFourHourMatch;
+    return Number(rawHour) * 60 + Number(rawMinute);
+  }
+
+  return Number.NaN;
+};
+
+const formatTo12Hour = (time: string) => {
+  const minutes = parseTimeToMinutes(time);
+  if (Number.isNaN(minutes)) return time;
+
+  const hour24 = Math.floor(minutes / 60) % 24;
+  const minute = minutes % 60;
+  const period = hour24 >= 12 ? 'PM' : 'AM';
+  const hour12 = hour24 % 12 || 12;
+
+  return `${hour12.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${period}`;
+};
+
 const Timetable = () => {
-  const [section, setSection] = useState(sectionIds[0]);
+  const [semester, setSemester] = useState(defaultSemester);
+  const [section, setSection] = useState(() => {
+    const firstSection = Object.keys(TIMETABLE_DATA_BY_SEMESTER[defaultSemester] ?? {})[0];
+    return firstSection ?? '';
+  });
   const [batch, setBatch] = useState<'ALL' | '1' | '2'>('ALL');
   const [selectedDay, setSelectedDay] = useState(() => {
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
@@ -31,6 +69,20 @@ const Timetable = () => {
   });
   const [now, setNow] = useState(new Date());
 
+  const semesterData = TIMETABLE_DATA_BY_SEMESTER[semester] ?? {};
+  const sectionIds = useMemo(() => Object.keys(semesterData), [semesterData]);
+
+  useEffect(() => {
+    if (sectionIds.length === 0) {
+      setSection('');
+      return;
+    }
+
+    if (!sectionIds.includes(section)) {
+      setSection(sectionIds[0]);
+    }
+  }, [section, sectionIds]);
+
   // Update current time every 30s
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 30000);
@@ -38,20 +90,22 @@ const Timetable = () => {
   }, []);
 
   const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
-  const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
-  const sectionData = TIMETABLE_DATA[section];
+  const sectionData = semesterData[section];
 
   const isCurrentSession = (session: ClassSession, day: string) => {
-    return day === currentDay && currentTime >= session.startTime && currentTime < session.endTime;
+    if (day !== currentDay) return false;
+    const start = parseTimeToMinutes(session.startTime);
+    const end = parseTimeToMinutes(session.endTime);
+    return nowMinutes >= start && nowMinutes < end;
   };
 
   const isUpcoming = (session: ClassSession, day: string) => {
     if (day !== currentDay) return false;
-    const [h, m] = session.startTime.split(':').map(Number);
-    const sessionMin = h * 60 + m;
-    const nowMin = now.getHours() * 60 + now.getMinutes();
-    return sessionMin > nowMin && sessionMin - nowMin <= 15;
+    const sessionMin = parseTimeToMinutes(session.startTime);
+    const diff = sessionMin - nowMinutes;
+    return diff > 0 && diff <= 15;
   };
 
   const filteredSchedule = useMemo(() => {
@@ -60,7 +114,7 @@ const Timetable = () => {
       ...daySchedule,
       sessions: daySchedule.sessions
         .filter(s => batch === 'ALL' || s.batch === 'ALL' || s.batch === batch)
-        .sort((a, b) => a.startTime.localeCompare(b.startTime)),
+        .sort((a, b) => parseTimeToMinutes(a.startTime) - parseTimeToMinutes(b.startTime)),
     }));
   }, [sectionData, batch]);
 
@@ -78,8 +132,7 @@ const Timetable = () => {
     if (!todayData) return;
 
     todayData.sessions.forEach(session => {
-      const [h, m] = session.startTime.split(':').map(Number);
-      const sessionMin = h * 60 + m;
+      const sessionMin = parseTimeToMinutes(session.startTime);
       const diff = sessionMin - nowMin;
 
       if (diff === 5) {
@@ -87,13 +140,13 @@ const Timetable = () => {
         if (!sessionStorage.getItem(key)) {
           sessionStorage.setItem(key, 'true');
           toast(`📚 ${session.subject} starts in 5 min`, {
-            description: `${session.startTime} – ${session.endTime} · ${session.room || 'TBA'}`,
+            description: `${formatTo12Hour(session.startTime)} – ${formatTo12Hour(session.endTime)} · ${session.room || 'TBA'}`,
             duration: 10000,
           });
 
           if (Notification.permission === 'granted') {
             new Notification(`📚 ${session.subject} in 5 minutes`, {
-              body: `${session.startTime} – ${session.endTime} · ${session.room || 'TBA'}`,
+              body: `${formatTo12Hour(session.startTime)} – ${formatTo12Hour(session.endTime)} · ${session.room || 'TBA'}`,
               icon: '/favicon.ico',
             });
           }
@@ -127,6 +180,17 @@ const Timetable = () => {
       <div className="px-4 md:px-6 pt-4 pb-2 border-b border-border/[0.06] shrink-0">
         <PageHeader title="TIMETABLE" className="mb-4">
           <div className="flex items-center gap-3">
+            <Select value={semester} onValueChange={setSemester}>
+              <SelectTrigger className="w-36 h-10 rounded-xl bg-muted/15 border-border/[0.08] text-xs font-mono">
+                <SelectValue placeholder="Semester" />
+              </SelectTrigger>
+              <SelectContent>
+                {semesterIds.map(sem => (
+                  <SelectItem key={sem} value={sem}>Semester {sem}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <motion.button
               whileTap={{ scale: 0.92 }}
               onClick={toggleReminders}
@@ -150,7 +214,7 @@ const Timetable = () => {
             </SelectTrigger>
             <SelectContent>
               {sectionIds.map(id => (
-                <SelectItem key={id} value={id}>{TIMETABLE_DATA[id].name}</SelectItem>
+                <SelectItem key={id} value={id}>{semesterData[id]?.name ?? id}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -238,7 +302,7 @@ const Timetable = () => {
                 const style = typeStyles[session.type] || typeStyles.LECTURE;
                 const isCurrent = isCurrentSession(session, selectedDay);
                 const upcoming = isUpcoming(session, selectedDay);
-                const isPast = selectedDay === currentDay && currentTime > session.endTime;
+                const isPast = selectedDay === currentDay && nowMinutes > parseTimeToMinutes(session.endTime);
 
                 return (
                   <motion.div
@@ -260,11 +324,11 @@ const Timetable = () => {
                       'rounded-l-lg'
                     )}>
                       <span className={cn('text-xs font-mono font-medium', style.text)}>
-                        {session.startTime}
+                        {formatTo12Hour(session.startTime)}
                       </span>
                       <span className="text-[8px] font-mono text-muted-foreground/30 my-0.5">→</span>
                       <span className={cn('text-[10px] font-mono', style.text, 'opacity-60')}>
-                        {session.endTime}
+                        {formatTo12Hour(session.endTime)}
                       </span>
                     </div>
 
@@ -313,10 +377,10 @@ const Timetable = () => {
                       <div className="text-right shrink-0 ml-3 hidden sm:block">
                         <span className="text-[10px] font-mono text-muted-foreground/30">
                           {(() => {
-                            const [sh, sm] = session.startTime.split(':').map(Number);
-                            const [eh, em] = session.endTime.split(':').map(Number);
-                            const dur = (eh * 60 + em) - (sh * 60 + sm);
-                            return `${dur}min`;
+                            const start = parseTimeToMinutes(session.startTime);
+                            const end = parseTimeToMinutes(session.endTime);
+                            const dur = end - start;
+                            return Number.isFinite(dur) && dur > 0 ? `${dur}min` : '--';
                           })()}
                         </span>
                       </div>
