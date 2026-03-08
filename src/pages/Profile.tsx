@@ -19,11 +19,10 @@ const Profile = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [role, setRole] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (profile) { setName(profile.name || ''); setBio(profile.bio || ''); setRole(profile.role || ''); }
+    if (profile) { setName(profile.name || ''); setBio(profile.bio || ''); }
   }, [profile]);
 
   useEffect(() => {
@@ -38,7 +37,7 @@ const Profile = () => {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
-    const { error } = await (supabase.from as any)('profiles').update({ name, bio, role }).eq('id', user.id);
+    const { error } = await (supabase.from as any)('profiles').update({ name, bio }).eq('id', user.id);
     if (error) toast.error(error.message);
     else { toast.success('Profile updated!'); await refreshProfile(); setEditOpen(false); }
     setSaving(false);
@@ -128,8 +127,6 @@ const Profile = () => {
                   <Input value={name} onChange={e => setName(e.target.value)} className="rounded-lg bg-background/40 border-border/30 mt-1" /></div>
                 <div><label className="text-[10px] text-muted-foreground font-display tracking-wider uppercase">Bio</label>
                   <Textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} className="rounded-lg bg-background/40 border-border/30 mt-1" /></div>
-                <div><label className="text-[10px] text-muted-foreground font-display tracking-wider uppercase">Role</label>
-                  <Input value={role} onChange={e => setRole(e.target.value)} placeholder="e.g., CSE Student" className="rounded-lg bg-background/40 border-border/30 mt-1" /></div>
                 <Button onClick={handleSave} disabled={saving} className="w-full rounded-lg btn-neon font-display tracking-wider text-xs uppercase">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Changes'}
                 </Button>
