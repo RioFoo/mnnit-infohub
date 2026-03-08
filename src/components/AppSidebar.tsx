@@ -9,9 +9,10 @@ import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar
 } from '@/components/ui/sidebar';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 
 const navItems = [
   { title: 'For You', url: '/', icon: Home },
@@ -39,20 +40,7 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" className="border-r border-border/[0.06] bg-sidebar/80 backdrop-blur-2xl">
       {/* Brand */}
-      <div className="p-4 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-          <span className="text-primary text-sm font-bold font-display">◈</span>
-        </div>
-        {!collapsed && (
-          <motion.span
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="font-display font-bold text-sm tracking-tight"
-          >
-            INFOHUB
-          </motion.span>
-        )}
-      </div>
+      <BrandLogo collapsed={collapsed} />
 
       {/* Divider */}
       <div className="mx-3 divider-glow" />
