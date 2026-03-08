@@ -99,13 +99,14 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.04, duration: 0.3 }}
                       className="relative"
+                      whileHover={{ x: 4 }}
                     >
                       <SidebarMenuButton asChild>
                         <RouterNavLink
                           to={item.url}
                           end={item.url === '/'}
                           className={() => cn(
-                            'relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-300 group overflow-hidden',
+                            'relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 text-sm transition-all duration-300 group overflow-hidden',
                             isActive
                               ? 'text-primary font-semibold'
                               : 'text-muted-foreground hover:text-foreground'
@@ -115,27 +116,32 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                           {isActive && (
                             <motion.div
                               layoutId="sidebar-active"
-                              className="absolute inset-0 rounded-lg"
+                              className="absolute inset-0 rounded-xl"
                               style={{
-                                background: 'linear-gradient(135deg, hsl(var(--neon-cyan) / 0.1), hsl(var(--neon-purple) / 0.05))',
-                                boxShadow: 'inset 0 0 20px hsl(var(--neon-cyan) / 0.05)',
+                                background: 'linear-gradient(135deg, hsl(var(--neon-cyan) / 0.12), hsl(var(--neon-purple) / 0.06))',
+                                boxShadow: 'inset 0 0 20px hsl(var(--neon-cyan) / 0.06)',
                               }}
                               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                             />
                           )}
 
+                          {/* Hover glow bg */}
+                          {!isActive && (
+                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                          )}
+
                           {/* Icon */}
                           <div className={cn(
-                            'relative z-10 w-8 h-8 rounded-md flex items-center justify-center transition-all duration-300',
+                            'relative z-10 w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300',
                             isActive
                               ? 'bg-primary text-primary-foreground shadow-[0_0_20px_hsl(var(--neon-cyan)/0.5)]'
-                              : 'bg-muted/30 group-hover:bg-primary/10 group-hover:text-primary'
+                              : 'bg-muted/30 group-hover:bg-primary/15 group-hover:text-primary group-hover:shadow-[0_0_15px_hsl(var(--neon-cyan)/0.2)] group-hover:scale-110'
                           )}>
-                            <item.icon className="h-4 w-4" />
+                            <item.icon className="h-4.5 w-4.5" />
                           </div>
 
                           {!collapsed && (
-                            <span className="relative z-10 font-medium">{item.title}</span>
+                            <span className="relative z-10 font-medium text-[13px] tracking-wide">{item.title}</span>
                           )}
 
                           {item.title === 'Alerts' && !collapsed && (
@@ -151,7 +157,13 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                           )}
 
                           {/* Hover shimmer */}
-                          <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-600 shimmer pointer-events-none" />
+                          <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                            style={{
+                              background: 'linear-gradient(105deg, transparent 40%, hsl(var(--neon-cyan) / 0.06) 45%, hsl(var(--neon-cyan) / 0.12) 50%, hsl(var(--neon-cyan) / 0.06) 55%, transparent 60%)',
+                              backgroundSize: '200% 100%',
+                              animation: 'shimmer-slide 2s ease-in-out infinite',
+                            }}
+                          />
                         </RouterNavLink>
                       </SidebarMenuButton>
 
@@ -159,7 +171,7 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                       {isActive && (
                         <motion.div
                           layoutId="sidebar-neon-edge"
-                          className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-6 rounded-r-full bg-primary"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 rounded-r-full bg-primary"
                           style={{ boxShadow: '0 0 15px hsl(var(--neon-cyan) / 0.8), 3px 0 10px hsl(var(--neon-cyan) / 0.4)' }}
                           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                         />
