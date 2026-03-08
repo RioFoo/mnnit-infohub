@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import infohubIcon from '@/assets/infohub-icon.png';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSearchParams, Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
