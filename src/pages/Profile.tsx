@@ -138,8 +138,8 @@ const Profile = () => {
       >
         {/* Banner */}
         <div className="h-32 relative overflow-hidden group cursor-pointer" onClick={() => bannerInputRef.current?.click()}>
-          {(profile as any).banner_url ? (
-            <img src={(profile as any).banner_url} alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
+          {profile.banner_url ? (
+            <img src={profile.banner_url} alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
           ) : (
             <>
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
