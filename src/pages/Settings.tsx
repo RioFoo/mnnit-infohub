@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react';
 import { useTheme, THEMES } from '@/contexts/ThemeContext';
 import { motion } from 'framer-motion';
 import { PageHeader } from '@/components/PageHeader';
-import { Palette, Info, Check, Eye, Users, GitBranch } from 'lucide-react';
+import { Palette, Info, Check, Eye, Users, GitBranch, Volume2, Vibrate } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
+import { getNotifPrefs, setNotifPrefs, playNotificationAlert } from '@/lib/notificationAlert';
+import { LucideIcon } from 'lucide-react';
 
 type Visibility = 'branch' | 'followers' | 'both';
 
@@ -15,6 +18,29 @@ const VISIBILITY_OPTIONS: { value: Visibility; label: string; icon: typeof Eye; 
   { value: 'followers', label: 'Followers', icon: Users, desc: 'Your followers only' },
   { value: 'both', label: 'Both', icon: Eye, desc: 'Branch + followers' },
 ];
+
+const NotifToggle = ({ icon: Icon, label, description, checked, onToggle }: {
+  icon: LucideIcon; label: string; description: string; checked: boolean; onToggle: (val: boolean) => void;
+}) => {
+  const [on, setOn] = useState(checked);
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-muted/10 flex items-center justify-center">
+          <Icon className="w-4 h-4 text-muted-foreground" />
+        </div>
+        <div>
+          <p className="text-xs font-semibold">{label}</p>
+          <p className="text-[9px] font-mono text-muted-foreground/40">{description}</p>
+        </div>
+      </div>
+      <Switch
+        checked={on}
+        onCheckedChange={(val) => { setOn(val); onToggle(val); }}
+      />
+    </div>
+  );
+};
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
@@ -138,6 +164,45 @@ const Settings = () => {
           </div>
         </motion.div>
       )}
+
+      {/* Notification Preferences */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.09 }}
+        className="card-bio p-6 mb-6"
+      >
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-8 h-8 rounded-lg bg-primary/[0.06] flex items-center justify-center">
+            <Volume2 className="w-4 h-4 text-primary" />
+          </div>
+          <span className="text-sm font-display font-bold">Notification Alerts</span>
+        </div>
+        <div className="space-y-4">
+          <NotifToggle
+            icon={Volume2}
+            label="Sound"
+            description="Play a tone when a notification arrives"
+            checked={getNotifPrefs().sound}
+            onToggle={(val) => {
+              const prefs = getNotifPrefs();
+              setNotifPrefs({ ...prefs, sound: val });
+              if (val) playNotificationAlert();
+            }}
+          />
+          <NotifToggle
+            icon={Vibrate}
+            label="Vibration"
+            description="Vibrate on mobile when a notification arrives"
+            checked={getNotifPrefs().vibration}
+            onToggle={(val) => {
+              const prefs = getNotifPrefs();
+              setNotifPrefs({ ...prefs, vibration: val });
+              if (val && navigator.vibrate) navigator.vibrate([80, 40, 80]);
+            }}
+          />
+        </div>
+      </motion.div>
 
       {/* About */}
       <motion.div
