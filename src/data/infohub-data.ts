@@ -318,7 +318,7 @@ export const TIMETABLE_DATA: Record<string, SectionData> = {
       { day: "Monday", sessions: [
         { startTime: "09:00", endTime: "11:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '1' },
         { startTime: "09:00", endTime: "11:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '2' },
-        { startTime: "13:00", endTime: "14:00", subject: "Engineering Chemistry Tutorial", room: "NLH-2", type: "TUTORIAL", batch: 'ALL', combinedInfo: "(A+B)" },
+        { startTime: "14:00", endTime: "15:00", subject: "Engineering Chemistry Tutorial", room: "NLH-2", type: "TUTORIAL", batch: 'ALL', combinedInfo: "(A+B)" },
       ]},
       { day: "Tuesday", sessions: [
         { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-8", type: "LECTURE", batch: 'ALL' },
@@ -330,21 +330,20 @@ export const TIMETABLE_DATA: Record<string, SectionData> = {
         { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-7", type: "LECTURE", batch: 'ALL' },
         { startTime: "10:00", endTime: "11:00", subject: "Professional Communication", room: "GS-8", type: "LECTURE", batch: 'ALL' },
         { startTime: "14:00", endTime: "15:00", subject: "Programming Paradigms", room: "GS-5", type: "LECTURE", batch: 'ALL' },
-        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "SEW-9", type: "TUTORIAL", batch: '2' },
-        { startTime: "15:00", endTime: "17:00", subject: "Data Structures Lab", room: "CCTF", type: "LAB", batch: '1' },
+        { startTime: "15:00", endTime: "16:00", subject: "Mathematics-II Tutorial", room: "SEW-9", type: "TUTORIAL", batch: '2' },
+        { startTime: "16:00", endTime: "18:00", subject: "Data Structures Lab", room: "CCTF", type: "LAB", batch: '1' },
       ]},
       { day: "Thursday", sessions: [
         { startTime: "10:00", endTime: "11:00", subject: "Data Structures", room: "GS-8", type: "LECTURE", batch: 'ALL' },
         { startTime: "11:00", endTime: "13:00", subject: "Data Structures Lab", room: "CCTF", type: "LAB", batch: '2' },
-        { startTime: "15:00", endTime: "16:00", subject: "Professional Communication", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
-        { startTime: "16:00", endTime: "18:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
+        { startTime: "16:00", endTime: "17:00", subject: "Professional Communication", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
       ]},
       { day: "Friday", sessions: [
         { startTime: "10:00", endTime: "11:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(A+B)" },
         { startTime: "11:00", endTime: "12:00", subject: "Programming Paradigms", room: "GS-5", type: "LECTURE", batch: 'ALL' },
         { startTime: "12:00", endTime: "13:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
-        { startTime: "15:00", endTime: "17:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '2' },
-        { startTime: "15:00", endTime: "16:00", subject: "Mathematics-II Tutorial", room: "FE-18", type: "TUTORIAL", batch: '1' },
+        { startTime: "16:00", endTime: "17:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '2' },
+        { startTime: "16:00", endTime: "17:00", subject: "Mathematics-II Tutorial", room: "FE-18", type: "TUTORIAL", batch: '1' },
         { startTime: "17:00", endTime: "18:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
       ]},
     ]
@@ -482,13 +481,15 @@ export const TIMETABLE_DATA: Record<string, SectionData> = {
       { day: "Monday", sessions: [
         { startTime: "09:00", endTime: "10:00", subject: "Principles of Comm. Engineering", room: "FN-1", type: "LECTURE", batch: 'ALL' },
         { startTime: "11:00", endTime: "13:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '2' },
-        { startTime: "13:00", endTime: "14:00", subject: "Mathematics-II", room: "GS-4", type: "LECTURE", batch: 'ALL' },
         { startTime: "14:00", endTime: "15:00", subject: "Professional Communication", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Mathematics-II", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Principles of Electronics Engineering", room: "GS-7", type: "LECTURE", batch: 'ALL' },
       ]},
       { day: "Tuesday", sessions: [
         { startTime: "09:00", endTime: "10:00", subject: "Professional Communication", room: "GS-5", type: "LECTURE", batch: 'ALL' },
         { startTime: "10:00", endTime: "11:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
         { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "SEW-9", type: "TUTORIAL", batch: '1' },
+        { startTime: "15:00", endTime: "17:00", subject: "Principles of Electronics Engineering Practical", room: "Lab", type: "LAB", batch: '1' },
       ]},
       { day: "Wednesday", sessions: [
         { startTime: "09:00", endTime: "10:00", subject: "Principles of Comm. Engineering", room: "GS-4", type: "LECTURE", batch: 'ALL' },
@@ -496,13 +497,14 @@ export const TIMETABLE_DATA: Record<string, SectionData> = {
         { startTime: "11:00", endTime: "13:00", subject: "CAD for Electronics Lab", room: "Lab", type: "LAB", batch: '2' },
         { startTime: "14:00", endTime: "15:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
         { startTime: "15:00", endTime: "17:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '1' },
+        { startTime: "17:00", endTime: "18:00", subject: "Principles of Electronics Engineering", room: "GS-7", type: "LECTURE", batch: 'ALL' },
       ]},
       { day: "Thursday", sessions: [
         { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II Tutorial", room: "SEW-10", type: "TUTORIAL", batch: '2' },
         { startTime: "10:00", endTime: "11:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
         { startTime: "11:00", endTime: "13:00", subject: "Principles of Comm. Engg Lab", room: "Lab", type: "LAB", batch: '1' },
-        { startTime: "15:00", endTime: "17:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '2' },
-        { startTime: "15:00", endTime: "17:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
+        { startTime: "14:00", endTime: "16:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '2' },
+        { startTime: "14:00", endTime: "16:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
       ]},
       { day: "Friday", sessions: [
         { startTime: "09:00", endTime: "11:00", subject: "Principles of Comm. Engg Lab", room: "Lab", type: "LAB", batch: '2' },
@@ -567,20 +569,24 @@ export const TIMETABLE_DATA: Record<string, SectionData> = {
         { startTime: "09:00", endTime: "11:00", subject: "Engineering Mechanics Practical", room: "Lab", type: "LAB", batch: '1' },
         { startTime: "11:00", endTime: "13:00", subject: "Numerical & Statistical Techniques Practical", room: "Lab", type: "LAB", batch: '2' },
         { startTime: "14:00", endTime: "15:00", subject: "Engineering Mechanics", room: "LH-2", type: "LECTURE", batch: 'ALL' },
-        { startTime: "16:00", endTime: "18:00", subject: "Engineering Graphics Lab", room: "SEW-8", type: "LAB", batch: '1' },
+        { startTime: "15:00", endTime: "17:00", subject: "Engineering Graphics Lab", room: "SEW-8", type: "LAB", batch: '1' },
       ]},
       { day: "Tuesday", sessions: [
         { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II Tutorial", room: "SEW-1", type: "TUTORIAL", batch: '1' },
         { startTime: "10:00", endTime: "11:00", subject: "Engineering Physics-II Tutorial", room: "SEW-1", type: "TUTORIAL", batch: '1' },
         { startTime: "11:00", endTime: "13:00", subject: "Engineering Mechanics Practical", room: "Lab", type: "LAB", batch: '2' },
-        { startTime: "15:00", endTime: "16:00", subject: "Engineering Physics-II", room: "FEW-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Numerical & Statistical Techniques Practical", room: "Lab", type: "LAB", batch: '1' },
+        { startTime: "14:00", endTime: "15:00", subject: "Engineering Physics-II", room: "FEW-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "17:00", subject: "Engineering Innovation & Design Practical", room: "Workshop", type: "LAB", batch: 'ALL', combinedInfo: "(G+H)" },
         { startTime: "17:00", endTime: "18:00", subject: "Professional Ethics & Social Values", room: "GS-8", type: "LECTURE", batch: 'ALL', combinedInfo: "(G+H)" },
       ]},
       { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Numerical & Statistical Techniques", room: "LH-2", type: "LECTURE", batch: 'ALL' },
         { startTime: "10:00", endTime: "11:00", subject: "Mathematics-II", room: "LH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Engineering Mechanics", room: "FEW-1", type: "LECTURE", batch: 'ALL' },
         { startTime: "14:00", endTime: "15:00", subject: "Professional Ethics & Social Values", room: "GS-5", type: "LECTURE", batch: 'ALL', combinedInfo: "(G+H)" },
-        { startTime: "15:00", endTime: "16:00", subject: "Engineering Physics-II Tutorial", room: "GW-5", type: "TUTORIAL", batch: '2' },
-        { startTime: "15:00", endTime: "16:00", subject: "Engineering Physics-II", room: "FEW-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Engineering Physics-II Tutorial", room: "GW-5", type: "TUTORIAL", batch: '2' },
+        { startTime: "17:00", endTime: "18:00", subject: "Mathematics-II Tutorial", room: "GW-5", type: "TUTORIAL", batch: '2' },
       ]},
       { day: "Thursday", sessions: [
         { startTime: "09:00", endTime: "10:00", subject: "Engineering Physics-II", room: "FC-5", type: "LECTURE", batch: 'ALL' },
@@ -592,7 +598,8 @@ export const TIMETABLE_DATA: Record<string, SectionData> = {
       { day: "Friday", sessions: [
         { startTime: "09:00", endTime: "11:00", subject: "Intro to AI & ML Lab", room: "CCTF", type: "LAB", batch: 'ALL' },
         { startTime: "11:00", endTime: "12:00", subject: "Mathematics-II", room: "LH-2", type: "LECTURE", batch: 'ALL' },
-        { startTime: "14:00", endTime: "16:00", subject: "Engineering Physics-II Practical", room: "Physics Lab", type: "LAB", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Intro to AI & ML", room: "LH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Engineering Physics-II Practical", room: "Physics Lab", type: "LAB", batch: 'ALL' },
       ]},
     ]
   },
@@ -706,6 +713,7 @@ export const TIMETABLE_DATA: Record<string, SectionData> = {
       { day: "Thursday", sessions: [
         { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "FN-4", type: "LECTURE", batch: 'ALL' },
         { startTime: "10:00", endTime: "11:00", subject: "Engineering Physics-I", room: "FN-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Building Engineering-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
         { startTime: "15:00", endTime: "17:00", subject: "Workshop & Mfg. Process Lab", room: "SEW", type: "LAB", batch: '1' },
       ]},
       { day: "Friday", sessions: [
@@ -913,8 +921,8 @@ export const TIMETABLE_DATA: Record<string, SectionData> = {
       ]},
       { day: "Wednesday", sessions: [
         { startTime: "09:00", endTime: "11:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '2' },
-        { startTime: "09:00", endTime: "11:00", subject: "Electrical Workshop Lab", room: "Lab", type: "LAB", batch: '1' },
-        { startTime: "11:00", endTime: "12:00", subject: "Mathematics-II", room: "FEW-15", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Electrical Workshop Lab", room: "Lab", type: "LAB", batch: '1' },
+        { startTime: "12:00", endTime: "13:00", subject: "Mathematics-II", room: "FEW-15", type: "LECTURE", batch: '2' },
         { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II", room: "GS-4", type: "LECTURE", batch: 'ALL' },
         { startTime: "15:00", endTime: "16:00", subject: "Intro to AI & ML", room: "GS-4", type: "LECTURE", batch: 'ALL' },
         { startTime: "16:00", endTime: "17:00", subject: "Engineering Chemistry Tutorial", room: "GS-4", type: "TUTORIAL", batch: 'ALL' },
@@ -926,7 +934,7 @@ export const TIMETABLE_DATA: Record<string, SectionData> = {
         { startTime: "10:00", endTime: "11:00", subject: "Intro to AI & ML", room: "GS-4", type: "LECTURE", batch: 'ALL' },
         { startTime: "11:00", endTime: "13:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
         { startTime: "14:00", endTime: "15:00", subject: "Professional Ethics & Social Values", room: "GS-4", type: "LECTURE", batch: 'ALL' },
-        { startTime: "16:00", endTime: "18:00", subject: "Intro to AI & ML Lab", room: "CCSF", type: "LAB", batch: '2' },
+        { startTime: "15:00", endTime: "17:00", subject: "Intro to AI & ML Lab", room: "CCSF", type: "LAB", batch: '2' },
       ]},
       { day: "Friday", sessions: [
         { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
@@ -1043,6 +1051,11 @@ export const TIMETABLE_DATA: Record<string, SectionData> = {
       { day: "Friday", sessions: [] },
     ]
   },
+};
+
+// Semester → section timetable mapping (for future expansion)
+export const TIMETABLE_DATA_BY_SEMESTER: Record<string, Record<string, SectionData>> = {
+  "2": TIMETABLE_DATA,
 };
 
 
