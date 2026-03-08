@@ -1,6 +1,6 @@
 import {
   Home, Compass, GraduationCap, CalendarDays, Clock, Calculator,
-  BookOpen, Bell, User, Settings, LogOut, LogIn, Search
+  BookOpen, Bell, User, Settings, LogOut, LogIn
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,25 +12,24 @@ import {
 import { motion } from 'framer-motion';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
 import infohubIcon from '@/assets/infohub-icon.png';
 
 const BrandLogo = ({ collapsed }: { collapsed: boolean }) => {
   return (
     <div className="p-4 flex items-center gap-3">
       <motion.div
-        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 brand-logo-3d"
+        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 brand-logo-3d"
         whileHover={{ rotateY: 20, rotateX: -10, scale: 1.1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         style={{ transformStyle: 'preserve-3d', perspective: 600 }}
       >
-        <img src={infohubIcon} alt="InfoHub" className="w-8 h-8 object-contain" />
+        <img src={infohubIcon} alt="InfoHub" className="w-9 h-9 object-contain brand-icon-3d" />
       </motion.div>
       {!collapsed && (
         <motion.span
           initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: 1, x: 0 }}
-          className="font-display font-bold text-sm tracking-tight brand-text-3d block"
+          className="font-display font-bold text-base tracking-tight brand-text-3d block"
         >
           INFOHUB
         </motion.span>
@@ -94,24 +93,10 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
 
       <div className="mx-3 divider-glow" />
 
-      {/* Search */}
-      {!collapsed && (
-        <div className="px-3 py-2">
-          <button
-            onClick={onOpenCommand}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground bg-muted/20 hover:bg-muted/30 transition-all border border-border/[0.06] group"
-          >
-            <Search className="w-3.5 h-3.5 group-hover:text-primary transition-colors" />
-            <span className="flex-1 text-left text-[10px] opacity-40 font-mono">Search...</span>
-            <kbd className="text-[8px] bg-background/40 px-1.5 py-0.5 rounded border border-border/[0.06] font-mono">⌘K</kbd>
-          </button>
-        </div>
-      )}
-
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1.5 px-1">
               {navItems.map((item, index) => {
                 const isActive = item.url === '/'
                   ? location.pathname === '/'
@@ -129,7 +114,7 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                           to={item.url}
                           end={item.url === '/'}
                           className={() => cn(
-                            'nav-item-3d relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm group',
+                            'nav-item-3d relative flex items-center gap-3.5 rounded-lg px-3 py-3 text-sm group',
                             isActive
                               ? 'bg-primary/[0.07] text-primary'
                               : 'text-muted-foreground'
@@ -152,8 +137,8 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
 
                           {!collapsed && (
                             <span className={cn(
-                              'nav-text-3d text-[13px]',
-                              isActive && 'nav-text-3d-active font-semibold'
+                              'sidebar-nav-text text-[13px]',
+                              isActive && 'sidebar-nav-text-active'
                             )}>{item.title}</span>
                           )}
 
@@ -173,18 +158,6 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Command Button */}
-      {!collapsed && (
-        <div className="px-3 py-2">
-          <button
-            onClick={onOpenCommand}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-mono font-medium text-primary bg-gradient-to-r from-primary/[0.06] to-secondary/[0.06] border border-primary/[0.12] hover:border-primary/25 transition-all glow-border pulse-glow"
-          >
-            ⌘ Search
-          </button>
-        </div>
-      )}
-
       <div className="mx-3 divider-glow" />
 
       <SidebarFooter className="p-3 space-y-1">
@@ -195,12 +168,12 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                 <RouterNavLink
                   to="/settings"
                   className={({ isActive }) => cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200',
+                    'flex items-center gap-3.5 rounded-lg px-3 py-3 text-sm transition-all duration-200',
                     isActive ? 'bg-primary/[0.05] text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted/15'
                   )}
                 >
                   <Settings className="h-[18px] w-[18px]" />
-                  {!collapsed && <span className="text-[13px]">Settings</span>}
+                  {!collapsed && <span className="sidebar-nav-text text-[13px]">Settings</span>}
                 </RouterNavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -209,18 +182,18 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
             {user ? (
               <SidebarMenuButton
                 onClick={signOut}
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-destructive/70 hover:text-destructive hover:bg-destructive/[0.05] transition-all cursor-pointer"
+                className="flex items-center gap-3.5 rounded-lg px-3 py-3 text-sm text-destructive/70 hover:text-destructive hover:bg-destructive/[0.05] transition-all cursor-pointer"
               >
                 <LogOut className="h-[18px] w-[18px]" />
-                {!collapsed && <span className="text-[13px]">Sign Out</span>}
+                {!collapsed && <span className="sidebar-nav-text text-[13px]">Sign Out</span>}
               </SidebarMenuButton>
             ) : (
               <SidebarMenuButton
                 onClick={() => navigate('/auth')}
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-primary/[0.05] transition-all cursor-pointer"
+                className="flex items-center gap-3.5 rounded-lg px-3 py-3 text-sm text-primary hover:bg-primary/[0.05] transition-all cursor-pointer"
               >
                 <LogIn className="h-[18px] w-[18px]" />
-                {!collapsed && <span className="text-[13px]">Sign In</span>}
+                {!collapsed && <span className="sidebar-nav-text text-[13px]">Sign In</span>}
               </SidebarMenuButton>
             )}
           </SidebarMenuItem>
