@@ -1,11 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Loader2, Image, Video, Music, FileText, X } from 'lucide-react';
+import { Loader2, Image, Video, Music, FileText, X, Upload, MessageSquare, Megaphone, HelpCircle, Lightbulb } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
@@ -24,8 +24,15 @@ const ALLOWED_TYPES: Record<string, string[]> = {
 
 const ALL_ALLOWED = Object.values(ALLOWED_TYPES).flat();
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB for non-video
-const MAX_VIDEO_SIZE = 8 * 1024 * 1024; // 8MB for video
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 8 * 1024 * 1024;
+
+const POST_FORMATS = [
+  { id: 'general', label: 'General', icon: MessageSquare, description: 'Share thoughts, updates' },
+  { id: 'announcement', label: 'Announcement', icon: Megaphone, description: 'Important notices' },
+  { id: 'question', label: 'Question', icon: HelpCircle, description: 'Ask the community' },
+  { id: 'idea', label: 'Idea', icon: Lightbulb, description: 'Share suggestions' },
+];
 
 const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogProps) => {
   const { user } = useAuth();
@@ -34,12 +41,12 @@ const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogPro
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
+  const [postFormat, setPostFormat] = useState('general');
+  const [isDragging, setIsDragging] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const dropRef = useRef<HTMLDivElement>(null);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (!f) return;
-
+  const processFile = (f: File) => {
     if (!ALL_ALLOWED.includes(f.type)) {
       toast.error('Unsupported file type');
       return;
@@ -50,7 +57,6 @@ const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogPro
       toast.error(`File too large (max ${isVideo ? '8MB' : '5MB'})`);
       return;
     }
-
     setFile(f);
     if (f.type.startsWith('image/')) {
       const reader = new FileReader();
@@ -60,6 +66,31 @@ const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogPro
       setPreview(null);
     }
   };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (f) processFile(f);
+  };
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const f = e.dataTransfer.files?.[0];
+    if (f) processFile(f);
+  }, []);
 
   const clearFile = () => {
     setFile(null);
@@ -95,7 +126,10 @@ const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogPro
       mediaType = getMediaCategory(file.type);
     }
 
+    const formatTag = postFormat !== 'general' ? postFormat : null;
     const parsedTags = tags.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean);
+    if (formatTag && !parsedTags.includes(formatTag)) parsedTags.unshift(formatTag);
+
     const { error } = await (supabase.from as any)('posts').insert({
       user_id: user.id,
       content,
@@ -109,6 +143,7 @@ const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogPro
       toast.success('Posted!');
       setContent('');
       setTags('');
+      setPostFormat('general');
       clearFile();
       onOpenChange(false);
       onCreated();
@@ -116,22 +151,43 @@ const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogPro
     setPosting(false);
   };
 
-  const mediaButtons = [
-    { icon: Image, label: 'Image', accept: ALLOWED_TYPES.image.join(',') },
-    { icon: Video, label: 'Video', accept: ALLOWED_TYPES.video.join(',') },
-    { icon: Music, label: 'Audio', accept: ALLOWED_TYPES.audio.join(',') },
-    { icon: FileText, label: 'Doc', accept: ALLOWED_TYPES.document.join(',') },
-  ];
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-card border border-border/10 rounded-2xl shadow-2xl">
+      <DialogContent className="sm:max-w-lg bg-card border border-border/10 rounded-2xl shadow-2xl" aria-describedby="create-post-desc">
         <DialogHeader>
           <DialogTitle className="text-lg font-display font-bold">Create Post</DialogTitle>
+          <p id="create-post-desc" className="text-sm text-muted-foreground">Choose a format and share with the community</p>
         </DialogHeader>
-        <div className="space-y-4 mt-2">
+        <div className="space-y-4 mt-1 max-h-[65vh] overflow-y-auto pr-1">
+          {/* Post format selector */}
+          <div className="grid grid-cols-2 gap-2">
+            {POST_FORMATS.map(({ id, label, icon: Icon, description }) => (
+              <motion.button
+                key={id}
+                whileTap={{ scale: 0.96 }}
+                onClick={() => setPostFormat(id)}
+                className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all ${
+                  postFormat === id
+                    ? 'border-primary/30 bg-primary/[0.06] text-foreground'
+                    : 'border-border/[0.08] bg-muted/5 text-muted-foreground hover:border-border/20'
+                }`}
+              >
+                <Icon className={`w-4 h-4 shrink-0 ${postFormat === id ? 'text-primary' : ''}`} />
+                <div className="min-w-0">
+                  <p className="text-xs font-medium leading-tight">{label}</p>
+                  <p className="text-[10px] font-mono opacity-60 leading-tight">{description}</p>
+                </div>
+              </motion.button>
+            ))}
+          </div>
+
           <Textarea
-            placeholder="What's on your mind?"
+            placeholder={
+              postFormat === 'question' ? 'Ask your question...' :
+              postFormat === 'announcement' ? 'Write your announcement...' :
+              postFormat === 'idea' ? 'Share your idea...' :
+              "What's on your mind?"
+            }
             value={content}
             onChange={e => setContent(e.target.value)}
             rows={4}
@@ -139,25 +195,42 @@ const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogPro
             className="bg-muted/15 border-border/[0.08] rounded-xl resize-none text-sm"
           />
 
-          {/* Media buttons */}
-          <div className="flex items-center gap-2">
-            {mediaButtons.map(({ icon: Icon, label, accept }) => (
-              <motion.button
-                key={label}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => {
-                  if (fileRef.current) {
-                    fileRef.current.accept = accept;
-                    fileRef.current.click();
-                  }
-                }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-muted/10 border border-border/[0.08] text-xs font-mono text-muted-foreground hover:text-foreground hover:border-primary/20 transition-all"
-              >
-                <Icon className="w-3.5 h-3.5" />
-                {label}
-              </motion.button>
-            ))}
-          </div>
+          {/* Drag & drop zone */}
+          {!file && (
+            <div
+              ref={dropRef}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => {
+                if (fileRef.current) {
+                  fileRef.current.accept = ALL_ALLOWED.join(',');
+                  fileRef.current.click();
+                }
+              }}
+              className={`flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-dashed cursor-pointer transition-all ${
+                isDragging
+                  ? 'border-primary/40 bg-primary/[0.06]'
+                  : 'border-border/[0.12] bg-muted/5 hover:border-border/25 hover:bg-muted/10'
+              }`}
+            >
+              <Upload className={`w-6 h-6 ${isDragging ? 'text-primary' : 'text-muted-foreground/40'}`} />
+              <div className="text-center">
+                <p className="text-xs font-medium text-muted-foreground">
+                  {isDragging ? 'Drop file here' : 'Drag & drop or click to upload'}
+                </p>
+                <p className="text-[10px] font-mono text-muted-foreground/50 mt-0.5">
+                  Images, Videos, Audio, Documents
+                </p>
+              </div>
+              <div className="flex gap-3 mt-1">
+                <Image className="w-3.5 h-3.5 text-muted-foreground/30" />
+                <Video className="w-3.5 h-3.5 text-muted-foreground/30" />
+                <Music className="w-3.5 h-3.5 text-muted-foreground/30" />
+                <FileText className="w-3.5 h-3.5 text-muted-foreground/30" />
+              </div>
+            </div>
+          )}
 
           <input ref={fileRef} type="file" className="hidden" onChange={handleFileSelect} />
 

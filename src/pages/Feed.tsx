@@ -118,19 +118,6 @@ const Feed = () => {
         </motion.div>
       )}
 
-      {user && (
-        <motion.button
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.5, type: 'spring' }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setCreateOpen(true)}
-          className="fixed bottom-24 md:bottom-8 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg z-40 pulse-glow"
-        >
-          <Plus className="w-6 h-6" />
-        </motion.button>
-      )}
 
       <AuthPromptDialog open={showAuthPrompt} onOpenChange={setShowAuthPrompt} message={authMessage} />
     </div>
