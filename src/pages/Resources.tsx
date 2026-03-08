@@ -198,7 +198,7 @@ const Resources = () => {
 
       {/* Upload Dialog */}
       <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>
-        <DialogContent className="sm:max-w-md p-0 overflow-hidden card-bio glow-border border-border/[0.06]">
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-card border border-border/10 rounded-2xl shadow-2xl">
           <div className="p-6">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-9 h-9 rounded-xl bg-primary/[0.06] flex items-center justify-center">

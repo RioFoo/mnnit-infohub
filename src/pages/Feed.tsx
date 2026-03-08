@@ -211,7 +211,7 @@ const Feed = () => {
 
       {/* Create dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="card-bio glow-border sm:max-w-lg border-border/[0.06]">
+        <DialogContent className="sm:max-w-lg bg-card border border-border/10 rounded-2xl shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-lg font-display font-bold">Create Post</DialogTitle>
           </DialogHeader>
