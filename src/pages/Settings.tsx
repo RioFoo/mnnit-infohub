@@ -1,5 +1,6 @@
 import { useTheme, THEMES } from '@/contexts/ThemeContext';
 import { motion } from 'framer-motion';
+import { PageHeader } from '@/components/PageHeader';
 import { Palette, Info, Check } from 'lucide-react';
 
 const Settings = () => {
@@ -7,14 +8,7 @@ const Settings = () => {
 
   return (
     <div className="page-container max-w-2xl">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="mb-8"
-      >
-        <h1 className="text-2xl page-header-bio gradient-text">SETTINGS</h1>
-      </motion.div>
+      <PageHeader title="SETTINGS" />
 
       {/* Themes */}
       <motion.div

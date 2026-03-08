@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { PageHeader } from '@/components/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
@@ -119,20 +120,14 @@ const Resources = () => {
 
   return (
     <div className="page-container max-w-4xl">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="flex items-center justify-between mb-6"
-      >
-        <h1 className="text-2xl md:text-3xl page-header-bio gradient-text">LIBRARY</h1>
+      <PageHeader title="LIBRARY">
         <Button
           onClick={() => requireAuth(() => setUploadOpen(true), 'Sign in to upload')}
           size="sm" className="gap-2 rounded-xl text-xs btn-bio"
         >
           <Upload className="w-3.5 h-3.5" /> Upload
         </Button>
-      </motion.div>
+      </PageHeader>
 
       {/* Search */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="relative mb-6">

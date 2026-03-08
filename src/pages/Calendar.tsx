@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PageHeader } from '@/components/PageHeader';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, addMonths, subMonths, isSameDay, isToday, parseISO } from 'date-fns';
 
 const typeGlowColors: Record<EventType, string> = {
@@ -49,14 +50,7 @@ const Calendar = () => {
 
   return (
     <div className="page-container">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="mb-8"
-      >
-        <h1 className="text-2xl md:text-3xl page-header-bio gradient-text">CALENDAR</h1>
-      </motion.div>
+      <PageHeader title="CALENDAR" />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">

@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 
 import { Search, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { PageHeader } from '@/components/PageHeader';
 
 const CATEGORIES = ['All', 'Academics', 'Events', 'Tech', 'Sports', 'Cultural'];
 
@@ -38,14 +39,7 @@ const Explore = () => {
 
   return (
     <div className="page-container">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="mb-8"
-      >
-        <h1 className="text-2xl md:text-3xl page-header-bio gradient-text">EXPLORE</h1>
-      </motion.div>
+      <PageHeader title="EXPLORE" />
 
       {/* Search */}
       <motion.div

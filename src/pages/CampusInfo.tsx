@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ExternalLink, Mail, Phone, Search, Users, Globe, Megaphone } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
+import { PageHeader } from '@/components/PageHeader';
 
 const NOTICE_CATS = ['ALL', 'RESULT', 'EXAM', 'ACADEMIC', 'FEE', 'ADMISSION'];
 const CLUB_CATS = ['All', 'Technical', 'Cultural', 'Sports', 'Arts'];
@@ -29,14 +30,7 @@ const CampusInfo = () => {
 
   return (
     <div className="page-container">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="mb-8"
-      >
-        <h1 className="text-2xl md:text-3xl page-header-bio gradient-text">CAMPUS</h1>
-      </motion.div>
+      <PageHeader title="CAMPUS" />
 
       {/* Search */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="relative mb-10 max-w-xl">

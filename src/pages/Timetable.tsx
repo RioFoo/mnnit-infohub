@@ -3,6 +3,7 @@ import { TIMETABLE_DATA, type ClassSession } from '@/data/infohub-data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
+import { PageHeader } from '@/components/PageHeader';
 import { Activity } from 'lucide-react';
 
 const sectionIds = Object.keys(TIMETABLE_DATA);
@@ -39,14 +40,7 @@ const Timetable = () => {
 
   return (
     <div className="page-container">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="mb-8"
-      >
-        <h1 className="text-2xl md:text-3xl page-header-bio gradient-text">TIMETABLE</h1>
-      </motion.div>
+      <PageHeader title="TIMETABLE" />
 
       {/* Controls */}
       <motion.div
