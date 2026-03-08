@@ -178,7 +178,7 @@ const Timetable = () => {
       </div>
 
       {/* Day tabs */}
-      <div className="flex items-center gap-1 px-4 md:px-6 py-2 border-b border-border/[0.04] shrink-0 overflow-x-auto">
+      <div className="flex items-center gap-1.5 px-4 md:px-6 py-3 border-b border-border/[0.04] shrink-0 overflow-x-auto">
         {DAYS.map((day, i) => {
           const isToday = day === currentDay;
           const isSelected = day === selectedDay;
@@ -191,40 +191,30 @@ const Timetable = () => {
               whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedDay(day)}
               className={cn(
-                'relative flex flex-col items-center gap-0.5 px-4 py-2 rounded-lg text-xs font-mono transition-all min-w-[60px]',
+                'relative flex flex-col items-center gap-1 px-5 py-2.5 rounded-xl text-sm font-mono transition-all min-w-[72px]',
                 isSelected ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted/10'
               )}
             >
               {isSelected && (
                 <motion.div
                   layoutId="day-pill"
-                  className="absolute inset-0 rounded-lg bg-primary/[0.08]"
+                  className="absolute inset-0 rounded-xl bg-primary/[0.08]"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
               <span className="relative z-10 font-medium">{DAY_SHORT[i]}</span>
               <span className={cn(
-                'relative z-10 text-[8px]',
+                'relative z-10 text-[9px]',
                 isSelected ? 'text-primary/60' : 'text-muted-foreground/40'
               )}>
                 {count} class{count !== 1 ? 'es' : ''}
               </span>
               {isToday && (
-                <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary)/0.6)]" />
+                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary)/0.6)]" />
               )}
             </motion.button>
           );
         })}
-
-        {/* Legend */}
-        <div className="hidden md:flex items-center gap-3 ml-auto pl-4 border-l border-border/[0.06]">
-          {Object.entries(typeStyles).map(([type, style]) => (
-            <div key={type} className="flex items-center gap-1.5">
-              <div className={cn('w-1.5 h-1.5 rounded-full', style.dot)} />
-              <span className="text-[9px] text-muted-foreground/50 font-mono capitalize">{type.toLowerCase()}</span>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Sessions list - line by line */}
