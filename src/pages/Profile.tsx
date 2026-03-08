@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Edit, Loader2, LogIn, Heart, MessageCircle, Camera, ImagePlus } from 'lucide-react';
+import { Edit, Loader2, LogIn, Heart, MessageCircle, Camera, ImagePlus, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
@@ -115,6 +115,16 @@ const Profile = () => {
       toast.success('Banner updated!');
     } catch (err: any) { toast.error(err.message); }
     setUploadingBanner(false);
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    if (!user) return;
+    const { error } = await (supabase.from as any)('posts').delete().eq('id', postId).eq('user_id', user.id);
+    if (error) toast.error('Failed to delete post');
+    else {
+      setPosts(prev => prev.filter(p => p.id !== postId));
+      toast.success('Post deleted');
+    }
   };
 
   if (!user || !profile) {
@@ -348,6 +358,13 @@ const Profile = () => {
                 <span className="text-[10px] font-mono text-muted-foreground/30 ml-auto">
                   {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                 </span>
+                <button
+                  onClick={() => handleDeletePost(post.id)}
+                  className="ml-2 text-muted-foreground/30 hover:text-destructive transition-colors"
+                  title="Delete post"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
               </div>
             </motion.div>
           ))}
