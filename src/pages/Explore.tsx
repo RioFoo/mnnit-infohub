@@ -11,7 +11,6 @@ import { useFollowState } from '@/hooks/useFollowState';
 import { AuthPromptDialog } from '@/components/AuthPromptDialog';
 import PostCard, { type Post } from '@/components/feed/PostCard';
 import { cn } from '@/lib/utils';
-import { cn } from '@/lib/utils';
 
 interface ReactionRow {
   post_id: string;
