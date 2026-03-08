@@ -43,7 +43,29 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
         <motion.div whileHover={{ rotate: 20, scale: 1.2 }} transition={{ type: 'spring', stiffness: 300 }}>
           <Zap className="w-6 h-6 text-primary shrink-0" />
         </motion.div>
-        {!collapsed && <span className="font-mono font-bold text-primary text-lg">InfoHub</span>}
+        {!collapsed && (
+          <motion.span
+            className="font-mono font-bold text-lg relative cursor-default select-none"
+            style={{
+              background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)), hsl(var(--primary)))',
+              backgroundSize: '200% 200%',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.4))',
+            }}
+            animate={{
+              backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+            whileHover={{
+              scale: 1.08,
+              filter: 'drop-shadow(0 0 16px hsl(var(--primary) / 0.6))',
+              transition: { duration: 0.2 },
+            }}
+          >
+            InfoHub
+          </motion.span>
+        )}
       </div>
 
       {!collapsed && (
