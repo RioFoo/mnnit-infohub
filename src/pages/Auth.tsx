@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,10 +14,89 @@ const BRANCHES = ['CSE', 'ECE', 'EE', 'ME', 'CE', 'BioTech', 'Chem', 'Prod', 'GI
 const SECTIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
 
 const DEMO_ACCOUNTS = [
-{ key: 'student' as const, label: '👨‍💻 Student', email: 'demo.student@mnnit.ac.in', password: 'Demo@1234' },
-{ key: 'senior' as const, label: '🎓 Senior', email: 'senior.dev@mnnit.ac.in', password: 'Demo@1234' },
-{ key: 'admin' as const, label: '⚙️ Admin', email: 'admin.infohub@mnnit.ac.in', password: 'Demo@1234' }];
+  { key: 'student' as const, label: '👨‍💻 Student', email: 'demo.student@mnnit.ac.in', password: 'Demo@1234' },
+  { key: 'senior' as const, label: '🎓 Senior', email: 'senior.dev@mnnit.ac.in', password: 'Demo@1234' },
+  { key: 'admin' as const, label: '⚙️ Admin', email: 'admin.infohub@mnnit.ac.in', password: 'Demo@1234' },
+];
 
+// Floating 3D particle component
+const FloatingParticles = () => {
+  const particles = Array.from({ length: 30 }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 4 + 1,
+    duration: Math.random() * 20 + 10,
+    delay: Math.random() * 5,
+  }));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full bg-primary/20"
+          style={{ width: p.size, height: p.size, left: `${p.x}%`, top: `${p.y}%` }}
+          animate={{
+            y: [0, -30, 0],
+            x: [0, Math.random() * 20 - 10, 0],
+            opacity: [0.2, 0.6, 0.2],
+            scale: [1, 1.5, 1],
+          }}
+          transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: 'easeInOut' }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// Animated 3D cube
+const FloatingCube = ({ delay = 0, size = 60, x = 0, y = 0 }: { delay?: number; size?: number; x?: number; y?: number }) => (
+  <motion.div
+    className="absolute"
+    style={{ left: `${x}%`, top: `${y}%`, width: size, height: size, perspective: 200 }}
+    animate={{ rotateX: [0, 360], rotateY: [0, 360], y: [0, -20, 0] }}
+    transition={{ duration: 12, repeat: Infinity, delay, ease: 'linear' }}
+  >
+    <div
+      className="w-full h-full relative"
+      style={{ transformStyle: 'preserve-3d' }}
+    >
+      {/* Cube faces */}
+      {[
+        { transform: `translateZ(${size / 2}px)`, bg: 'hsl(var(--primary) / 0.15)' },
+        { transform: `rotateY(180deg) translateZ(${size / 2}px)`, bg: 'hsl(var(--primary) / 0.1)' },
+        { transform: `rotateY(90deg) translateZ(${size / 2}px)`, bg: 'hsl(var(--secondary) / 0.15)' },
+        { transform: `rotateY(-90deg) translateZ(${size / 2}px)`, bg: 'hsl(var(--secondary) / 0.1)' },
+        { transform: `rotateX(90deg) translateZ(${size / 2}px)`, bg: 'hsl(var(--primary) / 0.08)' },
+        { transform: `rotateX(-90deg) translateZ(${size / 2}px)`, bg: 'hsl(var(--primary) / 0.12)' },
+      ].map((face, i) => (
+        <div
+          key={i}
+          className="absolute inset-0 border border-primary/20 rounded-sm"
+          style={{ transform: face.transform, background: face.bg, backfaceVisibility: 'hidden' }}
+        />
+      ))}
+    </div>
+  </motion.div>
+);
+
+// Orbiting ring
+const OrbitRing = ({ size = 200, duration = 8, delay = 0 }: { size?: number; duration?: number; delay?: number }) => (
+  <motion.div
+    className="absolute border border-primary/10 rounded-full"
+    style={{
+      width: size,
+      height: size,
+      left: '50%',
+      top: '50%',
+      marginLeft: -size / 2,
+      marginTop: -size / 2,
+    }}
+    animate={{ rotateX: 75, rotateZ: [0, 360] }}
+    transition={{ duration, repeat: Infinity, delay, ease: 'linear' }}
+  />
+);
 
 const Auth = () => {
   const { session, signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
@@ -31,6 +110,7 @@ const Auth = () => {
   const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotLoading, setForgotLoading] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('');
@@ -45,6 +125,22 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [branch, setBranch] = useState('');
   const [section, setSection] = useState('');
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setMousePos({
+          x: ((e.clientX - rect.left) / rect.width - 0.5) * 20,
+          y: ((e.clientY - rect.top) / rect.height - 0.5) * 20,
+        });
+      }
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   if (session && !showIntro) return <Navigate to="/" replace />;
 
@@ -112,7 +208,6 @@ const Auth = () => {
       toast.error(`Google Sign-In failed: ${error.message}`);
       setGoogleLoading(false);
     }
-    // If no error, Supabase redirects to Google — no further action needed
   };
 
   const handleDemoFill = (demo: typeof DEMO_ACCOUNTS[0]) => {
@@ -143,224 +238,360 @@ const Auth = () => {
 
   if (showIntro) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-background overflow-hidden relative">
+        <FloatingParticles />
         <AnimatePresence mode="wait">
-          {introStep === 0 &&
-          <motion.div key="s0" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="text-center">
-              <Zap className="w-16 h-16 text-primary mx-auto mb-4" />
-              <h1 className="text-3xl font-mono font-bold text-primary">Welcome back, {userName} 👋</h1>
+          {introStep === 0 && (
+            <motion.div key="s0" initial={{ opacity: 0, scale: 0.8, rotateY: -90 }} animate={{ opacity: 1, scale: 1, rotateY: 0 }} exit={{ opacity: 0, scale: 0.8, rotateY: 90 }} transition={{ type: 'spring', damping: 15 }} className="text-center" style={{ perspective: 1000 }}>
+              <Zap className="w-16 h-16 text-primary mx-auto mb-4 drop-shadow-[0_0_15px_hsl(var(--primary)/0.5)]" />
+              <h1 className="text-3xl font-mono font-bold text-primary glow-text">Welcome back, {userName} 👋</h1>
             </motion.div>
-          }
-          {introStep === 1 &&
-          <motion.div key="s1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center">
+          )}
+          {introStep === 1 && (
+            <motion.div key="s1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center">
               <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className="text-muted-foreground font-mono">Syncing your campus data...</p>
             </motion.div>
-          }
-          {introStep === 2 &&
-          <motion.div key="s2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-center">
-              <h2 className="text-2xl font-mono font-bold text-primary">Ready. Entering InfoHub... 🚀</h2>
+          )}
+          {introStep === 2 && (
+            <motion.div key="s2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-center">
+              <h2 className="text-2xl font-mono font-bold text-primary glow-text">Ready. Entering InfoHub... 🚀</h2>
             </motion.div>
-          }
+          )}
         </AnimatePresence>
-      </div>);
-
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left branding */}
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center relative overflow-hidden bg-background">
-        <div className="absolute inset-0 opacity-20" style={{ background: 'var(--gradient-primary)' }} />
-        <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="relative z-10 text-center p-12">
-          <Zap className="w-20 h-20 text-primary mx-auto mb-6" />
-          <h1 className="text-5xl font-mono font-bold text-primary glow-text mb-4">MNNIT InfoHub</h1>
-          <p className="text-xl text-muted-foreground max-w-md">Your campus. Supercharged.</p>
+    <div ref={containerRef} className="min-h-screen flex relative overflow-hidden bg-background">
+      {/* Animated background grid */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{
+        backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)`,
+        backgroundSize: '60px 60px',
+      }} />
+
+      {/* Radial glow following mouse */}
+      <div
+        className="absolute inset-0 pointer-events-none transition-all duration-700 ease-out"
+        style={{
+          background: `radial-gradient(600px circle at ${50 + mousePos.x * 2}% ${50 + mousePos.y * 2}%, hsl(var(--primary) / 0.06), transparent 60%)`,
+        }}
+      />
+
+      {/* Left branding — 3D scene */}
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center relative overflow-hidden">
+        <FloatingParticles />
+
+        {/* Orbit rings */}
+        <div className="absolute inset-0 flex items-center justify-center" style={{ perspective: 800 }}>
+          <OrbitRing size={300} duration={20} />
+          <OrbitRing size={220} duration={15} delay={2} />
+          <OrbitRing size={380} duration={25} delay={4} />
+        </div>
+
+        {/* Floating cubes */}
+        <FloatingCube delay={0} size={50} x={15} y={20} />
+        <FloatingCube delay={3} size={35} x={75} y={15} />
+        <FloatingCube delay={6} size={45} x={70} y={70} />
+        <FloatingCube delay={2} size={30} x={20} y={75} />
+        <FloatingCube delay={4} size={25} x={85} y={45} />
+
+        {/* Main branding with 3D tilt */}
+        <motion.div
+          className="relative z-10 text-center p-12"
+          style={{ perspective: 1000 }}
+          animate={{
+            rotateX: mousePos.y * 0.3,
+            rotateY: mousePos.x * 0.3,
+          }}
+          transition={{ type: 'spring', stiffness: 100, damping: 30 }}
+        >
+          {/* Glowing backdrop */}
+          <div className="absolute inset-0 -m-8 rounded-3xl bg-primary/5 blur-3xl" />
+          
+          <motion.div
+            initial={{ opacity: 0, y: 30, rotateX: -15 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ duration: 1, type: 'spring' }}
+          >
+            <div className="relative inline-block mb-8">
+              <Zap className="w-24 h-24 text-primary drop-shadow-[0_0_30px_hsl(var(--primary)/0.5)]" />
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.3), transparent 70%)' }}
+              />
+            </div>
+            <h1 className="text-6xl font-mono font-bold text-primary glow-text mb-4 tracking-tight">
+              MNNIT
+              <br />
+              <span className="text-5xl bg-clip-text text-transparent" style={{ backgroundImage: 'var(--gradient-primary)' }}>
+                InfoHub
+              </span>
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-md mx-auto mt-4">
+              Your campus. <span className="text-primary font-semibold">Supercharged.</span>
+            </p>
+          </motion.div>
+
+          {/* Floating tags */}
+          {['Timetable', 'Grades', 'Feed', 'Events'].map((tag, i) => (
+            <motion.span
+              key={tag}
+              className="absolute glass rounded-full px-3 py-1 text-xs font-mono text-primary/80 border border-primary/20"
+              style={{
+                left: `${[10, 80, 5, 85][i]}%`,
+                top: `${[15, 25, 80, 75][i]}%`,
+              }}
+              animate={{
+                y: [0, -8, 0],
+                opacity: [0.6, 1, 0.6],
+              }}
+              transition={{ duration: 3 + i, repeat: Infinity, delay: i * 0.5 }}
+            >
+              {tag}
+            </motion.span>
+          ))}
         </motion.div>
       </div>
 
-      {/* Right form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-          <div className="lg:hidden text-center mb-8">
-            <Zap className="w-12 h-12 text-primary mx-auto mb-2" />
-            <h1 className="text-2xl font-mono font-bold text-primary">MNNIT InfoHub</h1>
-          </div>
+      {/* Right form — Glass card with 3D effect */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-8 relative">
+        <motion.div
+          initial={{ opacity: 0, x: 40, rotateY: -5 }}
+          animate={{ opacity: 1, x: 0, rotateY: 0 }}
+          transition={{ duration: 0.8, type: 'spring' }}
+          className="w-full max-w-md"
+          style={{ perspective: 1000 }}
+        >
+          <motion.div
+            className="glass-strong rounded-2xl p-8 shadow-2xl relative overflow-hidden"
+            style={{ transformStyle: 'preserve-3d' }}
+            whileHover={{ scale: 1.01 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            {/* Animated border glow */}
+            <div className="absolute inset-0 rounded-2xl opacity-50" style={{
+              background: 'var(--gradient-primary)',
+              mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+              maskComposite: 'xor',
+              WebkitMaskComposite: 'xor',
+              padding: '1px',
+            }} />
 
-          {/* Error display */}
-          {error &&
-          <div className="mb-4 p-3 rounded-md border border-destructive/50 bg-destructive/10 text-destructive text-sm">
-              ⚠️ {error}
+            {/* Corner accents */}
+            <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-primary/30 rounded-tl-2xl" />
+            <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-primary/30 rounded-br-2xl" />
+
+            {/* Mobile logo */}
+            <div className="lg:hidden text-center mb-8">
+              <Zap className="w-12 h-12 text-primary mx-auto mb-2 drop-shadow-[0_0_15px_hsl(var(--primary)/0.5)]" />
+              <h1 className="text-2xl font-mono font-bold text-primary glow-text">MNNIT InfoHub</h1>
             </div>
-          }
 
-          {/* Google Login Button */}
-          <Button
-            variant="outline"
-            className="w-full mb-6 h-12 text-base gap-3 border-border hover:bg-muted/50"
-            onClick={handleGoogleLogin}
-            disabled={loading || googleLoading}>
-            
-            {googleLoading ?
-            <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Redirecting to Google...
-              </> :
+            {/* Error display */}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mb-4 p-3 rounded-md border border-destructive/50 bg-destructive/10 text-destructive text-sm"
+                >
+                  ⚠️ {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            <>
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                </svg>
-                Continue with Google
-              </>
-            }
-          </Button>
+            {/* Google Login */}
+            <Button
+              variant="outline"
+              className="w-full mb-6 h-12 text-base gap-3 border-border/50 hover:bg-muted/50 hover:border-primary/30 transition-all duration-300 hover:shadow-[0_0_20px_hsl(var(--primary)/0.1)]"
+              onClick={handleGoogleLogin}
+              disabled={loading || googleLoading}
+            >
+              {googleLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Redirecting to Google...
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                  </svg>
+                  Continue with Google
+                </>
+              )}
+            </Button>
 
-          <div className="relative mb-6">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-            
-          </div>
+            <div className="relative mb-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border/50" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-3 text-muted-foreground font-mono">or continue with email</span>
+              </div>
+            </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-muted">
-              <TabsTrigger value="login" className="gap-1"><Mail className="w-3 h-3" /> Login</TabsTrigger>
-              <TabsTrigger value="register" className="gap-1"><UserPlus className="w-3 h-3" /> Register</TabsTrigger>
-            </TabsList>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 bg-muted/50 backdrop-blur-sm">
+                <TabsTrigger value="login" className="gap-1 data-[state=active]:shadow-[0_0_10px_hsl(var(--primary)/0.2)]">
+                  <Mail className="w-3 h-3" /> Login
+                </TabsTrigger>
+                <TabsTrigger value="register" className="gap-1 data-[state=active]:shadow-[0_0_10px_hsl(var(--primary)/0.2)]">
+                  <UserPlus className="w-3 h-3" /> Register
+                </TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4 mt-6">
-                <div>
-                  <Label htmlFor="login-email">Email</Label>
-                  <Input id="login-email" type="email" value={loginEmail} onChange={(e) => {setLoginEmail(e.target.value);setSelectedDemo(null);}} placeholder="you@mnnit.ac.in" required className="mt-1" />
-                  {selectedDemo &&
-                  <p className="mt-1 text-xs text-primary flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" />
-                      Demo account selected — Password: Demo@1234
-                    </p>
-                  }
-                </div>
-                <div>
-                  <Label htmlFor="login-password">Password</Label>
-                  <div className="relative mt-1">
+              <TabsContent value="login">
+                <form onSubmit={handleLogin} className="space-y-4 mt-6">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                    <Label htmlFor="login-email" className="text-foreground/80">Email</Label>
                     <Input
-                      id="login-password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      placeholder="••••••••"
+                      id="login-email"
+                      type="email"
+                      value={loginEmail}
+                      onChange={(e) => { setLoginEmail(e.target.value); setSelectedDemo(null); }}
+                      placeholder="you@mnnit.ac.in"
                       required
-                      className="pr-10" />
-                    
+                      className="mt-1 bg-background/50 border-border/50 focus:border-primary/50 transition-all duration-300 focus:shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
+                    />
+                    {selectedDemo && (
+                      <p className="mt-1 text-xs text-primary flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" />
+                        Demo account selected — Password: Demo@1234
+                      </p>
+                    )}
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                    <Label htmlFor="login-password" className="text-foreground/80">Password</Label>
+                    <div className="relative mt-1">
+                      <Input
+                        id="login-password"
+                        type={showPassword ? 'text' : 'password'}
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        placeholder="••••••••"
+                        required
+                        className="pr-10 bg-background/50 border-border/50 focus:border-primary/50 transition-all duration-300 focus:shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </motion.div>
+                  <div className="flex justify-end">
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
-                      
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      onClick={() => setShowForgot(true)}
+                      className="text-xs text-primary/80 hover:text-primary hover:underline transition-colors"
+                    >
+                      Forgot Password?
                     </button>
                   </div>
-                </div>
-                <div className="flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => setShowForgot(true)}
-                    className="text-xs text-primary hover:underline">
-                    
-                    Forgot Password?
-                  </button>
-                </div>
-                <Button
-                  type="submit"
-                  className={`w-full ${selectedDemo ? 'animate-pulse shadow-[0_0_15px_hsl(var(--primary)/0.5)]' : ''}`}
-                  disabled={loading}>
-                  
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sign In'}
-                </Button>
-              </form>
-            </TabsContent>
+                  <Button
+                    type="submit"
+                    className={`w-full h-11 text-base font-semibold transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.3)] ${selectedDemo ? 'animate-pulse shadow-[0_0_15px_hsl(var(--primary)/0.5)]' : ''}`}
+                    disabled={loading}
+                  >
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sign In →'}
+                  </Button>
+                </form>
+              </TabsContent>
 
-            <TabsContent value="register">
-              <form onSubmit={handleSignup} className="space-y-4 mt-6">
-                <div>
-                  <Label>Full Name</Label>
-                  <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Rahul Sharma" required className="mt-1" />
-                </div>
-                <div>
-                  <Label>College Email</Label>
-                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@mnnit.ac.in" required className="mt-1" />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  
+              <TabsContent value="register">
+                <form onSubmit={handleSignup} className="space-y-4 mt-6">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                    <Label className="text-foreground/80">Full Name</Label>
+                    <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Rahul Sharma" required className="mt-1 bg-background/50 border-border/50 focus:border-primary/50" />
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+                    <Label className="text-foreground/80">College Email</Label>
+                    <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@mnnit.ac.in" required className="mt-1 bg-background/50 border-border/50 focus:border-primary/50" />
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground/80">Branch</Label>
+                      <Select value={branch} onValueChange={setBranch}>
+                        <SelectTrigger className="mt-1 bg-background/50 border-border/50"><SelectValue placeholder="Branch" /></SelectTrigger>
+                        <SelectContent>
+                          {BRANCHES.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80">Section</Label>
+                      <Select value={section} onValueChange={setSection}>
+                        <SelectTrigger className="mt-1 bg-background/50 border-border/50"><SelectValue placeholder="Section" /></SelectTrigger>
+                        <SelectContent>
+                          {SECTIONS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+                    <Label className="text-foreground/80">Password</Label>
+                    <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" required minLength={6} className="mt-1 bg-background/50 border-border/50 focus:border-primary/50" />
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+                    <Label className="text-foreground/80">Confirm Password</Label>
+                    <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter password" required minLength={6} className="mt-1 bg-background/50 border-border/50 focus:border-primary/50" />
+                  </motion.div>
+                  <Button type="submit" className="w-full h-11 text-base font-semibold transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.3)]" disabled={loading}>
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Account →'}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
 
-
-
-
-
-
-
-                  
-                  <div>
-                    <Label>Section</Label>
-                    <Select value={section} onValueChange={setSection}>
-                      <SelectTrigger className="mt-1"><SelectValue placeholder="Section" /></SelectTrigger>
-                      <SelectContent>
-                        {SECTIONS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div>
-                  <Label>Password</Label>
-                  <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" required minLength={6} className="mt-1" />
-                </div>
-                <div>
-                  <Label>Confirm Password</Label>
-                  <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter password" required minLength={6} className="mt-1" />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Account'}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
-
-
-          <p className="text-xs text-muted-foreground text-center mt-6">By signing in, you agree to our Terms of Service</p>
+            <p className="text-xs text-muted-foreground text-center mt-6 font-mono">By signing in, you agree to our Terms of Service</p>
+          </motion.div>
 
           {/* Forgot Password Overlay */}
           <AnimatePresence>
-            {showForgot &&
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-              
+            {showForgot && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md p-4"
+              >
                 <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                className="w-full max-w-sm rounded-lg border border-border bg-card p-6 shadow-lg">
-                
-                  <h2 className="text-lg font-mono font-bold text-foreground mb-1">Reset Password</h2>
+                  initial={{ scale: 0.9, opacity: 0, rotateX: -10 }}
+                  animate={{ scale: 1, opacity: 1, rotateX: 0 }}
+                  exit={{ scale: 0.9, opacity: 0, rotateX: 10 }}
+                  className="w-full max-w-sm glass-strong rounded-2xl p-6 shadow-2xl relative overflow-hidden"
+                  style={{ perspective: 1000 }}
+                >
+                  <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-primary/30 rounded-tl-2xl" />
+                  <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-primary/30 rounded-br-2xl" />
+
+                  <h2 className="text-lg font-mono font-bold text-foreground mb-1 glow-text">Reset Password</h2>
                   <p className="text-sm text-muted-foreground mb-4">Enter your email and we'll send a reset link.</p>
                   <form onSubmit={handleForgotPassword} className="space-y-4">
                     <div>
                       <Label htmlFor="forgot-email">Email</Label>
                       <Input
-                      id="forgot-email"
-                      type="email"
-                      value={forgotEmail}
-                      onChange={(e) => setForgotEmail(e.target.value)}
-                      placeholder="you@mnnit.ac.in"
-                      required
-                      className="mt-1" />
-                    
+                        id="forgot-email"
+                        type="email"
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                        placeholder="you@mnnit.ac.in"
+                        required
+                        className="mt-1 bg-background/50 border-border/50 focus:border-primary/50"
+                      />
                     </div>
-                    <Button type="submit" className="w-full" disabled={forgotLoading}>
+                    <Button type="submit" className="w-full hover:shadow-[0_0_25px_hsl(var(--primary)/0.3)]" disabled={forgotLoading}>
                       {forgotLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send Reset Link'}
                     </Button>
                     <Button variant="ghost" type="button" onClick={() => setShowForgot(false)} className="w-full gap-2">
@@ -369,12 +600,12 @@ const Auth = () => {
                   </form>
                 </motion.div>
               </motion.div>
-            }
+            )}
           </AnimatePresence>
         </motion.div>
       </div>
-    </div>);
-
+    </div>
+  );
 };
 
 export default Auth;
