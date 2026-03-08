@@ -214,7 +214,7 @@ const Profile = () => {
             {profile.gender && <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.gender}</span>}
           </div>
 
-          <div className="flex gap-6 mt-6 pt-5 relative items-center">
+          <div className="flex flex-wrap gap-3 sm:gap-6 mt-6 pt-5 relative items-center">
             <div className="divider-glow absolute left-0 right-0 top-0" />
             <div className="text-center transform transition-all duration-300 hover:scale-110 cursor-pointer">
               <p className="text-3xl font-display font-black gradient-text hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.6)]">{posts.length}</p>
@@ -226,17 +226,17 @@ const Profile = () => {
               whileHover={{ scale: 1.08, rotateY: 5 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => { setFollowDialogTab('followers'); setFollowDialogOpen(true); }}
-              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-primary/[0.06] border border-primary/15 hover:bg-primary/[0.1] hover:border-primary/25 transition-all group cursor-pointer transform hover:drop-shadow-[0_8px_20px_hsl(var(--primary)/0.3)]"
+              className="flex items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-primary/[0.06] border border-primary/15 hover:bg-primary/[0.1] hover:border-primary/25 transition-all group cursor-pointer transform hover:drop-shadow-[0_8px_20px_hsl(var(--primary)/0.3)]"
             >
               <div className="relative">
-                <Users className="w-6 h-6 text-primary group-hover:drop-shadow-[0_0_12px_hsl(var(--primary)/0.7)] transition-all" />
-                <span className="absolute -top-1.5 -right-2 min-w-[18px] h-5 px-1 rounded-full bg-primary text-primary-foreground text-[9px] font-mono font-black flex items-center justify-center shadow-[0_0_12px_hsl(var(--primary)/0.6)]">
+                <Users className="w-5 sm:w-6 h-5 sm:h-6 text-primary group-hover:drop-shadow-[0_0_12px_hsl(var(--primary)/0.7)] transition-all" />
+                <span className="absolute -top-1.5 -right-2 min-w-[16px] sm:min-w-[18px] h-4 sm:h-5 px-1 rounded-full bg-primary text-primary-foreground text-[8px] sm:text-[9px] font-mono font-black flex items-center justify-center shadow-[0_0_12px_hsl(var(--primary)/0.6)]">
                   {followerCount + followingCount}
                 </span>
               </div>
               <div className="text-left">
-                <p className="text-sm font-mono font-black text-foreground leading-tight">Follow</p>
-                <p className="text-[10px] font-mono text-muted-foreground/70 font-bold">{followerCount} followers · {followingCount} following</p>
+                <p className="text-xs sm:text-sm font-mono font-black text-foreground leading-tight">Follow</p>
+                <p className="text-[9px] sm:text-[10px] font-mono text-muted-foreground/70 font-bold hidden sm:block">{followerCount} followers · {followingCount} following</p>
               </div>
             </motion.button>
 
@@ -245,15 +245,15 @@ const Profile = () => {
               whileHover={{ scale: 1.08, rotateY: 5 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => { setFollowDialogTab('favourites'); setFollowDialogOpen(true); }}
-              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-yellow-500/[0.06] border border-yellow-500/15 hover:bg-yellow-500/[0.1] hover:border-yellow-500/25 transition-all group cursor-pointer transform hover:drop-shadow-[0_8px_20px_hsl(45,100%,50%,0.3)]"
+              className="flex items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-yellow-500/[0.06] border border-yellow-500/15 hover:bg-yellow-500/[0.1] hover:border-yellow-500/25 transition-all group cursor-pointer transform hover:drop-shadow-[0_8px_20px_hsl(45,100%,50%,0.3)]"
             >
               <div className="relative">
-                <Star className="w-6 h-6 text-yellow-500 fill-yellow-500 group-hover:drop-shadow-[0_0_12px_hsl(45,100%,50%,0.7)] transition-all" />
-                <span className="absolute -top-1.5 -right-2 min-w-[18px] h-5 px-1 rounded-full bg-yellow-500 text-yellow-950 text-[9px] font-mono font-black flex items-center justify-center shadow-[0_0_12px_hsl(45,100%,50%,0.6)]">
+                <Star className="w-5 sm:w-6 h-5 sm:h-6 text-yellow-500 fill-yellow-500 group-hover:drop-shadow-[0_0_12px_hsl(45,100%,50%,0.7)] transition-all" />
+                <span className="absolute -top-1.5 -right-2 min-w-[16px] sm:min-w-[18px] h-4 sm:h-5 px-1 rounded-full bg-yellow-500 text-yellow-950 text-[8px] sm:text-[9px] font-mono font-black flex items-center justify-center shadow-[0_0_12px_hsl(45,100%,50%,0.6)]">
                   {favouriteCount}
                 </span>
               </div>
-              <p className="text-sm font-mono font-black text-foreground leading-tight">Favorites</p>
+              <p className="text-xs sm:text-sm font-mono font-black text-foreground leading-tight">Favorites</p>
             </motion.button>
 
             {/* Find People button */}
@@ -261,10 +261,10 @@ const Profile = () => {
               whileHover={{ scale: 1.08, rotateY: 5 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/explore?tab=people')}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/[0.06] border border-secondary/15 hover:bg-secondary/[0.1] hover:border-secondary/25 transition-all group cursor-pointer transform hover:drop-shadow-[0_8px_20px_hsl(var(--secondary)/0.3)]"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-secondary/[0.06] border border-secondary/15 hover:bg-secondary/[0.1] hover:border-secondary/25 transition-all group cursor-pointer transform hover:drop-shadow-[0_8px_20px_hsl(var(--secondary)/0.3)]"
             >
-              <UserPlus className="w-6 h-6 text-secondary group-hover:drop-shadow-[0_0_12px_hsl(var(--secondary)/0.7)] transition-all" />
-              <p className="text-sm font-mono font-black text-foreground leading-tight">Find People</p>
+              <UserPlus className="w-5 sm:w-6 h-5 sm:h-6 text-secondary group-hover:drop-shadow-[0_0_12px_hsl(var(--secondary)/0.7)] transition-all" />
+              <p className="text-xs sm:text-sm font-mono font-black text-foreground leading-tight">Find People</p>
             </motion.button>
           </div>
 
