@@ -1,16 +1,17 @@
+import { useState, useEffect } from 'react';
 import {
   Home, Compass, GraduationCap, CalendarDays, Clock, Calculator,
   BookOpen, Bell, User, Settings, LogOut, LogIn
 } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, NavLink as RouterNavLink } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar
 } from '@/components/ui/sidebar';
 import { motion } from 'framer-motion';
-import { NavLink as RouterNavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import InfoHubLogo from '@/components/InfoHubLogo';
 
@@ -44,7 +45,7 @@ const navItems = [
   { title: 'Timetable', url: '/timetable', icon: Clock },
   { title: 'Grades', url: '/grades', icon: Calculator },
   { title: 'Library', url: '/resources', icon: BookOpen },
-  { title: 'Alerts', url: '/notifications', icon: Bell },
+  { title: 'Notifications', url: '/notifications', icon: Bell },
   { title: 'Profile', url: '/profile', icon: User },
 ];
 
@@ -58,6 +59,32 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut, profile, user } = useAuth();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Fetch unread count and subscribe to real-time updates
+  useEffect(() => {
+    if (!user) { setUnreadCount(0); return; }
+
+    const fetchUnread = async () => {
+      const { count } = await (supabase.from as any)('notifications')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('read', false);
+      setUnreadCount(count || 0);
+    };
+    fetchUnread();
+
+    const channel = supabase
+      .channel('sidebar-notif-count')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
+        () => { fetchUnread(); }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [user]);
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border/[0.06] bg-sidebar/80 backdrop-blur-2xl">
@@ -140,9 +167,9 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                             )}>{item.title}</span>
                           )}
 
-                          {item.title === 'Alerts' && !collapsed && (
+                          {item.title === 'Notifications' && !collapsed && unreadCount > 0 && (
                             <Badge className="ml-auto text-[8px] h-4 px-1.5 bg-destructive/80 text-destructive-foreground border-none font-mono">
-                              3
+                              {unreadCount > 99 ? '99+' : unreadCount}
                             </Badge>
                           )}
                         </RouterNavLink>
