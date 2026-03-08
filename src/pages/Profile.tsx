@@ -200,16 +200,16 @@ const Profile = () => {
 
           <div className="flex gap-8 mt-6 pt-5 relative">
             <div className="divider-glow absolute left-0 right-0 top-0" />
-            <div>
-              <p className="text-3xl font-display font-bold gradient-text">{posts.length}</p>
+            <div className="text-center">
+              <p className="text-2xl font-display font-bold gradient-text">{posts.length}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Posts</p>
             </div>
-            <div>
-              <p className="text-3xl font-display font-bold gradient-text">{followerCount}</p>
+            <div className="text-center">
+              <p className="text-2xl font-display font-bold gradient-text">{followerCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Followers</p>
             </div>
-            <div>
-              <p className="text-3xl font-display font-bold gradient-text">{followingCount}</p>
+            <div className="text-center">
+              <p className="text-2xl font-display font-bold gradient-text">{followingCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Following</p>
             </div>
           </div>
