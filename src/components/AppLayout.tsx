@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import BioBackground from '@/components/BioBackground';
 import { Home, Compass, CalendarDays, Bell, User, LogIn } from 'lucide-react';
+import infohubIcon from '@/assets/infohub-icon.png';
 import { useState, useEffect } from 'react';
 import { CommandPalette } from '@/components/CommandPalette';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -93,10 +94,8 @@ const AppLayout = () => {
             <div className="flex items-center gap-3">
               <SidebarTrigger className="hidden md:flex text-muted-foreground hover:text-primary transition-colors" />
               <div className="md:hidden flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
-                  <span className="text-primary text-xs font-bold font-display">◈</span>
-                </div>
-                <span className="font-display font-bold text-sm tracking-tight">INFOHUB</span>
+                <img src={infohubIcon} alt="InfoHub" className="w-6 h-6 object-contain brand-icon-3d" />
+                <span className="font-display font-bold text-sm tracking-tight brand-text-3d">INFOHUB</span>
               </div>
             </div>
 
