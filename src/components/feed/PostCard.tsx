@@ -1,11 +1,13 @@
 import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, Share2 } from 'lucide-react';
+import { MessageCircle, Share2, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import MediaRenderer from './MediaRenderer';
 import EmojiReactionPicker from './EmojiReactionPicker';
 import CommentSection from './CommentSection';
+import FollowButton from './FollowButton';
+import { cn } from '@/lib/utils';
 
 interface PostProfile {
   name: string;
@@ -39,6 +41,12 @@ interface PostCardProps {
   onReact: (postId: string, emoji: string) => void;
   onRequireAuth: (fn: () => void, msg: string) => void;
   isAuthenticated: boolean;
+  currentUserId?: string;
+  isFollowingAuthor?: boolean;
+  isFavouriteAuthor?: boolean;
+  isFavouritePost?: boolean;
+  onToggleFollow?: (userId: string) => void;
+  onToggleFavourite?: (userId: string) => void;
 }
 
 const itemVariants = {
@@ -46,7 +54,11 @@ const itemVariants = {
   show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const } }
 };
 
-const PostCard = ({ post, reactions, onReact, onRequireAuth, isAuthenticated }: PostCardProps) => {
+const PostCard = ({
+  post, reactions, onReact, onRequireAuth, isAuthenticated,
+  currentUserId, isFollowingAuthor = false, isFavouriteAuthor = false,
+  isFavouritePost = false, onToggleFollow, onToggleFavourite
+}: PostCardProps) => {
   const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement>(null);
   const [showComments, setShowComments] = useState(false);
@@ -72,9 +84,10 @@ const PostCard = ({ post, reactions, onReact, onRequireAuth, isAuthenticated }: 
       try { await navigator.share({ text, url }); } catch {}
     } else {
       await navigator.clipboard.writeText(`${text}\n${url}`);
-      // toast handled by caller
     }
   };
+
+  const isOwnPost = currentUserId === post.user_id;
 
   return (
     <motion.div variants={itemVariants}>
@@ -82,9 +95,20 @@ const PostCard = ({ post, reactions, onReact, onRequireAuth, isAuthenticated }: 
         ref={cardRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="card-bio p-5 transition-transform duration-300 ease-out"
+        className={cn(
+          'card-bio p-5 transition-transform duration-300 ease-out',
+          isFavouritePost && 'ring-1 ring-yellow-500/20 shadow-[0_0_20px_hsl(45,100%,50%,0.08)]'
+        )}
         style={{ transformStyle: 'preserve-3d' }}
       >
+        {/* Favourite badge */}
+        {isFavouritePost && (
+          <div className="flex items-center gap-1.5 mb-3 text-[10px] font-mono text-yellow-500/80">
+            <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+            <span>From your Favorites</span>
+          </div>
+        )}
+
         <div className="flex items-start gap-3.5">
           <button onClick={() => navigate(`/profile/${post.user_id}`)} className="avatar-orbital shrink-0 cursor-pointer">
             {post.profiles?.avatar_url ? (
@@ -103,6 +127,21 @@ const PostCard = ({ post, reactions, onReact, onRequireAuth, isAuthenticated }: 
               {post.profiles?.branch && (
                 <span className="text-[10px] font-mono text-muted-foreground/40">· {post.profiles.branch}</span>
               )}
+
+              {/* Inline follow button */}
+              {!isOwnPost && onToggleFollow && (
+                <FollowButton
+                  isFollowing={isFollowingAuthor}
+                  isFavourite={isFavouriteAuthor}
+                  onFollow={() => onToggleFollow(post.user_id)}
+                  onFavourite={() => onToggleFavourite?.(post.user_id)}
+                  onRequireAuth={onRequireAuth}
+                  isAuthenticated={isAuthenticated}
+                  isOwnPost={isOwnPost}
+                  compact
+                />
+              )}
+
               <span className="text-[10px] font-mono text-muted-foreground/30 ml-auto">
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
               </span>
