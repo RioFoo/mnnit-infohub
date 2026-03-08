@@ -26,6 +26,7 @@ const Profile = () => {
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [favouriteCount, setFavouriteCount] = useState(0);
+  const [followDialogTab, setFollowDialogTab] = useState<'followers' | 'following' | 'favourites'>('followers');
   const [editOpen, setEditOpen] = useState(false);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
@@ -38,7 +39,6 @@ const Profile = () => {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingBanner, setUploadingBanner] = useState(false);
   const [followDialogOpen, setFollowDialogOpen] = useState(false);
-  const [followDialogTab, setFollowDialogTab] = useState<'followers' | 'following'>('followers');
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -228,12 +228,22 @@ const Profile = () => {
               <p className="text-2xl font-display font-bold gradient-text">{followingCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Following</p>
             </button>
-            <div className="text-center">
+            <button
+              className="text-center hover:opacity-70 transition-opacity group"
+              onClick={() => { setFollowDialogTab('favourites'); setFollowDialogOpen(true); }}
+            >
               <p className="text-2xl font-display font-bold text-yellow-500">{favouriteCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground flex items-center gap-1 justify-center">
-                <Star className="w-3 h-3 text-yellow-500/50" /> Favorites
+                <motion.span
+                  whileHover={{ scale: 1.3, rotate: 15 }}
+                  whileTap={{ scale: 0.8 }}
+                  className="inline-flex"
+                >
+                  <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500 drop-shadow-[0_0_4px_hsl(45,100%,50%,0.5)] group-hover:drop-shadow-[0_0_8px_hsl(45,100%,50%,0.7)] transition-all" />
+                </motion.span>
+                Favorites
               </p>
-            </div>
+            </button>
           </div>
 
           <Dialog open={editOpen} onOpenChange={setEditOpen}>
