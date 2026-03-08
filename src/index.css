@@ -353,6 +353,37 @@
 }
 
 /* ═══════════════════════════════════════════════
+   ✦ 3D BRAND TEXT
+   ═══════════════════════════════════════════════ */
+.brand-text-3d {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)), hsl(var(--primary)));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: brand-gradient-shift 4s ease-in-out infinite;
+  filter: drop-shadow(0 1px 1px hsl(var(--primary) / 0.3))
+          drop-shadow(0 2px 4px hsl(var(--primary) / 0.2))
+          drop-shadow(0 4px 8px hsl(0 0% 0% / 0.3));
+}
+
+@keyframes brand-gradient-shift {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 200% center; }
+}
+
+.brand-icon-3d {
+  filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.6))
+          drop-shadow(0 0 12px hsl(var(--primary) / 0.3));
+  animation: icon-pulse 3s ease-in-out infinite;
+}
+
+@keyframes icon-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.6)) drop-shadow(0 0 12px hsl(var(--primary) / 0.3)); }
+  50% { filter: drop-shadow(0 0 10px hsl(var(--primary) / 0.8)) drop-shadow(0 0 20px hsl(var(--primary) / 0.5)); }
+}
+
+/* ═══════════════════════════════════════════════
    ✦ TYPOGRAPHY
    ═══════════════════════════════════════════════ */
 .page-header-bio {
