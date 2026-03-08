@@ -24,6 +24,7 @@ const Profile = () => {
   const [posts, setPosts] = useState<any[]>([]);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
+  const [editOpen, setEditOpen] = useState(false);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [gender, setGender] = useState('');
