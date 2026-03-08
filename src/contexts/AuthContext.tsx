@@ -38,12 +38,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase.from('profiles' as any).select('*').eq('id', userId).single();
+    const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
     if (data) setProfile(data as unknown as Profile);
   };
 
   const ensureProfile = async (currentUser: User) => {
-    const { data: existing } = await supabase.from('profiles' as any).select('*').eq('id', currentUser.id).single();
+    const { data: existing } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
     if (existing) {
       setProfile(existing as unknown as Profile);
     } else {
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         branch: meta?.branch || 'CSE',
         section: meta?.section || 'A',
       };
-      const { data: newProfile } = await supabase.from('profiles' as any).insert(profileData as any).select().single();
+      const { data: newProfile } = await supabase.from('profiles').insert(profileData).select().single();
       if (newProfile) setProfile(newProfile as unknown as Profile);
     }
   };
