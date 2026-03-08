@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSearchParams } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -94,13 +95,14 @@ const OrbitRing = ({ size = 200, duration = 8, delay = 0 }: { size?: number; dur
 );
 
 const Auth = () => {
+  const [searchParams] = useSearchParams();
   const { session, signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
   const [userName, setUserName] = useState('');
-  const [activeTab, setActiveTab] = useState('login');
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') === 'register' ? 'register' : 'login');
   const [error, setError] = useState<string | null>(null);
   const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');

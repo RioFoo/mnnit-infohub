@@ -6,13 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Loader2 } from 'lucide-react';
+import { Edit, Loader2, LogIn } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const { user, profile, refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<any[]>([]);
   const [editOpen, setEditOpen] = useState(false);
   const [name, setName] = useState('');
@@ -50,7 +52,23 @@ const Profile = () => {
     setSaving(false);
   };
 
-  if (!profile) return <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
+  // Show login prompt if not authenticated
+  if (!user || !profile) {
+    return (
+      <div className="max-w-2xl mx-auto p-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass rounded-xl p-8 text-center space-y-4">
+          <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-primary mx-auto">
+            <LogIn className="w-8 h-8" />
+          </div>
+          <h2 className="text-xl font-mono font-bold">Your Profile</h2>
+          <p className="text-muted-foreground text-sm">Sign in to view and manage your profile, see your posts, and connect with others.</p>
+          <Button onClick={() => navigate('/auth')} className="gap-2">
+            <LogIn className="w-4 h-4" /> Sign In to Continue
+          </Button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-4 space-y-6">

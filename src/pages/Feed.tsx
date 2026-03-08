@@ -6,10 +6,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Heart, MessageCircle, Share2, Plus, Loader2, ImagePlus } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Plus, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { AuthPromptDialog } from '@/components/AuthPromptDialog';
 
 interface Post {
   id: string;
@@ -25,6 +27,7 @@ interface Post {
 
 const Feed = () => {
   const { user } = useAuth();
+  const { showAuthPrompt, setShowAuthPrompt, authMessage, requireAuth } = useAuthGuard();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
@@ -50,7 +53,7 @@ const Feed = () => {
 
   useEffect(() => {
     fetchPosts();
-    fetchLikes();
+    if (user) fetchLikes();
 
     const channel = supabase.channel('posts-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => fetchPosts())
@@ -96,24 +99,28 @@ const Feed = () => {
     <div className="max-w-2xl mx-auto p-4 space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-mono font-bold text-primary">Feed</h1>
-        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="gap-1">
-              <Plus className="w-4 h-4" /> Post
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle className="font-mono">Create Post</DialogTitle></DialogHeader>
-            <div className="space-y-3">
-              <Textarea placeholder="What's happening at MNNIT?" value={newContent} onChange={e => setNewContent(e.target.value)} rows={4} />
-              <Input placeholder="Tags (comma separated)" value={newTags} onChange={e => setNewTags(e.target.value)} />
-              <Button onClick={handleCreatePost} disabled={posting || !newContent.trim()} className="w-full">
-                {posting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Post'}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <Button
+          size="sm"
+          className="gap-1"
+          onClick={() => requireAuth(() => setCreateOpen(true), 'Sign in to create posts and share with the campus!')}
+        >
+          <Plus className="w-4 h-4" /> Post
+        </Button>
       </div>
+
+      {/* Create post dialog - only opens when authenticated */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle className="font-mono">Create Post</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <Textarea placeholder="What's happening at MNNIT?" value={newContent} onChange={e => setNewContent(e.target.value)} rows={4} />
+            <Input placeholder="Tags (comma separated)" value={newTags} onChange={e => setNewTags(e.target.value)} />
+            <Button onClick={handleCreatePost} disabled={posting || !newContent.trim()} className="w-full">
+              {posting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Post'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {loading ? (
         <div className="flex justify-center py-12">
@@ -155,13 +162,16 @@ const Feed = () => {
                 )}
                 <div className="flex items-center gap-4 mt-3">
                   <button
-                    onClick={() => handleLike(post.id)}
+                    onClick={() => requireAuth(() => handleLike(post.id), 'Sign in to like posts!')}
                     className={`flex items-center gap-1 text-xs transition-colors ${likedPosts.has(post.id) ? 'text-destructive' : 'text-muted-foreground hover:text-destructive'}`}
                   >
                     <Heart className={`w-4 h-4 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
                     {post.likes_count}
                   </button>
-                  <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
+                  <button
+                    onClick={() => requireAuth(() => {}, 'Sign in to comment on posts!')}
+                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+                  >
                     <MessageCircle className="w-4 h-4" />
                     {post.comments_count}
                   </button>
@@ -174,6 +184,8 @@ const Feed = () => {
           </motion.div>
         ))
       )}
+
+      <AuthPromptDialog open={showAuthPrompt} onOpenChange={setShowAuthPrompt} message={authMessage} />
     </div>
   );
 };
