@@ -11,6 +11,9 @@ interface Profile {
   role: string | null;
   branch: string | null;
   section: string | null;
+  semester: string | null;
+  batch: string | null;
+  gender: string | null;
 }
 
 interface AuthContextType {
