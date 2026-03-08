@@ -10,10 +10,10 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const TIME_SLOTS = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
 const typeStyles: Record<string, string> = {
-  LECTURE: 'bg-[hsl(200_90%_50%/0.12)] text-[hsl(200_90%_60%)] border-[hsl(200_90%_50%/0.25)]',
-  LAB: 'bg-[hsl(270_80%_55%/0.12)] text-[hsl(270_80%_65%)] border-[hsl(270_80%_55%/0.25)]',
-  TUTORIAL: 'bg-[hsl(40_90%_50%/0.12)] text-[hsl(40_90%_60%)] border-[hsl(40_90%_50%/0.25)]',
-  WORKSHOP: 'bg-[hsl(150_70%_45%/0.12)] text-[hsl(150_70%_55%)] border-[hsl(150_70%_45%/0.25)]',
+  LECTURE: 'bg-primary/8 text-primary border-primary/15',
+  LAB: 'bg-secondary/8 text-secondary border-secondary/15',
+  TUTORIAL: 'bg-amber-500/8 text-amber-500 border-amber-500/15',
+  WORKSHOP: 'bg-emerald-500/8 text-emerald-500 border-emerald-500/15',
 };
 
 const Timetable = () => {
@@ -40,24 +40,23 @@ const Timetable = () => {
   return (
     <div className="page-container">
       <motion.div
-        initial={{ opacity: 0, y: 20, rotateX: -5 }}
-        animate={{ opacity: 1, y: 0, rotateX: 0 }}
-        transition={{ duration: 0.6, type: 'spring', stiffness: 200 }}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
         className="mb-8"
-        style={{ perspective: '800px' }}
       >
-        <h1 className="text-3xl md:text-4xl page-header-3d">TIMETABLE</h1>
+        <h1 className="text-2xl md:text-3xl page-header gradient-text">Timetable</h1>
       </motion.div>
 
-      {/* ═══ CONTROLS ═══ */}
+      {/* Controls */}
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+        transition={{ delay: 0.05 }}
         className="flex flex-wrap gap-3 items-center mb-6"
       >
         <Select value={section} onValueChange={setSection}>
-          <SelectTrigger className="w-48 rounded-xl bg-card/60 border-border/30 backdrop-blur-sm font-mono text-sm">
+          <SelectTrigger className="w-48 rounded-xl bg-muted/20 border-border/20 text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -68,9 +67,9 @@ const Timetable = () => {
         </Select>
 
         <Tabs value={batch} onValueChange={(v) => setBatch(v as 'ALL' | '1' | '2')}>
-          <TabsList className="rounded-xl bg-card/60 border border-border/30">
+          <TabsList className="rounded-xl bg-muted/30 border border-border/20">
             {['ALL', '1', '2'].map(v => (
-              <TabsTrigger key={v} value={v} className="rounded-lg font-display text-xs tracking-wider tab-3d data-[state=active]:tab-3d-active">
+              <TabsTrigger key={v} value={v} className="rounded-lg text-xs font-medium data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
                 {v === 'ALL' ? 'All' : `B${v}`}
               </TabsTrigger>
             ))}
@@ -81,45 +80,39 @@ const Timetable = () => {
           {Object.entries(typeStyles).map(([type]) => (
             <div key={type} className="flex items-center gap-1.5">
               <div className={`w-2 h-2 rounded-sm ${typeStyles[type].split(' ')[0]}`} />
-              <span className="text-[9px] text-muted-foreground font-display tracking-wider uppercase">{type}</span>
+              <span className="text-[10px] text-muted-foreground font-medium capitalize">{type.toLowerCase()}</span>
             </div>
           ))}
         </div>
       </motion.div>
 
-      {/* ═══ GRID ═══ */}
+      {/* Grid */}
       <motion.div
-        initial={{ opacity: 0, y: 20, rotateX: -3 }}
-        animate={{ opacity: 1, y: 0, rotateX: 0 }}
-        transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-        className="overflow-x-auto card-3d-pro p-1"
-        style={{ perspective: '1200px' }}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="overflow-x-auto float-card p-1"
       >
         <div className="min-w-[800px]">
-          <div className="grid grid-cols-6 gap-px rounded-xl overflow-hidden" style={{ background: 'hsl(var(--border) / 0.15)' }}>
-            <div className="text-[9px] font-display tracking-widest text-muted-foreground p-3 bg-card/80 backdrop-blur-sm uppercase">Time</div>
+          <div className="grid grid-cols-6 gap-px rounded-xl overflow-hidden" style={{ background: 'hsl(var(--border) / 0.1)' }}>
+            <div className="text-[10px] font-medium text-muted-foreground p-3 bg-card/80 backdrop-blur-sm">Time</div>
             {DAYS.map(day => (
               <div
                 key={day}
-                className={`text-[10px] font-display tracking-wider p-3 text-center bg-card/80 backdrop-blur-sm uppercase ${
-                  day === currentDay ? 'text-primary font-bold' : 'text-muted-foreground'
+                className={`text-[11px] font-medium p-3 text-center bg-card/80 backdrop-blur-sm ${
+                  day === currentDay ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
                 {day.slice(0, 3)}
                 {day === currentDay && (
-                  <motion.div
-                    className="h-0.5 bg-primary rounded-full mt-1.5 mx-auto w-6"
-                    animate={{ opacity: [0.4, 1, 0.4] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    style={{ boxShadow: '0 0 8px hsl(var(--neon-cyan) / 0.5)' }}
-                  />
+                  <div className="h-0.5 bg-primary rounded-full mt-1.5 mx-auto w-6 opacity-60" />
                 )}
               </div>
             ))}
 
             {TIME_SLOTS.map((time, ti) => (
               <>
-                <div key={time} className="text-[9px] font-mono text-muted-foreground/50 p-2 bg-card/30 flex items-start">
+                <div key={time} className="text-[10px] font-mono text-muted-foreground/40 p-2 bg-card/20 flex items-start">
                   {time}
                 </div>
                 {DAYS.map(day => {
@@ -130,28 +123,27 @@ const Timetable = () => {
                   return (
                     <div
                       key={`${day}-${time}`}
-                      className={`min-h-[52px] p-1 bg-card/30 ${isToday ? 'bg-primary/[0.02]' : ''}`}
+                      className={`min-h-[52px] p-1 bg-card/20 ${isToday ? 'bg-primary/[0.02]' : ''}`}
                     >
                       {sessions.map((s, i) => {
                         const isCurrent = isCurrentSession(s, day);
                         return (
                           <motion.div
                             key={i}
-                            initial={{ opacity: 0, scale: 0.85 }}
+                            initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: ti * 0.02 }}
-                            whileHover={{ scale: 1.08, y: -2, zIndex: 20 }}
-                            className={`rounded-lg p-2 text-[9px] border mb-1 cursor-default transition-all ${typeStyles[s.type] || ''} ${
-                              isCurrent ? 'neon-border ring-1 ring-primary/50' : ''
+                            className={`rounded-lg p-2 text-[9px] border mb-1 transition-all ${typeStyles[s.type] || ''} ${
+                              isCurrent ? 'ring-1 ring-primary/30' : ''
                             }`}
                           >
                             {isCurrent && (
                               <div className="flex items-center gap-1 mb-0.5">
-                                <Activity className="w-2.5 h-2.5 text-primary animate-pulse" />
-                                <span className="text-primary text-[7px] font-display font-bold uppercase tracking-widest">Live</span>
+                                <Activity className="w-2.5 h-2.5 text-primary" />
+                                <span className="text-primary text-[7px] font-semibold uppercase tracking-wider">Live</span>
                               </div>
                             )}
-                            <p className="font-semibold truncate leading-tight">{s.subject.split('(')[0].trim()}</p>
+                            <p className="font-medium truncate leading-tight">{s.subject.split('(')[0].trim()}</p>
                             <p className="opacity-50 mt-0.5 font-mono">{s.room} {s.batch !== 'ALL' ? `· B${s.batch}` : ''}</p>
                           </motion.div>
                         );

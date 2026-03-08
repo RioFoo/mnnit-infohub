@@ -2,7 +2,7 @@ import { Outlet, useLocation, useNavigate, NavLink as RouterNavLink } from 'reac
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Home, Compass, CalendarDays, Bell, User, LogIn } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { CommandPalette } from '@/components/CommandPalette';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
@@ -24,47 +24,31 @@ const MobileNavItem = ({ item }: { item: (typeof mobileNavItems)[number] }) => {
     <RouterNavLink
       to={item.url}
       end={item.url === '/'}
-      className="relative flex flex-col items-center gap-0.5 px-4 py-2.5 rounded-xl transition-all duration-300 min-w-[52px]">
-      
+      className="relative flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-300 min-w-[56px]"
+    >
       {isActive && (
         <motion.div
-          layoutId="mobile-active"
-          className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary"
-          style={{ boxShadow: '0 0 12px hsl(var(--neon-cyan) / 0.8), 0 0 30px hsl(var(--neon-cyan) / 0.3)' }}
-          transition={{ type: 'spring', stiffness: 500, damping: 30 }} />
+          layoutId="mobile-pill"
+          className="absolute inset-0 rounded-xl bg-primary/10"
+          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+        />
       )}
-      <motion.div
-        whileTap={{ scale: 0.7, rotateY: 180 }}
-        transition={{ type: 'spring', stiffness: 400 }}
-        className="relative z-10"
-        style={{ transformStyle: 'preserve-3d' }}>
-        <item.icon className={cn(
-          'w-5 h-5 transition-all duration-300',
-          isActive
-            ? 'text-primary drop-shadow-[0_0_8px_hsl(var(--neon-cyan)/0.7)]'
-            : 'text-muted-foreground'
-        )} />
-      </motion.div>
+      <item.icon className={cn(
+        'w-5 h-5 transition-all duration-200 relative z-10',
+        isActive ? 'text-primary' : 'text-muted-foreground'
+      )} />
       <span className={cn(
-        'text-[8px] font-display uppercase tracking-wider relative z-10',
-        isActive ? 'text-primary nav-text-3d-active' : 'text-muted-foreground/60'
+        'text-[10px] font-medium relative z-10 transition-colors duration-200',
+        isActive ? 'text-primary' : 'text-muted-foreground/60'
       )}>
         {item.title}
       </span>
-      {isActive && (
-        <motion.div
-          layoutId="mobile-bg"
-          className="absolute inset-0 rounded-xl bg-primary/8"
-          style={{ boxShadow: '0 4px 0 hsl(var(--primary) / 0.1), 0 6px 15px hsl(0 0% 0% / 0.15)' }}
-          transition={{ type: 'spring', stiffness: 400, damping: 30 }} />
-      )}
     </RouterNavLink>
   );
 };
 
 const AppLayout = () => {
   const [commandOpen, setCommandOpen] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 50, y: 30 });
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -80,101 +64,68 @@ const AppLayout = () => {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width * 100;
-    const y = (e.clientY - rect.top) / rect.height * 100;
-    setMousePos({ x, y });
-  }, []);
-
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full relative">
-        {/* ═══ SPACE BACKGROUND LAYERS ═══ */}
-        <div className="starfield" />
-        <div className="aurora-bg" />
-        <div className="floating-orbs">
-          <div className="orb" />
-          <div className="orb" />
-          <div className="orb" />
-        </div>
-        <div className="fixed inset-0 grid-bg pointer-events-none z-0" />
-        <div className="scanline-overlay" />
+        {/* Ambient background */}
+        <div className="ambient-bg" />
+        <div className="dot-grid" />
         <div className="noise-bg" />
-
-        {/* ═══ CURSOR SPOTLIGHT ═══ */}
-        <div
-          className="fixed inset-0 pointer-events-none z-[1] transition-all duration-500"
-          style={{
-            background: `radial-gradient(ellipse 700px 500px at ${mousePos.x}% ${mousePos.y}%, hsl(var(--neon-cyan) / 0.05), transparent)`
-          }} />
 
         <div className="hidden md:block relative z-20">
           <AppSidebar onOpenCommand={() => setCommandOpen(true)} />
         </div>
 
-        <div
-          className="flex-1 flex flex-col min-h-screen relative z-10"
-          onMouseMove={handleMouseMove}>
-          
-          {/* ═══ HEADER ═══ */}
-          <header className="h-14 flex items-center justify-between px-5 sticky top-0 z-40 glass-panel border-b border-border/30">
+        <div className="flex-1 flex flex-col min-h-screen relative z-10">
+          {/* Header */}
+          <header className="h-14 flex items-center justify-between px-4 md:px-6 sticky top-0 z-40 glass-panel border-b border-border/20">
             <div className="flex items-center gap-3">
-              <SidebarTrigger className="hidden md:flex text-muted-foreground hover:text-primary transition-colors" />
+              <SidebarTrigger className="hidden md:flex text-muted-foreground hover:text-foreground transition-colors" />
               <div className="md:hidden flex items-center gap-2.5">
-                <div className="relative">
-                  <img src="/src/assets/infohub-logo.png" alt="InfoHub" className="w-7 h-7" />
-                  <div className="absolute inset-0 rounded-full bg-primary/30 blur-md -z-10" />
-                </div>
-                <span className="font-display font-bold text-sm gradient-text tracking-wider">INFOHUB</span>
+                <img src="/src/assets/infohub-logo.png" alt="InfoHub" className="w-7 h-7 rounded-lg" />
+                <span className="font-semibold text-sm tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>InfoHub</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {!user && (
                 <motion.button
-                  whileHover={{ scale: 1.05, y: -1 }}
-                  whileTap={{ scale: 0.95, y: 1 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/auth')}
-                  className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold font-display tracking-wider uppercase bg-primary/10 text-primary hover:bg-primary/20 transition-all btn-neon border border-primary/20">
+                  className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-all btn-premium"
+                >
                   <LogIn className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Login</span>
+                  <span className="hidden sm:inline">Sign In</span>
                 </motion.button>
               )}
             </div>
           </header>
 
-          {/* ═══ MAIN CONTENT ═══ */}
+          {/* Main Content */}
           <main className="flex-1 pb-24 md:pb-0 relative z-10">
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}
-                initial={{ opacity: 0, rotateY: -8, scale: 0.97, filter: 'blur(6px)' }}
-                animate={{ opacity: 1, rotateY: 0, scale: 1, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, rotateY: 8, scale: 0.97, filter: 'blur(6px)' }}
-                transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-                style={{ transformOrigin: 'center center', perspective: '1200px' }}>
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+              >
                 <Outlet />
               </motion.div>
             </AnimatePresence>
           </main>
 
-          {/* ═══ MOBILE NAV ═══ */}
-          <nav className="md:hidden fixed bottom-4 left-3 right-3 z-50">
-            <motion.div
-              initial={{ y: 120, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4, type: 'spring', stiffness: 300, damping: 25 }}
-              className="glass-panel rounded-2xl px-1 py-2 mx-auto max-w-sm border border-primary/10"
-              style={{
-                boxShadow: '0 -5px 40px hsl(var(--neon-cyan) / 0.08), 0 10px 40px hsl(0 0% 0% / 0.4), 0 4px 0 hsl(var(--primary) / 0.05)'
-              }}>
-              <div className="flex items-center justify-around">
+          {/* Mobile Nav */}
+          <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+            <div className="glass-panel border-t border-border/20 px-2 py-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
+              <div className="flex items-center justify-around max-w-sm mx-auto">
                 {mobileNavItems.map((item) => (
                   <MobileNavItem key={item.url} item={item} />
                 ))}
               </div>
-            </motion.div>
+            </div>
           </nav>
         </div>
       </div>
