@@ -7,6 +7,7 @@ interface Profile {
   name: string | null;
   handle: string | null;
   avatar_url: string | null;
+  banner_url: string | null;
   bio: string | null;
   role: string | null;
   branch: string | null;
