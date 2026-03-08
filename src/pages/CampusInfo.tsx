@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { CONTACT_DIRECTORY, ACADEMIC_NOTIFICATIONS, QUICK_LINKS, CLUBS_AND_SOCIETIES } from '@/data/infohub-data';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ExternalLink, Mail, Phone, Search, Users, GraduationCap, Globe, Megaphone } from 'lucide-react';
+import { ExternalLink, Mail, Phone, Search, Users, GraduationCap, Globe, Megaphone, Network } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 
@@ -19,32 +19,44 @@ const CampusInfo = () => {
 
   return (
     <div className="page-container">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-        <div className="flex items-center gap-2 mb-1">
-          <GraduationCap className="w-4 h-4 text-primary" />
-          <span className="section-title mb-0">Hub</span>
+      {/* ═══ HEADER ═══ */}
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="relative mb-10">
+        <div className="absolute -left-4 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-accent/30 to-transparent" />
+        
+        <div className="flex items-center gap-4 mb-3">
+          <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center border border-accent/20 relative">
+            <Network className="w-6 h-6 text-accent" />
+          </div>
+          <div>
+            <span className="section-title mb-0">Campus Network</span>
+            <h1 className="text-3xl md:text-4xl font-display font-bold tracking-wider">
+              <span className="text-foreground">CAMPUS</span>{' '}
+              <span className="gradient-text-aurora">NEXUS</span>
+            </h1>
+          </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-mono font-bold">
-          Campus <span className="gradient-text">Info</span>
-        </h1>
+        <div className="cyber-line mt-4" />
       </motion.div>
 
-      {/* AI Search */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="relative mb-10 max-w-xl">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
-          placeholder="Ask anything about MNNIT..."
-          value={aiQuery}
-          onChange={e => setAiQuery(e.target.value)}
-          className="pl-11 h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 focus:shadow-[0_0_20px_hsl(var(--primary)/0.1)] transition-all"
-        />
+      {/* ═══ AI SEARCH ═══ */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="relative mb-10 max-w-xl">
+        <div className="absolute -inset-px rounded-lg bg-gradient-to-r from-accent/20 via-primary/20 to-accent/20 opacity-0 hover:opacity-100 transition-opacity duration-500 blur-sm" />
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Query the campus network..."
+            value={aiQuery}
+            onChange={e => setAiQuery(e.target.value)}
+            className="pl-11 h-12 rounded-lg bg-card/60 border-border/30 backdrop-blur-sm focus:border-primary/40 focus:shadow-[0_0_30px_hsl(var(--neon-cyan)/0.1)] transition-all font-mono text-sm"
+          />
+        </div>
       </motion.div>
 
-      {/* Quick Links */}
-      <section className="mb-10">
-        <div className="flex items-center gap-2 mb-4">
+      {/* ═══ QUICK LINKS ═══ */}
+      <section className="mb-12">
+        <div className="flex items-center gap-2 mb-5">
           <Globe className="w-4 h-4 text-muted-foreground" />
-          <span className="section-title mb-0">Quick Links</span>
+          <span className="section-title mb-0">Quick Access</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {QUICK_LINKS.map((link, i) => (
@@ -53,46 +65,47 @@ const CampusInfo = () => {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="card-3d p-4 group"
+              transition={{ delay: i * 0.05 }}
+              whileHover={{ y: -6, scale: 1.03 }}
+              className="holo-card p-4 group"
             >
-              <ExternalLink className="w-5 h-5 text-primary mb-3 group-hover:scale-110 transition-transform" />
-              <p className="text-sm font-semibold">{link.title}</p>
-              <p className="text-[10px] text-muted-foreground mt-1">{link.category}</p>
+              <ExternalLink className="w-4 h-4 text-primary mb-3 group-hover:scale-110 transition-transform" />
+              <p className="text-sm font-semibold group-hover:text-primary transition-colors">{link.title}</p>
+              <p className="text-[9px] text-muted-foreground mt-1 font-display tracking-wider uppercase">{link.category}</p>
             </motion.a>
           ))}
         </div>
       </section>
 
-      {/* Contact Directory */}
-      <section className="mb-10">
-        <div className="flex items-center gap-2 mb-4">
+      {/* ═══ CONTACTS ═══ */}
+      <section className="mb-12">
+        <div className="flex items-center gap-2 mb-5">
           <Phone className="w-4 h-4 text-muted-foreground" />
-          <span className="section-title mb-0">Contacts</span>
+          <span className="section-title mb-0">Directory</span>
         </div>
         <Tabs defaultValue={CONTACT_DIRECTORY[0].category}>
-          <TabsList className="flex-wrap h-auto rounded-xl bg-muted/30 p-1">
+          <TabsList className="flex-wrap h-auto rounded-lg bg-card/60 border border-border/30 p-1">
             {CONTACT_DIRECTORY.map(cat => (
-              <TabsTrigger key={cat.category} value={cat.category} className="text-xs rounded-lg">{cat.category}</TabsTrigger>
+              <TabsTrigger key={cat.category} value={cat.category} className="text-[10px] rounded-md font-display tracking-wider uppercase">{cat.category}</TabsTrigger>
             ))}
           </TabsList>
           {CONTACT_DIRECTORY.map(cat => (
             <TabsContent key={cat.category} value={cat.category}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                 {cat.contacts.map((c, i) => (
-                  <motion.div key={c.email} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.04 }} className="card-3d p-4">
+                  <motion.div key={c.email} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+                    className="holo-card p-4">
                     <p className="font-semibold text-sm">{c.role}</p>
-                    <p className="text-xs text-muted-foreground">{c.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{c.name}</p>
                     <div className="flex items-center gap-2 mt-3">
                       <Mail className="w-3 h-3 text-primary" />
-                      <a href={`mailto:${c.email}`} className="text-xs text-primary hover:underline">{c.email}</a>
+                      <a href={`mailto:${c.email}`} className="text-xs text-primary hover:underline font-mono">{c.email}</a>
                     </div>
                     <div className="flex items-center gap-2 mt-1">
                       <Phone className="w-3 h-3 text-primary" />
-                      <a href={`tel:${c.phone}`} className="text-xs text-primary hover:underline">{c.phone}</a>
+                      <a href={`tel:${c.phone}`} className="text-xs text-primary hover:underline font-mono">{c.phone}</a>
                     </div>
                   </motion.div>
                 ))}
@@ -102,34 +115,34 @@ const CampusInfo = () => {
         </Tabs>
       </section>
 
-      {/* Notices */}
-      <section className="mb-10">
-        <div className="flex items-center gap-2 mb-4">
+      {/* ═══ NOTICES ═══ */}
+      <section className="mb-12">
+        <div className="flex items-center gap-2 mb-5">
           <Megaphone className="w-4 h-4 text-muted-foreground" />
-          <span className="section-title mb-0">Notices</span>
+          <span className="section-title mb-0">Bulletins</span>
         </div>
         <div className="flex gap-2 flex-wrap mb-4">
           {NOTICE_CATS.map(c => (
             <motion.button key={c} whileTap={{ scale: 0.95 }} onClick={() => setNoticeCat(c)}
-              className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
-                noticeCat === c ? 'bg-primary text-primary-foreground shadow-[0_0_10px_hsl(var(--primary)/0.2)]' : 'bg-muted/40 text-muted-foreground border border-border/50'
+              className={`px-3 py-1.5 rounded-md text-[9px] font-display tracking-widest uppercase transition-all ${
+                noticeCat === c ? 'bg-primary text-primary-foreground shadow-[0_0_15px_hsl(var(--neon-cyan)/0.2)]' : 'bg-card/50 text-muted-foreground border border-border/30'
               }`}
             >{c}</motion.button>
           ))}
         </div>
         <div className="space-y-2">
           {filteredNotices.map((n, i) => (
-            <motion.a key={n.id} href={n.link} target="_blank" rel="noopener noreferrer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }}
-              className="card-3d p-4 block group"
-            >
+            <motion.a key={n.id} href={n.link} target="_blank" rel="noopener noreferrer"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.03 }}
+              className="holo-card p-4 block group">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-sm font-semibold group-hover:text-primary transition-colors">{n.title}</p>
                   <p className="text-xs text-muted-foreground mt-1">{n.details}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <Badge variant="secondary" className="text-[10px] rounded-lg">{n.category}</Badge>
-                  <p className="text-[10px] text-muted-foreground mt-1">{n.date}</p>
+                  <Badge variant="secondary" className="text-[9px] rounded-md font-display tracking-wider">{n.category}</Badge>
+                  <p className="text-[9px] text-muted-foreground mt-1 font-mono">{n.date}</p>
                 </div>
               </div>
             </motion.a>
@@ -137,32 +150,32 @@ const CampusInfo = () => {
         </div>
       </section>
 
-      {/* Clubs */}
+      {/* ═══ CLUBS ═══ */}
       <section>
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-5">
           <Users className="w-4 h-4 text-muted-foreground" />
-          <span className="section-title mb-0">Clubs & Societies</span>
+          <span className="section-title mb-0">Organizations</span>
         </div>
         <div className="flex gap-2 flex-wrap mb-4">
           {CLUB_CATS.map(c => (
             <motion.button key={c} whileTap={{ scale: 0.95 }} onClick={() => setClubCat(c)}
-              className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all ${
-                clubCat === c ? 'bg-primary text-primary-foreground' : 'bg-muted/40 text-muted-foreground border border-border/50'
+              className={`px-3 py-1.5 rounded-md text-[9px] font-display tracking-widest uppercase transition-all ${
+                clubCat === c ? 'bg-primary text-primary-foreground' : 'bg-card/50 text-muted-foreground border border-border/30'
               }`}
             >{c}</motion.button>
           ))}
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {filteredClubs.map((club, i) => (
-            <motion.div key={club.name} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.04 }}
-              whileHover={{ y: -4 }}
-              className="card-3d p-5 text-center"
+            <motion.div key={club.name} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.04 }}
+              whileHover={{ y: -6 }}
+              className="holo-card p-5 text-center group"
             >
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
+              <div className="w-10 h-10 rounded-md bg-primary/8 flex items-center justify-center mx-auto mb-3 border border-primary/15 group-hover:shadow-[0_0_15px_hsl(var(--neon-cyan)/0.2)] transition-shadow">
                 <Users className="w-5 h-5 text-primary" />
               </div>
-              <p className="text-sm font-semibold">{club.name}</p>
-              <Badge variant="secondary" className="text-[10px] mt-2 rounded-lg">{club.category}</Badge>
+              <p className="text-sm font-semibold group-hover:text-primary transition-colors">{club.name}</p>
+              <Badge variant="secondary" className="text-[9px] mt-2 rounded-md font-display tracking-wider">{club.category}</Badge>
             </motion.div>
           ))}
         </div>

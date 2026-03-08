@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Loader2, LogIn, User, Sparkles } from 'lucide-react';
+import { Edit, Loader2, LogIn, User, Shield, Fingerprint } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
@@ -47,13 +47,16 @@ const Profile = () => {
   if (!user || !profile) {
     return (
       <div className="page-container flex items-center justify-center min-h-[60vh]">
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="card-3d holo-border p-10 text-center max-w-sm">
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-            <User className="w-7 h-7 text-primary" />
+        <motion.div initial={{ opacity: 0, scale: 0.9, rotateX: -10 }} animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+          className="holo-card holo-border p-12 text-center max-w-sm" style={{ perspective: '800px' }}>
+          <div className="w-20 h-20 rounded-xl bg-primary/8 flex items-center justify-center mx-auto mb-5 neon-border">
+            <Fingerprint className="w-9 h-9 text-primary/60" />
           </div>
-          <h2 className="text-xl font-mono font-bold mb-2">Your Profile</h2>
-          <p className="text-muted-foreground text-sm mb-5">Sign in to view and manage your profile.</p>
-          <Button onClick={() => navigate('/auth')} className="gap-2 rounded-xl btn-glow"><LogIn className="w-4 h-4" /> Sign In</Button>
+          <h2 className="text-lg font-display font-bold tracking-wider">IDENTITY REQUIRED</h2>
+          <p className="text-muted-foreground text-sm mt-2 mb-6">Authenticate to access your profile.</p>
+          <Button onClick={() => navigate('/auth')} className="gap-2 rounded-lg btn-neon font-display tracking-wider text-xs uppercase">
+            <LogIn className="w-4 h-4" /> Authenticate
+          </Button>
         </motion.div>
       </div>
     );
@@ -61,64 +64,92 @@ const Profile = () => {
 
   return (
     <div className="page-container max-w-2xl">
-      {/* Profile card */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card-3d holo-border p-8 text-center mb-8">
-        {/* Avatar */}
-        <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="inline-block mb-4">
-          {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt={profile.name || ''} className="w-24 h-24 rounded-2xl object-cover ring-4 ring-primary/20" />
-          ) : (
-            <div className="w-24 h-24 rounded-2xl bg-primary/15 flex items-center justify-center text-primary font-bold text-4xl ring-4 ring-primary/20">
-              {(profile.name || 'U')[0].toUpperCase()}
-            </div>
-          )}
-        </motion.div>
-
-        <h2 className="text-2xl font-mono font-bold">{profile.name || 'User'}</h2>
-        <p className="text-sm text-muted-foreground mt-1">@{profile.handle}</p>
-        {profile.bio && <p className="text-sm mt-3 max-w-xs mx-auto text-muted-foreground">{profile.bio}</p>}
-
-        <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
-          <Badge className="rounded-lg bg-primary/10 text-primary border-primary/20">{profile.branch || 'Branch'}</Badge>
-          <Badge variant="outline" className="rounded-lg">{profile.section ? `Section ${profile.section}` : 'Section'}</Badge>
-          <Badge variant="outline" className="rounded-lg">{profile.role || 'Student'}</Badge>
+      {/* ═══ PROFILE CARD ═══ */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="holo-card holo-border p-0 mb-8 overflow-hidden"
+      >
+        {/* Banner gradient */}
+        <div className="h-24 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/10 to-accent/20" />
+          <div className="absolute inset-0 hex-grid opacity-30" />
+          <div className="absolute inset-0 data-stream-bg opacity-20" />
         </div>
 
-        <div className="flex justify-center gap-10 mt-6 pt-5 border-t border-border/30">
-          <div className="text-center">
-            <p className="text-2xl font-mono font-bold gradient-text">{posts.length}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Posts</p>
+        <div className="px-8 pb-8 -mt-10 relative">
+          <motion.div whileHover={{ scale: 1.05 }} className="inline-block relative">
+            {profile.avatar_url ? (
+              <img src={profile.avatar_url} alt={profile.name || ''} className="w-20 h-20 rounded-lg object-cover border-4 border-background ring-2 ring-primary/30" />
+            ) : (
+              <div className="w-20 h-20 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-3xl border-4 border-background ring-2 ring-primary/30 font-display">
+                {(profile.name || 'U')[0].toUpperCase()}
+              </div>
+            )}
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center border-2 border-background"
+              style={{ boxShadow: '0 0 10px hsl(var(--neon-cyan) / 0.6)' }}>
+              <Shield className="w-2.5 h-2.5 text-primary-foreground" />
+            </div>
+          </motion.div>
+
+          <div className="mt-4">
+            <h2 className="text-2xl font-display font-bold tracking-wider">{profile.name || 'User'}</h2>
+            <p className="text-xs text-primary/60 font-mono mt-0.5">@{profile.handle}</p>
+            {profile.bio && <p className="text-sm mt-3 text-muted-foreground max-w-md">{profile.bio}</p>}
           </div>
-        </div>
 
-        <Dialog open={editOpen} onOpenChange={setEditOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="mt-5 rounded-xl gap-1.5"><Edit className="w-3 h-3" /> Edit Profile</Button>
-          </DialogTrigger>
-          <DialogContent className="card-3d border-border/50">
-            <DialogHeader>
-              <DialogTitle className="font-mono flex items-center gap-2"><Sparkles className="w-4 h-4 text-primary" /> Edit Profile</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3">
-              <div><label className="text-xs text-muted-foreground font-medium">Name</label><Input value={name} onChange={e => setName(e.target.value)} className="rounded-xl bg-muted/30 mt-1" /></div>
-              <div><label className="text-xs text-muted-foreground font-medium">Bio</label><Textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} className="rounded-xl bg-muted/30 mt-1" /></div>
-              <div><label className="text-xs text-muted-foreground font-medium">Role</label><Input value={role} onChange={e => setRole(e.target.value)} placeholder="e.g., CSE Student, 2nd Year" className="rounded-xl bg-muted/30 mt-1" /></div>
-              <Button onClick={handleSave} disabled={saving} className="w-full rounded-xl btn-glow">{saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Changes'}</Button>
+          <div className="flex items-center gap-2 mt-4 flex-wrap">
+            <Badge className="rounded-md bg-primary/8 text-primary border-primary/15 font-display tracking-wider text-[10px]">{profile.branch || 'Branch'}</Badge>
+            <Badge variant="outline" className="rounded-md font-display tracking-wider text-[10px]">{profile.section ? `Sec ${profile.section}` : 'Section'}</Badge>
+            <Badge variant="outline" className="rounded-md font-display tracking-wider text-[10px]">{profile.role || 'Student'}</Badge>
+          </div>
+
+          <div className="flex gap-10 mt-6 pt-5 border-t border-border/20">
+            <div>
+              <p className="text-2xl font-display font-bold gradient-text">{posts.length}</p>
+              <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-display">Transmissions</p>
             </div>
-          </DialogContent>
-        </Dialog>
+          </div>
+
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="mt-5 rounded-lg gap-1.5 font-display tracking-wider text-[10px] uppercase border-border/30">
+                <Edit className="w-3 h-3" /> Modify
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="holo-card border-border/30">
+              <DialogHeader>
+                <DialogTitle className="font-display tracking-wider text-sm uppercase flex items-center gap-2">
+                  <Edit className="w-4 h-4 text-primary" /> Edit Profile
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 mt-2">
+                <div><label className="text-[10px] text-muted-foreground font-display tracking-wider uppercase">Name</label>
+                  <Input value={name} onChange={e => setName(e.target.value)} className="rounded-lg bg-background/40 border-border/30 mt-1" /></div>
+                <div><label className="text-[10px] text-muted-foreground font-display tracking-wider uppercase">Bio</label>
+                  <Textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} className="rounded-lg bg-background/40 border-border/30 mt-1" /></div>
+                <div><label className="text-[10px] text-muted-foreground font-display tracking-wider uppercase">Role</label>
+                  <Input value={role} onChange={e => setRole(e.target.value)} placeholder="e.g., CSE Student" className="rounded-lg bg-background/40 border-border/30 mt-1" /></div>
+                <Button onClick={handleSave} disabled={saving} className="w-full rounded-lg btn-neon font-display tracking-wider text-xs uppercase">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Changes'}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </motion.div>
 
-      {/* Posts */}
-      <span className="section-title">Your Posts</span>
+      {/* ═══ POSTS ═══ */}
+      <span className="section-title">Your Transmissions</span>
       {posts.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-12">No posts yet.</p>
+        <p className="text-sm text-muted-foreground text-center py-16 font-mono">No transmissions yet.</p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 mt-3">
           {posts.map((post, i) => (
-            <motion.div key={post.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="card-3d p-4">
+            <motion.div key={post.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+              className="holo-card p-4">
               <p className="text-sm">{post.content}</p>
-              <p className="text-[10px] text-muted-foreground mt-2">{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</p>
+              <p className="text-[10px] text-muted-foreground mt-2 font-mono">{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</p>
             </motion.div>
           ))}
         </div>
