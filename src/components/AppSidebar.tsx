@@ -12,19 +12,12 @@ import {
 import { motion } from 'framer-motion';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import infohubIcon from '@/assets/infohub-icon.png';
+import InfoHubLogo from '@/components/InfoHubLogo';
 
 const BrandLogo = ({ collapsed }: { collapsed: boolean }) => {
   return (
     <div className="p-4 flex items-center gap-3.5">
-      <motion.div
-        className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 brand-logo-3d"
-        whileHover={{ rotateY: 20, rotateX: -10, scale: 1.12 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        style={{ transformStyle: 'preserve-3d', perspective: 600 }}
-      >
-        <img src={infohubIcon} alt="InfoHub" className="w-9 h-9 object-contain brand-icon-3d" />
-      </motion.div>
+      <InfoHubLogo size={44} />
       {!collapsed && (
         <motion.div
           initial={{ opacity: 0, x: -8 }}

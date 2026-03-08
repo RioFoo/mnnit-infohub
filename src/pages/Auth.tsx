@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import infohubIcon from '@/assets/infohub-icon.png';
+import InfoHubLogo from '@/components/InfoHubLogo';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSearchParams, Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -307,14 +307,7 @@ const Auth = () => {
             transition={{ duration: 1, type: 'spring' }}
           >
             <div className="relative inline-block mb-8">
-              <img src={infohubIcon} alt="InfoHub" className="w-24 h-24 drop-shadow-[0_0_30px_hsl(var(--primary)/0.5)]" />
-              <Zap className="w-24 h-24 text-primary drop-shadow-[0_0_30px_hsl(var(--primary)/0.5)] hidden" />
-              <motion.div
-                className="absolute inset-0 rounded-full"
-                animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
-                transition={{ duration: 3, repeat: Infinity }}
-                style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.3), transparent 70%)' }}
-              />
+              <InfoHubLogo size={96} />
             </div>
             <h1 className="text-6xl font-mono font-bold text-primary glow-text mb-4 tracking-tight">
               MNNIT
