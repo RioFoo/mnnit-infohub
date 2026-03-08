@@ -204,14 +204,14 @@ const Profile = () => {
               <p className="text-2xl font-display font-bold gradient-text">{posts.length}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Posts</p>
             </div>
-            <div className="text-center">
+            <button className="text-center hover:opacity-70 transition-opacity" onClick={() => { setFollowDialogTab('followers'); setFollowDialogOpen(true); }}>
               <p className="text-2xl font-display font-bold gradient-text">{followerCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Followers</p>
-            </div>
-            <div className="text-center">
+            </button>
+            <button className="text-center hover:opacity-70 transition-opacity" onClick={() => { setFollowDialogTab('following'); setFollowDialogOpen(true); }}>
               <p className="text-2xl font-display font-bold gradient-text">{followingCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Following</p>
-            </div>
+            </button>
           </div>
 
           <Dialog open={editOpen} onOpenChange={setEditOpen}>
@@ -300,6 +300,8 @@ const Profile = () => {
               </div>
             </DialogContent>
           </Dialog>
+
+          {user && <FollowersDialog open={followDialogOpen} onOpenChange={setFollowDialogOpen} userId={user.id} tab={followDialogTab} />}
         </div>
       </motion.div>
 

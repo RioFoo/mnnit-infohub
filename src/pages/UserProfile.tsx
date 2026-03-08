@@ -38,6 +38,8 @@ const UserProfile = () => {
   const [favouriteLoading, setFavouriteLoading] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
+  const [followDialogOpen, setFollowDialogOpen] = useState(false);
+  const [followDialogTab, setFollowDialogTab] = useState<'followers' | 'following'>('followers');
 
   useEffect(() => {
     if (user && userId === user.id) {
@@ -254,15 +256,17 @@ const UserProfile = () => {
               <p className="text-2xl font-display font-bold gradient-text">{posts.length}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Posts</p>
             </div>
-            <div className="text-center">
+            <button className="text-center hover:opacity-70 transition-opacity" onClick={() => { setFollowDialogTab('followers'); setFollowDialogOpen(true); }}>
               <p className="text-2xl font-display font-bold gradient-text">{followerCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Followers</p>
-            </div>
-            <div className="text-center">
+            </button>
+            <button className="text-center hover:opacity-70 transition-opacity" onClick={() => { setFollowDialogTab('following'); setFollowDialogOpen(true); }}>
               <p className="text-2xl font-display font-bold gradient-text">{followingCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Following</p>
-            </div>
+            </button>
           </div>
+
+          {userId && <FollowersDialog open={followDialogOpen} onOpenChange={setFollowDialogOpen} userId={userId} tab={followDialogTab} />}
         </div>
       </motion.div>
 
