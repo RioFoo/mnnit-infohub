@@ -306,7 +306,7 @@ const Auth = () => {
             transition={{ duration: 1, type: 'spring' }}
           >
             <div className="relative inline-block mb-8">
-              <img src="/lovable-uploads/infohub-icon.png" alt="InfoHub" className="w-24 h-24 drop-shadow-[0_0_30px_hsl(var(--primary)/0.5)]" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }} />
+              <img src={infohubIcon} alt="InfoHub" className="w-24 h-24 drop-shadow-[0_0_30px_hsl(var(--primary)/0.5)]" />
               <Zap className="w-24 h-24 text-primary drop-shadow-[0_0_30px_hsl(var(--primary)/0.5)] hidden" />
               <motion.div
                 className="absolute inset-0 rounded-full"
