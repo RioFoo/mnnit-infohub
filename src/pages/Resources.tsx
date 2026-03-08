@@ -188,6 +188,11 @@ const Resources = () => {
                     <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{r.title}</p>
                     <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                       <span className="tag-pill text-[8px] px-2 py-0">{r.branch}</span>
+                      {r.visibility && r.visibility !== 'branch' && (
+                        <span className="tag-pill text-[8px] px-2 py-0 bg-accent/10 text-accent-foreground/60">
+                          {r.visibility === 'followers' ? '👥 Followers' : '🌐 Both'}
+                        </span>
+                      )}
                       <span className="text-[10px] font-mono text-muted-foreground/30">{formatFileSize(r.file_size)} · {getTimeAgo(r.created_at)}</span>
                     </div>
                   </div>
