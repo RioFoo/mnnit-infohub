@@ -15,45 +15,25 @@ import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import infohubIcon from '@/assets/infohub-icon.png';
 
-const brandWords = ['INFOHUB', 'MNNIT', 'NEXUS', 'CONNECT'];
-
 const BrandLogo = ({ collapsed }: { collapsed: boolean }) => {
-  const [wordIndex, setWordIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setWordIndex((i) => (i + 1) % brandWords.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const currentWord = brandWords[wordIndex];
-
   return (
     <div className="p-4 flex items-center gap-3">
       <motion.div
-        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 brand-logo-glow"
-        whileHover={{ rotateY: 180, scale: 1.15 }}
-        animate={{ rotate: [0, 0, 0] }}
+        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 brand-logo-3d"
+        whileHover={{ rotateY: 20, rotateX: -10, scale: 1.1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        style={{ transformStyle: 'preserve-3d' }}
+        style={{ transformStyle: 'preserve-3d', perspective: 600 }}
       >
-        <img src={infohubIcon} alt="InfoHub" className="w-8 h-8 object-contain brand-icon-3d" />
+        <img src={infohubIcon} alt="InfoHub" className="w-8 h-8 object-contain" />
       </motion.div>
       {!collapsed && (
-        <div className="overflow-hidden h-5 relative">
-          <motion.span
-            key={currentWord}
-            initial={{ opacity: 0, y: 14, rotateX: -90 }}
-            animate={{ opacity: 1, y: 0, rotateX: 0 }}
-            exit={{ opacity: 0, y: -14, rotateX: 90 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-            className="font-display font-bold text-sm tracking-tight brand-text-3d block"
-            style={{ transformStyle: 'preserve-3d', perspective: 600 }}
-          >
-            {currentWord}
-          </motion.span>
-        </div>
+        <motion.span
+          initial={{ opacity: 0, x: -8 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="font-display font-bold text-sm tracking-tight brand-text-3d block"
+        >
+          INFOHUB
+        </motion.span>
       )}
     </div>
   );
@@ -193,14 +173,14 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Nexus Button */}
+      {/* Command Button */}
       {!collapsed && (
         <div className="px-3 py-2">
           <button
             onClick={onOpenCommand}
             className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-mono font-medium text-primary bg-gradient-to-r from-primary/[0.06] to-secondary/[0.06] border border-primary/[0.12] hover:border-primary/25 transition-all glow-border pulse-glow"
           >
-            ⌘ Nexus
+            ⌘ Search
           </button>
         </div>
       )}
