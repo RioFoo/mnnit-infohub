@@ -69,6 +69,43 @@ const Profile = () => {
     setSaving(false);
   };
 
+  const uploadFile = async (file: File, bucket: string, folder: string) => {
+    const ext = file.name.split('.').pop();
+    const path = `${folder}/${user!.id}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(path);
+    return publicUrl;
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (file.size > 2 * 1024 * 1024) { toast.error('Max 2MB'); return; }
+    setUploadingAvatar(true);
+    try {
+      const url = await uploadFile(file, 'avatars', 'profiles');
+      await (supabase.from as any)('profiles').update({ avatar_url: url }).eq('id', user.id);
+      await refreshProfile();
+      toast.success('Avatar updated!');
+    } catch (err: any) { toast.error(err.message); }
+    setUploadingAvatar(false);
+  };
+
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (file.size > 5 * 1024 * 1024) { toast.error('Max 5MB'); return; }
+    setUploadingBanner(true);
+    try {
+      const url = await uploadFile(file, 'avatars', 'banners');
+      await (supabase.from as any)('profiles').update({ banner_url: url }).eq('id', user.id);
+      await refreshProfile();
+      toast.success('Banner updated!');
+    } catch (err: any) { toast.error(err.message); }
+    setUploadingBanner(false);
+  };
+
   if (!user || !profile) {
     return (
       <div className="page-container flex items-center justify-center min-h-[60vh]">
