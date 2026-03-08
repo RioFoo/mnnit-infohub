@@ -22,7 +22,8 @@ const Profile = () => {
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<any[]>([]);
-  const [editOpen, setEditOpen] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [gender, setGender] = useState('');
@@ -48,15 +49,21 @@ const Profile = () => {
   }, [profile]);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      if (!user) return;
-      const { data } = await (supabase.from as any)('posts')
-        .select('*, profiles(name, handle, avatar_url, branch)')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-      if (data) setPosts(data);
+    if (!user) return;
+    const fetchData = async () => {
+      const [postsRes, followersRes, followingRes] = await Promise.all([
+        (supabase.from as any)('posts')
+          .select('*, profiles(name, handle, avatar_url, branch)')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false }),
+        (supabase.from as any)('followers').select('id', { count: 'exact', head: true }).eq('following_id', user.id),
+        (supabase.from as any)('followers').select('id', { count: 'exact', head: true }).eq('follower_id', user.id),
+      ]);
+      if (postsRes.data) setPosts(postsRes.data);
+      setFollowerCount(followersRes.count || 0);
+      setFollowingCount(followingRes.count || 0);
     };
-    fetchPosts();
+    fetchData();
   }, [user]);
 
   const handleSave = async () => {
