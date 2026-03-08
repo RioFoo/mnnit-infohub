@@ -198,11 +198,19 @@ const Profile = () => {
             {profile.gender && <span className="tag-pill text-xs">{profile.gender}</span>}
           </div>
 
-          <div className="flex gap-8 mt-6 pt-5">
-            <div className="divider-glow absolute left-6 right-6" style={{ top: 'calc(100% - 60px)' }} />
+          <div className="flex gap-8 mt-6 pt-5 relative">
+            <div className="divider-glow absolute left-0 right-0 top-0" />
             <div>
               <p className="text-3xl font-display font-bold gradient-text">{posts.length}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Posts</p>
+            </div>
+            <div>
+              <p className="text-3xl font-display font-bold gradient-text">{followerCount}</p>
+              <p className="text-[10px] font-mono text-muted-foreground">Followers</p>
+            </div>
+            <div>
+              <p className="text-3xl font-display font-bold gradient-text">{followingCount}</p>
+              <p className="text-[10px] font-mono text-muted-foreground">Following</p>
             </div>
           </div>
 
