@@ -1,7 +1,7 @@
 import { Outlet, useLocation, useNavigate, NavLink as RouterNavLink } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
-import { Home, Compass, CalendarDays, Bell, User, LogIn, Menu } from 'lucide-react';
+import { Home, Compass, CalendarDays, Bell, User, LogIn } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { CommandPalette } from '@/components/CommandPalette';
 import { motion, AnimatePresence } from 'framer-motion';
