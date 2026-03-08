@@ -251,10 +251,10 @@ const Auth = () => {
   }
 
   return (
-    <div ref={containerRef} className="min-h-screen flex relative overflow-x-hidden bg-background">
+    <div ref={containerRef} className="min-h-screen flex relative overflow-x-hidden" style={{ background: 'linear-gradient(135deg, #0a0a1a 0%, #12082e 40%, #1a0a2e 70%, #0d0d24 100%)' }}>
       {/* Animated background grid */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
-        backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)`,
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{
+        backgroundImage: `linear-gradient(hsl(270 80% 60%) 1px, transparent 1px), linear-gradient(90deg, hsl(270 80% 60%) 1px, transparent 1px)`,
         backgroundSize: '60px 60px',
       }} />
 
@@ -262,7 +262,7 @@ const Auth = () => {
       <div
         className="absolute inset-0 pointer-events-none transition-all duration-700 ease-out"
         style={{
-          background: `radial-gradient(600px circle at ${50 + mousePos.x * 2}% ${50 + mousePos.y * 2}%, hsl(var(--primary) / 0.06), transparent 60%)`,
+          background: `radial-gradient(600px circle at ${50 + mousePos.x * 2}% ${50 + mousePos.y * 2}%, hsl(270 80% 60% / 0.08), transparent 60%)`,
         }}
       />
 
@@ -311,10 +311,10 @@ const Auth = () => {
                 style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.3), transparent 70%)' }}
               />
             </div>
-            <h1 className="text-6xl font-mono font-bold text-primary glow-text mb-4 tracking-tight">
+            <h1 className="text-6xl font-mono font-bold mb-4 tracking-tight" style={{ color: 'hsl(270 80% 70%)', textShadow: '0 0 30px hsl(270 80% 60% / 0.6), 0 0 60px hsl(270 80% 60% / 0.3)' }}>
               MNNIT
               <br />
-              <span className="text-5xl bg-clip-text text-transparent" style={{ backgroundImage: 'var(--gradient-primary)' }}>
+              <span className="text-5xl bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, hsl(270 80% 70%), hsl(320 80% 60%), hsl(270 80% 70%))' }}>
                 InfoHub
               </span>
             </h1>
@@ -406,7 +406,7 @@ const Auth = () => {
               <motion.div whileHover={{ rotate: 15, scale: 1.1 }} transition={{ type: 'spring' }}>
                 <Zap className="w-12 h-12 text-primary mx-auto mb-2 drop-shadow-[0_0_15px_hsl(var(--primary)/0.5)]" />
               </motion.div>
-              <h1 className="text-2xl font-mono font-bold text-primary glow-text">MNNIT InfoHub</h1>
+              <h1 className="text-2xl font-mono font-bold" style={{ color: 'hsl(270 80% 70%)', textShadow: '0 0 20px hsl(270 80% 60% / 0.5)' }}>MNNIT InfoHub</h1>
             </div>
 
             {/* Error display */}
