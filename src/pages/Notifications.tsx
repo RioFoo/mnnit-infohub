@@ -83,17 +83,11 @@ const Notifications = () => {
 
   return (
     <div className="page-container max-w-2xl">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="flex items-center justify-between mb-8"
-      >
-        <h1 className="text-2xl page-header-bio gradient-text">ALERTS</h1>
+      <PageHeader title="ALERTS">
         <Button variant="ghost" size="sm" onClick={markAllRead} className="text-xs font-mono rounded-xl">
           <CheckCheck className="w-4 h-4 mr-1" /> Mark all read
         </Button>
-      </motion.div>
+      </PageHeader>
 
       {allNotifs.length === 0 ? (
         <div className="text-center py-20">

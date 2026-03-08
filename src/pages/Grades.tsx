@@ -67,18 +67,12 @@ const Grades = () => {
 
   return (
     <div className="page-container">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="flex items-end justify-between flex-wrap gap-4 mb-8"
-      >
-        <h1 className="text-2xl md:text-3xl page-header-bio gradient-text">GRADES</h1>
+      <PageHeader title="GRADES">
         <div className="text-right">
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">CPI</p>
           <p className="text-4xl font-display font-bold gradient-text">{cpi.toFixed(2)}</p>
         </div>
-      </motion.div>
+      </PageHeader>
 
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">

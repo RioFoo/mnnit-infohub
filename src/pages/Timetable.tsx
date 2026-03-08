@@ -39,14 +39,7 @@ const Timetable = () => {
 
   return (
     <div className="page-container">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="mb-8"
-      >
-        <h1 className="text-2xl md:text-3xl page-header-bio gradient-text">TIMETABLE</h1>
-      </motion.div>
+      <PageHeader title="TIMETABLE" />
 
       {/* Controls */}
       <motion.div

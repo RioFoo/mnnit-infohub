@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Heart, MessageCircle, Share2, Plus, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { PageHeader } from '@/components/PageHeader';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
@@ -192,13 +193,7 @@ const Feed = () => {
   return (
     <div className="page-container">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="flex items-center justify-between mb-8"
-      >
-        <h1 className="text-2xl md:text-3xl page-header-bio gradient-text">FOR YOU</h1>
+      <PageHeader title="FOR YOU">
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.96 }}>
           <Button
             onClick={() => requireAuth(() => setCreateOpen(true), 'Sign in to post')}
@@ -207,7 +202,7 @@ const Feed = () => {
             <Plus className="w-4 h-4" /> Post
           </Button>
         </motion.div>
-      </motion.div>
+      </PageHeader>
 
       {/* Create dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
