@@ -16,7 +16,7 @@ interface FollowButtonProps {
 
 const FollowButton = ({
   isFollowing, isFavourite, onFollow, onFavourite,
-  onRequireAuth, isAuthenticated, isOwnPost, compact = true, loading
+  onRequireAuth, isAuthenticated: _isAuthenticated, isOwnPost, compact = true, loading
 }: FollowButtonProps) => {
   if (isOwnPost) return null;
 
