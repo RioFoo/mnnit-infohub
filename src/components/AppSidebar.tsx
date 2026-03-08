@@ -1,6 +1,6 @@
 import {
   Home, Compass, GraduationCap, CalendarDays, Clock, Calculator,
-  BookOpen, Bell, User, Settings, LogOut, LogIn, Search, ChevronRight
+  BookOpen, Bell, User, Settings, LogOut, LogIn, Search
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';

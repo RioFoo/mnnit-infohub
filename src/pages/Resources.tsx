@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Upload, Search, Download, FileText, X, Loader2, CloudUpload } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';

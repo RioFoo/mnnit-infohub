@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CONTACT_DIRECTORY, ACADEMIC_NOTIFICATIONS, QUICK_LINKS, CLUBS_AND_SOCIETIES } from '@/data/infohub-data';
-import { Badge } from '@/components/ui/badge';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ExternalLink, Mail, Phone, Search, Users, Globe, Megaphone } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,7 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 12, scale: 0.98 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const } }
 };
 
 const CampusInfo = () => {
