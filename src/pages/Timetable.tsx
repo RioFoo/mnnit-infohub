@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Bell, BellOff, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { PageHeader } from '@/components/PageHeader';
 
 const sectionIds = Object.keys(TIMETABLE_DATA);
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
@@ -122,30 +123,29 @@ const Timetable = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-3rem)] md:h-[calc(100vh-3rem)] overflow-hidden">
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-4 md:px-6 py-3 border-b border-border/[0.06] shrink-0">
-        <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-primary" />
-          <h1 className="font-display font-bold text-sm tracking-wider uppercase text-foreground">Timetable</h1>
-        </div>
+      {/* Top bar with PageHeader typewriter */}
+      <div className="px-4 md:px-6 pt-4 pb-2 border-b border-border/[0.06] shrink-0">
+        <PageHeader title="TIMETABLE" className="mb-4">
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileTap={{ scale: 0.92 }}
+              onClick={toggleReminders}
+              className={cn(
+                'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono transition-all',
+                remindersEnabled
+                  ? 'bg-primary/10 text-primary border border-primary/20'
+                  : 'bg-muted/15 text-muted-foreground border border-border/[0.08]'
+              )}
+            >
+              {remindersEnabled ? <Bell className="w-3.5 h-3.5" /> : <BellOff className="w-3.5 h-3.5" />}
+              <span>{remindersEnabled ? 'Reminders On' : 'Reminders Off'}</span>
+            </motion.button>
+          </div>
+        </PageHeader>
 
-        <div className="flex items-center gap-2">
-          <motion.button
-            whileTap={{ scale: 0.92 }}
-            onClick={toggleReminders}
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-mono transition-all',
-              remindersEnabled
-                ? 'bg-primary/10 text-primary border border-primary/20'
-                : 'bg-muted/15 text-muted-foreground border border-border/[0.08]'
-            )}
-          >
-            {remindersEnabled ? <Bell className="w-3 h-3" /> : <BellOff className="w-3 h-3" />}
-            <span className="hidden sm:inline">{remindersEnabled ? 'On' : 'Off'}</span>
-          </motion.button>
-
+        <div className="flex flex-wrap items-center gap-3">
           <Select value={section} onValueChange={setSection}>
-            <SelectTrigger className="w-36 h-8 rounded-lg bg-muted/15 border-border/[0.08] text-xs font-mono">
+            <SelectTrigger className="w-44 h-10 rounded-xl bg-muted/15 border-border/[0.08] text-sm font-mono">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -156,19 +156,29 @@ const Timetable = () => {
           </Select>
 
           <Tabs value={batch} onValueChange={(v) => setBatch(v as 'ALL' | '1' | '2')}>
-            <TabsList className="h-8 rounded-lg bg-muted/15 border border-border/[0.08]">
+            <TabsList className="h-10 rounded-xl bg-muted/15 border border-border/[0.08]">
               {['ALL', '1', '2'].map(v => (
-                <TabsTrigger key={v} value={v} className="h-6 rounded text-[10px] font-mono px-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
-                  {v === 'ALL' ? 'All' : `B${v}`}
+                <TabsTrigger key={v} value={v} className="h-8 rounded-lg text-xs font-mono px-4 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                  {v === 'ALL' ? 'All Batches' : `Batch ${v}`}
                 </TabsTrigger>
               ))}
             </TabsList>
           </Tabs>
+
+          {/* Legend */}
+          <div className="hidden md:flex items-center gap-4 ml-auto">
+            {Object.entries(typeStyles).map(([type, style]) => (
+              <div key={type} className="flex items-center gap-2">
+                <div className={cn('w-2 h-2 rounded-full', style.dot)} />
+                <span className="text-[10px] text-muted-foreground/50 font-mono capitalize">{type.toLowerCase()}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Day tabs */}
-      <div className="flex items-center gap-1 px-4 md:px-6 py-2 border-b border-border/[0.04] shrink-0 overflow-x-auto">
+      <div className="flex items-center gap-1.5 px-4 md:px-6 py-3 border-b border-border/[0.04] shrink-0 overflow-x-auto">
         {DAYS.map((day, i) => {
           const isToday = day === currentDay;
           const isSelected = day === selectedDay;
@@ -181,40 +191,30 @@ const Timetable = () => {
               whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedDay(day)}
               className={cn(
-                'relative flex flex-col items-center gap-0.5 px-4 py-2 rounded-lg text-xs font-mono transition-all min-w-[60px]',
+                'relative flex flex-col items-center gap-1 px-5 py-2.5 rounded-xl text-sm font-mono transition-all min-w-[72px]',
                 isSelected ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted/10'
               )}
             >
               {isSelected && (
                 <motion.div
                   layoutId="day-pill"
-                  className="absolute inset-0 rounded-lg bg-primary/[0.08]"
+                  className="absolute inset-0 rounded-xl bg-primary/[0.08]"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
               <span className="relative z-10 font-medium">{DAY_SHORT[i]}</span>
               <span className={cn(
-                'relative z-10 text-[8px]',
+                'relative z-10 text-[9px]',
                 isSelected ? 'text-primary/60' : 'text-muted-foreground/40'
               )}>
                 {count} class{count !== 1 ? 'es' : ''}
               </span>
               {isToday && (
-                <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary)/0.6)]" />
+                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary)/0.6)]" />
               )}
             </motion.button>
           );
         })}
-
-        {/* Legend */}
-        <div className="hidden md:flex items-center gap-3 ml-auto pl-4 border-l border-border/[0.06]">
-          {Object.entries(typeStyles).map(([type, style]) => (
-            <div key={type} className="flex items-center gap-1.5">
-              <div className={cn('w-1.5 h-1.5 rounded-full', style.dot)} />
-              <span className="text-[9px] text-muted-foreground/50 font-mono capitalize">{type.toLowerCase()}</span>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Sessions list - line by line */}
