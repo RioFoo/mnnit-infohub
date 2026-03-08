@@ -167,9 +167,9 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                             )}>{item.title}</span>
                           )}
 
-                          {item.title === 'Alerts' && !collapsed && (
+                          {item.title === 'Notifications' && !collapsed && unreadCount > 0 && (
                             <Badge className="ml-auto text-[8px] h-4 px-1.5 bg-destructive/80 text-destructive-foreground border-none font-mono">
-                              3
+                              {unreadCount > 99 ? '99+' : unreadCount}
                             </Badge>
                           )}
                         </RouterNavLink>
