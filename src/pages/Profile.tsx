@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Edit, Loader2, LogIn, Heart, MessageCircle } from 'lucide-react';
+import { Edit, Loader2, LogIn, Heart, MessageCircle, Camera, ImagePlus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
@@ -31,7 +31,10 @@ const Profile = () => {
   const [semester, setSemester] = useState('');
   const [batch, setBatch] = useState('');
   const [saving, setSaving] = useState(false);
-
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingBanner, setUploadingBanner] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (profile) {
       setName(profile.name || '');
@@ -66,6 +69,43 @@ const Profile = () => {
     setSaving(false);
   };
 
+  const uploadFile = async (file: File, bucket: string, folder: string) => {
+    const ext = file.name.split('.').pop();
+    const path = `${folder}/${user!.id}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(path);
+    return publicUrl;
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (file.size > 2 * 1024 * 1024) { toast.error('Max 2MB'); return; }
+    setUploadingAvatar(true);
+    try {
+      const url = await uploadFile(file, 'avatars', 'profiles');
+      await (supabase.from as any)('profiles').update({ avatar_url: url }).eq('id', user.id);
+      await refreshProfile();
+      toast.success('Avatar updated!');
+    } catch (err: any) { toast.error(err.message); }
+    setUploadingAvatar(false);
+  };
+
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (file.size > 5 * 1024 * 1024) { toast.error('Max 5MB'); return; }
+    setUploadingBanner(true);
+    try {
+      const url = await uploadFile(file, 'avatars', 'banners');
+      await (supabase.from as any)('profiles').update({ banner_url: url }).eq('id', user.id);
+      await refreshProfile();
+      toast.success('Banner updated!');
+    } catch (err: any) { toast.error(err.message); }
+    setUploadingBanner(false);
+  };
+
   if (!user || !profile) {
     return (
       <div className="page-container flex items-center justify-center min-h-[60vh]">
@@ -97,13 +137,27 @@ const Profile = () => {
         className="card-bio p-0 mb-8 overflow-hidden"
       >
         {/* Banner */}
-        <div className="h-32 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
-          <div className="absolute inset-0 surface-shimmer" />
+        <div className="h-32 relative overflow-hidden group cursor-pointer" onClick={() => bannerInputRef.current?.click()}>
+          {profile.banner_url ? (
+            <img src={profile.banner_url} alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
+          ) : (
+            <>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
+              <div className="absolute inset-0 surface-shimmer" />
+            </>
+          )}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+            {uploadingBanner ? (
+              <Loader2 className="w-6 h-6 text-foreground animate-spin opacity-0 group-hover:opacity-100 transition-opacity" />
+            ) : (
+              <ImagePlus className="w-6 h-6 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            )}
+          </div>
+          <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerUpload} />
         </div>
 
         <div className="px-6 sm:px-8 pb-8 -mt-14 relative">
-          <div className="avatar-orbital avatar-orbital-lg inline-block">
+          <div className="avatar-orbital avatar-orbital-lg inline-block relative group cursor-pointer" onClick={() => avatarInputRef.current?.click()}>
             {profile.avatar_url ? (
               <img src={profile.avatar_url} alt={profile.name || ''} className="w-24 h-24 rounded-full object-cover border-4 border-background" />
             ) : (
@@ -111,6 +165,14 @@ const Profile = () => {
                 {(profile.name || 'U')[0].toUpperCase()}
               </div>
             )}
+            <div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center border-4 border-transparent">
+              {uploadingAvatar ? (
+                <Loader2 className="w-5 h-5 text-foreground animate-spin opacity-0 group-hover:opacity-100 transition-opacity" />
+              ) : (
+                <Camera className="w-5 h-5 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              )}
+            </div>
+            <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
           </div>
 
           <div className="mt-4">
