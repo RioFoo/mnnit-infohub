@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Upload, Search, Download, FileText, X, Loader2, CloudUpload } from 'lucide-react';
+import { Upload, Search, Download, FileText, X, Loader2, CloudUpload, Eye, Users, GitBranch } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -64,9 +64,17 @@ const Resources = () => {
   const [uploadTitle, setUploadTitle] = useState('');
   const [uploadBranch, setUploadBranch] = useState('All');
   const [uploadSemester, setUploadSemester] = useState('1st');
+  const [uploadVisibility, setUploadVisibility] = useState<Visibility>('branch');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load default visibility from profile
+  useEffect(() => {
+    if (profile && (profile as any).default_resource_visibility) {
+      setUploadVisibility((profile as any).default_resource_visibility as Visibility);
+    }
+  }, [profile]);
 
   const fetchResources = async () => {
     const { data, error } = await supabase.from('resources' as any).select('*').order('created_at', { ascending: false });
@@ -106,10 +114,11 @@ const Resources = () => {
         title: uploadTitle.trim(), file_url: publicUrl, file_type: getFileExtension(selectedFile.name),
         file_size: selectedFile.size, branch: uploadBranch, semester: uploadSemester,
         user_id: user.id, uploader_name: profile?.name || user.email?.split('@')[0] || 'Anonymous',
+        visibility: uploadVisibility,
       } as any);
       if (dbError) throw dbError;
       toast.success('Uploaded!');
-      setUploadOpen(false); setSelectedFile(null); setUploadTitle(''); setUploadBranch('All'); setUploadSemester('1st');
+      setUploadOpen(false); setSelectedFile(null); setUploadTitle(''); setUploadBranch('All'); setUploadSemester('1st'); setUploadVisibility((profile as any)?.default_resource_visibility || 'branch');
       fetchResources();
     } catch (err: any) { toast.error(err.message || 'Upload failed'); }
     finally { setUploading(false); }
