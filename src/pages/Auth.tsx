@@ -189,8 +189,7 @@ const Auth = () => {
       setError(getErrorMessage(error.message));
       toast.error(getErrorMessage(error.message));
     } else {
-      toast.success('Account created! Check your email to confirm.');
-      runIntro(name);
+      setShowWelcome(true);
     }
     setLoading(false);
   };
@@ -494,12 +493,12 @@ const Auth = () => {
                       <motion.button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
-                        whileHover={{ scale: 1.2, rotateY: 180 }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors z-10"
+                        whileHover={{ scale: 1.2 }}
                         whileTap={{ scale: 0.9 }}
                         transition={{ type: 'spring', stiffness: 300 }}
                       >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showPassword ? <LockOpen className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                       </motion.button>
                     </motion.div>
                   </motion.div>
@@ -567,8 +566,17 @@ const Auth = () => {
                     style={{ perspective: 800 }}
                   >
                     <Label className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Password</Label>
-                    <motion.div className="mt-1" whileHover={{ translateZ: 10, rotateX: 2, rotateY: -1 }} style={{ transformStyle: 'preserve-3d' }}>
-                      <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" required minLength={6} className="bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
+                    <motion.div className="relative mt-1" whileHover={{ scale: 1.01 }}>
+                      <Input type={showRegPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" required minLength={6} className="pr-10 bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
+                      <motion.button
+                        type="button"
+                        onClick={() => setShowRegPassword(!showRegPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors z-10"
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        {showRegPassword ? <LockOpen className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                      </motion.button>
                     </motion.div>
                   </motion.div>
                   <motion.div
@@ -579,8 +587,17 @@ const Auth = () => {
                     style={{ perspective: 800 }}
                   >
                     <Label className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Confirm Password</Label>
-                    <motion.div className="mt-1" whileHover={{ translateZ: 10, rotateX: 2, rotateY: 1 }} style={{ transformStyle: 'preserve-3d' }}>
-                      <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter password" required minLength={6} className="bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
+                    <motion.div className="relative mt-1" whileHover={{ scale: 1.01 }}>
+                      <Input type={showRegConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter password" required minLength={6} className="pr-10 bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
+                      <motion.button
+                        type="button"
+                        onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors z-10"
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        {showRegConfirmPassword ? <LockOpen className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                      </motion.button>
                     </motion.div>
                   </motion.div>
                   <motion.div
@@ -599,6 +616,70 @@ const Auth = () => {
                 </form>
               </TabsContent>
             </Tabs>
+
+            {/* Welcome to InfoHub Community Overlay */}
+            <AnimatePresence>
+              {showWelcome && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-background/90 backdrop-blur-xl p-4"
+                >
+                  <motion.div
+                    initial={{ scale: 0.5, opacity: 0, rotateY: -30 }}
+                    animate={{ scale: 1, opacity: 1, rotateY: 0 }}
+                    exit={{ scale: 0.8, opacity: 0, rotateY: 30 }}
+                    transition={{ type: 'spring', damping: 15, stiffness: 200 }}
+                    className="text-center space-y-6 max-w-sm"
+                    style={{ perspective: 1000 }}
+                  >
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                    >
+                      <PartyPopper className="w-20 h-20 text-primary mx-auto drop-shadow-[0_0_25px_hsl(var(--primary)/0.5)]" />
+                    </motion.div>
+                    <motion.h2
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="text-3xl font-mono font-bold text-primary glow-text"
+                    >
+                      Welcome to InfoHub Community! 🎉
+                    </motion.h2>
+                    <motion.p
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                      className="text-muted-foreground"
+                    >
+                      Your account has been created. Please check your email to confirm, then log in.
+                    </motion.p>
+                    <motion.div
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.7 }}
+                    >
+                      <Button
+                        onClick={() => {
+                          setShowWelcome(false);
+                          setActiveTab('login');
+                          setLoginEmail(email);
+                          setName('');
+                          setEmail('');
+                          setPassword('');
+                          setConfirmPassword('');
+                        }}
+                        className="gap-2 h-11 px-8 text-base font-semibold hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)]"
+                      >
+                        <CheckCircle2 className="w-5 h-5" /> Go to Login
+                      </Button>
+                    </motion.div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Divider */}
             <div className="relative my-6">
