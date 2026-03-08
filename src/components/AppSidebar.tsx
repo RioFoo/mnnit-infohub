@@ -45,7 +45,7 @@ const navItems = [
   { title: 'Timetable', url: '/timetable', icon: Clock },
   { title: 'Grades', url: '/grades', icon: Calculator },
   { title: 'Library', url: '/resources', icon: BookOpen },
-  { title: 'Alerts', url: '/notifications', icon: Bell },
+  { title: 'Notifications', url: '/notifications', icon: Bell },
   { title: 'Profile', url: '/profile', icon: User },
 ];
 
