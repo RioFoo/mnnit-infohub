@@ -112,33 +112,8 @@ const AppLayout = () => {
               className="glass-float rounded-2xl px-2 py-2 mx-auto max-w-sm"
             >
               <div className="flex items-center justify-around">
-                {mobileNavItems.map((item, i) => (
-                  <NavLink
-                    key={item.url}
-                    to={item.url}
-                    end={item.url === '/'}
-                    className="relative flex flex-col items-center gap-0.5 p-2 rounded-xl text-muted-foreground transition-all duration-300"
-                    activeClassName="text-primary"
-                  >
-                    {({ isActive }: { isActive: boolean }) => (
-                      <>
-                        {isActive && (
-                          <motion.div
-                            layoutId="mobile-nav-active"
-                            className="absolute inset-0 rounded-xl bg-primary/10"
-                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                          />
-                        )}
-                        <motion.div
-                          whileTap={{ scale: 0.85 }}
-                          className="relative z-10"
-                        >
-                          <item.icon className={`w-5 h-5 transition-all ${isActive ? 'drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]' : ''}`} />
-                        </motion.div>
-                        <span className="text-[9px] font-medium relative z-10">{item.title}</span>
-                      </>
-                    )}
-                  </NavLink>
+                {mobileNavItems.map((item) => (
+                  <MobileNavItem key={item.url} item={item} />
                 ))}
               </div>
             </motion.div>
