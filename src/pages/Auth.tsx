@@ -387,6 +387,17 @@ const Auth = () => {
             <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-primary/20 rounded-tr-2xl pointer-events-none group-hover:border-primary/40 transition-colors duration-500" />
             <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-primary/20 rounded-bl-2xl pointer-events-none group-hover:border-primary/40 transition-colors duration-500" />
 
+            {/* Back button */}
+            <motion.button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-4 group/back"
+              whileHover={{ x: -4 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ArrowLeft className="w-4 h-4 group-hover/back:drop-shadow-[0_0_6px_hsl(var(--primary)/0.6)]" />
+              <span className="font-mono text-xs uppercase tracking-wider">Back to Feed</span>
+            </motion.button>
+
             {/* Mobile logo */}
             <div className="lg:hidden text-center mb-8">
               <motion.div whileHover={{ rotate: 15, scale: 1.1 }} transition={{ type: 'spring' }}>
