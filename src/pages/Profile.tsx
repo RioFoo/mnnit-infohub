@@ -117,6 +117,16 @@ const Profile = () => {
     setUploadingBanner(false);
   };
 
+  const handleDeletePost = async (postId: string) => {
+    if (!user) return;
+    const { error } = await (supabase.from as any)('posts').delete().eq('id', postId).eq('user_id', user.id);
+    if (error) toast.error('Failed to delete post');
+    else {
+      setPosts(prev => prev.filter(p => p.id !== postId));
+      toast.success('Post deleted');
+    }
+  };
+
   if (!user || !profile) {
     return (
       <div className="page-container flex items-center justify-center min-h-[60vh]">
