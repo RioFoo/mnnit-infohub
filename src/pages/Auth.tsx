@@ -121,8 +121,24 @@ const Auth = () => {
     setShowPassword(true);
     setSelectedDemo(demo.key);
     setActiveTab('login');
+    setShowForgot(false);
     setError(null);
     toast.success('Demo credentials filled! Click Sign In.', { icon: '✓' });
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    setError(null);
+    const { error } = await resetPassword(forgotEmail);
+    if (error) {
+      setError(getErrorMessage(error.message));
+      toast.error(getErrorMessage(error.message));
+    } else {
+      toast.success('Password reset email sent! Check your inbox.');
+      setShowForgot(false);
+    }
+    setForgotLoading(false);
   };
 
   if (showIntro) {
@@ -246,6 +262,15 @@ const Auth = () => {
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setShowForgot(true)}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    Forgot Password?
+                  </button>
                 </div>
                 <Button
                   type="submit"
