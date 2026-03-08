@@ -10,6 +10,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { playNotificationAlert } from '@/lib/notificationAlert';
 
 interface Notification {
   id: string; type: string; message: string; read: boolean; link: string | null; created_at: string;
@@ -74,6 +75,7 @@ const Notifications = () => {
         (payload) => {
           const newNotif = payload.new as Notification;
           setNotifications(prev => [newNotif, ...prev]);
+          playNotificationAlert();
           toast(typeIcon[newNotif.type] || '🔔', {
             description: newNotif.message,
             duration: 4000,
