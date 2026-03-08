@@ -356,6 +356,48 @@ const Auth = () => {
           </div>
 
           <p className="text-xs text-muted-foreground text-center mt-6">By signing in, you agree to our Terms of Service</p>
+
+          {/* Forgot Password Overlay */}
+          <AnimatePresence>
+            {showForgot && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4"
+              >
+                <motion.div
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.95, opacity: 0 }}
+                  className="w-full max-w-sm rounded-lg border border-border bg-card p-6 shadow-lg"
+                >
+                  <h2 className="text-lg font-mono font-bold text-foreground mb-1">Reset Password</h2>
+                  <p className="text-sm text-muted-foreground mb-4">Enter your email and we'll send a reset link.</p>
+                  <form onSubmit={handleForgotPassword} className="space-y-4">
+                    <div>
+                      <Label htmlFor="forgot-email">Email</Label>
+                      <Input
+                        id="forgot-email"
+                        type="email"
+                        value={forgotEmail}
+                        onChange={e => setForgotEmail(e.target.value)}
+                        placeholder="you@mnnit.ac.in"
+                        required
+                        className="mt-1"
+                      />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={forgotLoading}>
+                      {forgotLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send Reset Link'}
+                    </Button>
+                    <Button variant="ghost" type="button" onClick={() => setShowForgot(false)} className="w-full gap-2">
+                      <ArrowLeft className="w-4 h-4" /> Back to Login
+                    </Button>
+                  </form>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
     </div>
