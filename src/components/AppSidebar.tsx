@@ -1,9 +1,9 @@
 import {
   Home, Search, GraduationCap, CalendarDays, Clock, Calculator,
-  BookOpen, Bell, User, Settings, LogOut, Zap, Command
+  BookOpen, Bell, User, Settings, LogOut, LogIn, Zap, Command
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -32,8 +32,8 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
   const location = useLocation();
-  const { signOut, profile } = useAuth();
-  const isActive = (path: string) => location.pathname === path;
+  const navigate = useNavigate();
+  const { signOut, profile, user } = useAuth();
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border">
@@ -84,7 +84,7 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
       </SidebarContent>
 
       <SidebarFooter className="p-3 space-y-2">
-        {!collapsed && profile && (
+        {user && !collapsed && profile && (
           <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
             {profile.avatar_url ? (
               <img src={profile.avatar_url} alt={profile.name || ''} className="w-8 h-8 rounded-full object-cover" />
@@ -100,20 +100,31 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
           </div>
         )}
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <NavLink to="/settings" className="hover:bg-muted/50" activeClassName="bg-primary/10 text-primary">
-                <Settings className="mr-2 h-4 w-4" />
-                {!collapsed && <span>Settings</span>}
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton onClick={signOut} className="hover:bg-destructive/10 text-destructive cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
-              {!collapsed && <span>Sign Out</span>}
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {user && (
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <NavLink to="/settings" className="hover:bg-muted/50" activeClassName="bg-primary/10 text-primary">
+                  <Settings className="mr-2 h-4 w-4" />
+                  {!collapsed && <span>Settings</span>}
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
+          {user ? (
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={signOut} className="hover:bg-destructive/10 text-destructive cursor-pointer">
+                <LogOut className="mr-2 h-4 w-4" />
+                {!collapsed && <span>Sign Out</span>}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ) : (
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={() => navigate('/auth')} className="hover:bg-primary/10 text-primary cursor-pointer">
+                <LogIn className="mr-2 h-4 w-4" />
+                {!collapsed && <span>Sign In</span>}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
