@@ -32,31 +32,31 @@ export function CommandPalette({ open, onOpenChange }: Props) {
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <CommandInput placeholder="Search pages, links, actions..." />
+      <CommandInput placeholder="Search pages, links, actions..." className="font-mono text-primary" />
       <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandEmpty className="font-mono text-muted-foreground text-sm py-8">No results found.</CommandEmpty>
         <CommandGroup heading="Navigation">
           {navCommands.map(c => (
-            <CommandItem key={c.path} onSelect={() => go(c.path)}>
-              <c.icon className="mr-2 h-4 w-4" />
+            <CommandItem key={c.path} onSelect={() => go(c.path)} className="font-mono text-sm">
+              <c.icon className="mr-2 h-4 w-4 text-primary/60" />
               {c.name}
             </CommandItem>
           ))}
         </CommandGroup>
         <CommandGroup heading="Actions">
-          <CommandItem onSelect={() => go('/')}>
-            <Plus className="mr-2 h-4 w-4" />
+          <CommandItem onSelect={() => go('/')} className="font-mono text-sm">
+            <Plus className="mr-2 h-4 w-4 text-primary/60" />
             Create Post
           </CommandItem>
-          <CommandItem onSelect={() => { signOut(); onOpenChange(false); }}>
-            <LogOut className="mr-2 h-4 w-4" />
+          <CommandItem onSelect={() => { signOut(); onOpenChange(false); }} className="font-mono text-sm">
+            <LogOut className="mr-2 h-4 w-4 text-destructive/60" />
             Sign Out
           </CommandItem>
         </CommandGroup>
         <CommandGroup heading="MNNIT Portals">
           {QUICK_LINKS.map(l => (
-            <CommandItem key={l.url} onSelect={() => { window.open(l.url, '_blank'); onOpenChange(false); }}>
-              <ExternalLink className="mr-2 h-4 w-4" />
+            <CommandItem key={l.url} onSelect={() => { window.open(l.url, '_blank'); onOpenChange(false); }} className="font-mono text-sm">
+              <ExternalLink className="mr-2 h-4 w-4 text-secondary/60" />
               {l.title}
             </CommandItem>
           ))}

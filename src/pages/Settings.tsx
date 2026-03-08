@@ -10,10 +10,10 @@ const Settings = () => {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="mb-8"
       >
-        <h1 className="text-2xl page-header gradient-text">Settings</h1>
+        <h1 className="text-2xl page-header-bio gradient-text">SETTINGS</h1>
       </motion.div>
 
       {/* Themes */}
@@ -21,13 +21,13 @@ const Settings = () => {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="float-card p-6 mb-6"
+        className="card-bio p-6 mb-6"
       >
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-primary/[0.06] flex items-center justify-center">
             <Palette className="w-4 h-4 text-primary" />
           </div>
-          <span className="text-sm font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Theme</span>
+          <span className="text-sm font-display font-bold">Theme</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {THEMES.map((t, i) => (
@@ -36,13 +36,13 @@ const Settings = () => {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.08 + i * 0.03 }}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => setTheme(t.key)}
               className={`relative p-4 rounded-xl border transition-all text-left ${
                 theme === t.key
-                  ? 'border-primary/30 bg-primary/5 shadow-sm'
-                  : 'border-border/20 hover:border-primary/15 hover:bg-muted/20'
+                  ? 'border-primary/20 bg-primary/[0.04] glow-border'
+                  : 'border-border/[0.06] hover:border-primary/10 hover:bg-muted/10'
               }`}
             >
               {theme === t.key && (
@@ -50,13 +50,13 @@ const Settings = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', stiffness: 400 }}
-                  className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                  className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center shadow-[0_0_8px_hsl(var(--primary)/0.5)]"
                 >
                   <Check className="w-3 h-3 text-primary-foreground" />
                 </motion.div>
               )}
-              <div className="w-7 h-7 rounded-lg mb-3 border border-border/10" style={{ background: t.primaryColor }} />
-              <p className="text-xs font-medium">{t.name}</p>
+              <div className="w-7 h-7 rounded-lg mb-3 border border-border/[0.06]" style={{ background: t.primaryColor }} />
+              <p className="text-xs font-semibold">{t.name}</p>
             </motion.button>
           ))}
         </div>
@@ -67,17 +67,17 @@ const Settings = () => {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="float-card p-6"
+        className="card-bio p-6"
       >
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-primary/[0.06] flex items-center justify-center">
             <Info className="w-4 h-4 text-primary" />
           </div>
-          <span className="text-sm font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>About</span>
+          <span className="text-sm font-display font-bold">About</span>
         </div>
-        <p className="text-sm text-muted-foreground">MNNIT InfoHub v2.0</p>
-        <div className="divider-gradient mt-5 mb-4" />
-        <div className="flex items-center gap-3 text-xs text-muted-foreground/50">
+        <p className="text-sm font-mono text-muted-foreground">MNNIT InfoHub v3.0 — Bioluminescent Cinema</p>
+        <div className="divider-glow mt-5 mb-4" />
+        <div className="flex items-center gap-3 text-xs font-mono text-muted-foreground/40">
           <span>React</span>
           <span>·</span>
           <span>Supabase</span>

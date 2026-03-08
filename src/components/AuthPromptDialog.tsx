@@ -14,26 +14,26 @@ export const AuthPromptDialog = ({ open, onOpenChange, message }: AuthPromptDial
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-strong max-w-sm text-center">
+      <DialogContent className="card-bio glow-border-bright max-w-sm text-center border-border/[0.06]">
         <DialogHeader className="items-center">
-          <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-2">
+          <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2 breathe">
             <Zap className="w-7 h-7 text-primary" />
           </div>
-          <DialogTitle className="font-mono text-lg">Join MNNIT InfoHub</DialogTitle>
-          <DialogDescription className="text-sm">
+          <DialogTitle className="font-display font-bold text-lg">Join MNNIT InfoHub</DialogTitle>
+          <DialogDescription className="text-sm font-mono text-muted-foreground">
             {message || 'Sign in to like posts, comment, follow users, and more!'}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3 mt-2">
           <Button
-            className="w-full gap-2"
+            className="w-full gap-2 btn-bio"
             onClick={() => { onOpenChange(false); navigate('/auth'); }}
           >
             <LogIn className="w-4 h-4" /> Sign In
           </Button>
           <Button
             variant="outline"
-            className="w-full gap-2"
+            className="w-full gap-2 border-border/[0.08]"
             onClick={() => { onOpenChange(false); navigate('/auth?tab=register'); }}
           >
             <UserPlus className="w-4 h-4" /> Create Account

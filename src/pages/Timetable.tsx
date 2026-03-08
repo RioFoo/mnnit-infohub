@@ -9,11 +9,11 @@ const sectionIds = Object.keys(TIMETABLE_DATA);
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const TIME_SLOTS = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
-const typeStyles: Record<string, string> = {
-  LECTURE: 'bg-primary/8 text-primary border-primary/15',
-  LAB: 'bg-secondary/8 text-secondary border-secondary/15',
-  TUTORIAL: 'bg-amber-500/8 text-amber-500 border-amber-500/15',
-  WORKSHOP: 'bg-emerald-500/8 text-emerald-500 border-emerald-500/15',
+const typeGlow: Record<string, string> = {
+  LECTURE: 'border-l-2 border-l-secondary bg-secondary/[0.06] text-secondary',
+  LAB: 'border-l-2 border-l-accent bg-accent/[0.06] text-accent',
+  TUTORIAL: 'border-l-2 border-l-amber-400 bg-amber-400/[0.06] text-amber-400',
+  WORKSHOP: 'border-l-2 border-l-primary bg-primary/[0.06] text-primary',
 };
 
 const Timetable = () => {
@@ -42,10 +42,10 @@ const Timetable = () => {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="mb-8"
       >
-        <h1 className="text-2xl md:text-3xl page-header gradient-text">Timetable</h1>
+        <h1 className="text-2xl md:text-3xl page-header-bio gradient-text">TIMETABLE</h1>
       </motion.div>
 
       {/* Controls */}
@@ -56,7 +56,7 @@ const Timetable = () => {
         className="flex flex-wrap gap-3 items-center mb-6"
       >
         <Select value={section} onValueChange={setSection}>
-          <SelectTrigger className="w-48 rounded-xl bg-muted/20 border-border/20 text-sm">
+          <SelectTrigger className="w-48 rounded-xl bg-muted/15 border-border/[0.08] text-sm font-mono">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -67,9 +67,9 @@ const Timetable = () => {
         </Select>
 
         <Tabs value={batch} onValueChange={(v) => setBatch(v as 'ALL' | '1' | '2')}>
-          <TabsList className="rounded-xl bg-muted/30 border border-border/20">
+          <TabsList className="rounded-xl bg-muted/15 border border-border/[0.08]">
             {['ALL', '1', '2'].map(v => (
-              <TabsTrigger key={v} value={v} className="rounded-lg text-xs font-medium data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+              <TabsTrigger key={v} value={v} className="rounded-lg text-xs font-mono data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_8px_hsl(var(--primary)/0.2)]">
                 {v === 'ALL' ? 'All' : `B${v}`}
               </TabsTrigger>
             ))}
@@ -77,10 +77,10 @@ const Timetable = () => {
         </Tabs>
 
         <div className="flex gap-4 ml-auto flex-wrap">
-          {Object.entries(typeStyles).map(([type]) => (
+          {Object.entries(typeGlow).map(([type, cls]) => (
             <div key={type} className="flex items-center gap-1.5">
-              <div className={`w-2 h-2 rounded-sm ${typeStyles[type].split(' ')[0]}`} />
-              <span className="text-[10px] text-muted-foreground font-medium capitalize">{type.toLowerCase()}</span>
+              <div className={`w-2 h-2 rounded-sm ${cls.split(' ')[2]}`} />
+              <span className="text-[10px] text-muted-foreground font-mono capitalize">{type.toLowerCase()}</span>
             </div>
           ))}
         </div>
@@ -91,28 +91,28 @@ const Timetable = () => {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="overflow-x-auto float-card p-1"
+        className="overflow-x-auto card-bio p-1"
       >
         <div className="min-w-[800px]">
-          <div className="grid grid-cols-6 gap-px rounded-xl overflow-hidden" style={{ background: 'hsl(var(--border) / 0.1)' }}>
-            <div className="text-[10px] font-medium text-muted-foreground p-3 bg-card/80 backdrop-blur-sm">Time</div>
+          <div className="grid grid-cols-6 gap-px rounded-xl overflow-hidden" style={{ background: 'hsl(var(--border) / 0.04)' }}>
+            <div className="text-[10px] font-mono text-muted-foreground p-3 bg-card/60 backdrop-blur-sm">Time</div>
             {DAYS.map(day => (
               <div
                 key={day}
-                className={`text-[11px] font-medium p-3 text-center bg-card/80 backdrop-blur-sm ${
-                  day === currentDay ? 'text-primary' : 'text-muted-foreground'
+                className={`text-[11px] font-mono font-medium p-3 text-center bg-card/60 backdrop-blur-sm ${
+                  day === currentDay ? 'text-primary glow-text-subtle' : 'text-muted-foreground'
                 }`}
               >
                 {day.slice(0, 3)}
                 {day === currentDay && (
-                  <div className="h-0.5 bg-primary rounded-full mt-1.5 mx-auto w-6 opacity-60" />
+                  <div className="h-0.5 bg-primary rounded-full mt-1.5 mx-auto w-6 shadow-[0_0_6px_hsl(var(--primary)/0.5)]" />
                 )}
               </div>
             ))}
 
             {TIME_SLOTS.map((time, ti) => (
               <>
-                <div key={time} className="text-[10px] font-mono text-muted-foreground/40 p-2 bg-card/20 flex items-start">
+                <div key={time} className="text-[10px] font-mono text-muted-foreground/30 p-2 bg-card/20 flex items-start">
                   {time}
                 </div>
                 {DAYS.map(day => {
@@ -123,7 +123,7 @@ const Timetable = () => {
                   return (
                     <div
                       key={`${day}-${time}`}
-                      className={`min-h-[52px] p-1 bg-card/20 ${isToday ? 'bg-primary/[0.02]' : ''}`}
+                      className={`min-h-[52px] p-1 bg-card/10 ${isToday ? 'bg-primary/[0.015]' : ''}`}
                     >
                       {sessions.map((s, i) => {
                         const isCurrent = isCurrentSession(s, day);
@@ -133,18 +133,18 @@ const Timetable = () => {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: ti * 0.02 }}
-                            className={`rounded-lg p-2 text-[9px] border mb-1 transition-all ${typeStyles[s.type] || ''} ${
-                              isCurrent ? 'ring-1 ring-primary/30' : ''
+                            className={`rounded-lg p-2 text-[9px] mb-1 transition-all ${typeGlow[s.type] || ''} ${
+                              isCurrent ? 'glow-border-bright' : ''
                             }`}
                           >
                             {isCurrent && (
                               <div className="flex items-center gap-1 mb-0.5">
-                                <Activity className="w-2.5 h-2.5 text-primary" />
-                                <span className="text-primary text-[7px] font-semibold uppercase tracking-wider">Live</span>
+                                <Activity className="w-2.5 h-2.5 animate-pulse" />
+                                <span className="text-[7px] font-mono font-bold uppercase tracking-wider">LIVE</span>
                               </div>
                             )}
                             <p className="font-medium truncate leading-tight">{s.subject.split('(')[0].trim()}</p>
-                            <p className="opacity-50 mt-0.5 font-mono">{s.room} {s.batch !== 'ALL' ? `· B${s.batch}` : ''}</p>
+                            <p className="opacity-40 mt-0.5 font-mono">{s.room} {s.batch !== 'ALL' ? `· B${s.batch}` : ''}</p>
                           </motion.div>
                         );
                       })}

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Heart, MessageCircle, Share2, Plus, Loader2 } from 'lucide-react';
@@ -24,6 +24,112 @@ interface Post {
   user_id: string;
   profiles: { name: string; handle: string; avatar_url: string | null; branch: string } | null;
 }
+
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.98 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const } }
+};
+
+const PostCard = ({ post, liked, onLike, onRequireAuth }: { post: Post; liked: boolean; onLike: (id: string) => void; onRequireAuth: (fn: () => void, msg: string) => void }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    cardRef.current.style.transform = `perspective(1000px) rotateX(${y * -4}deg) rotateY(${x * 4}deg) translateY(-4px) scale(1.005)`;
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!cardRef.current) return;
+    cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px) scale(1)';
+  }, []);
+
+  return (
+    <motion.div variants={itemVariants}>
+      <div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className="card-bio p-5 transition-transform duration-300 ease-out"
+        style={{ transformStyle: 'preserve-3d' }}
+      >
+        <div className="flex items-start gap-3.5">
+          <div className="avatar-orbital shrink-0">
+            {post.profiles?.avatar_url ? (
+              <img src={post.profiles.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                {(post.profiles?.name || 'U')[0].toUpperCase()}
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-semibold text-sm">{post.profiles?.name || 'Anonymous'}</span>
+              <span className="text-[11px] font-mono text-muted-foreground">@{post.profiles?.handle}</span>
+              {post.profiles?.branch && (
+                <span className="text-[10px] font-mono text-muted-foreground/40">· {post.profiles.branch}</span>
+              )}
+              <span className="text-[10px] font-mono text-muted-foreground/30 ml-auto">
+                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+              </span>
+            </div>
+
+            <div className="divider-glow my-2.5" />
+
+            <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/85">{post.content}</p>
+
+            {post.image_url && (
+              <div className="mt-3 rounded-xl overflow-hidden border border-border/[0.06]">
+                <img src={post.image_url} alt="" className="max-h-72 object-cover w-full" />
+              </div>
+            )}
+
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {post.tags.map(tag => (
+                  <span key={tag} className="tag-pill text-[10px]">#{tag}</span>
+                ))}
+              </div>
+            )}
+
+            <div className="divider-glow my-3" />
+
+            {/* Actions */}
+            <div className="flex items-center gap-6">
+              <motion.button
+                whileTap={{ scale: 0.85 }}
+                onClick={() => onRequireAuth(() => onLike(post.id), 'Sign in to like!')}
+                className={`flex items-center gap-2 text-xs transition-all group/btn ${liked ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
+              >
+                <Heart className={`w-4 h-4 transition-all ${liked ? 'fill-current drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]' : 'group-hover/btn:scale-110'}`} />
+                <span className="text-[11px] font-mono tabular-nums">{post.likes_count}</span>
+              </motion.button>
+              <button
+                onClick={() => onRequireAuth(() => {}, 'Sign in to comment!')}
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-secondary transition-all"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span className="text-[11px] font-mono tabular-nums">{post.comments_count}</span>
+              </button>
+              <button className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-all ml-auto">
+                <Share2 className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 const Feed = () => {
   const { user } = useAuth();
@@ -89,32 +195,30 @@ const Feed = () => {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="flex items-center justify-between mb-8"
       >
-        <h1 className="text-2xl md:text-3xl page-header gradient-text">Feed</h1>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <h1 className="text-2xl md:text-3xl page-header-bio gradient-text">FOR YOU</h1>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.96 }}>
           <Button
             onClick={() => requireAuth(() => setCreateOpen(true), 'Sign in to post')}
-            className="gap-2 rounded-xl btn-premium text-sm"
+            className="gap-2 rounded-xl btn-bio text-sm"
           >
-            <Plus className="w-4 h-4" /> New Post
+            <Plus className="w-4 h-4" /> Post
           </Button>
         </motion.div>
       </motion.div>
 
       {/* Create dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="float-card border-border/20 sm:max-w-lg">
+        <DialogContent className="card-bio glow-border sm:max-w-lg border-border/[0.06]">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              Create Post
-            </DialogTitle>
+            <DialogTitle className="text-lg font-display font-bold">Create Post</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-2">
-            <Textarea placeholder="What's on your mind?" value={newContent} onChange={e => setNewContent(e.target.value)} rows={4} className="bg-muted/20 border-border/20 rounded-xl resize-none focus:border-primary/30 focus:ring-1 focus:ring-primary/10 transition-all" />
-            <Input placeholder="Tags (comma separated)" value={newTags} onChange={e => setNewTags(e.target.value)} className="bg-muted/20 border-border/20 rounded-xl" />
-            <Button onClick={handleCreatePost} disabled={posting || !newContent.trim()} className="w-full rounded-xl btn-premium">
+            <Textarea placeholder="What's on your mind?" value={newContent} onChange={e => setNewContent(e.target.value)} rows={4} className="bg-muted/15 border-border/[0.08] rounded-xl resize-none text-sm" />
+            <Input placeholder="Tags (comma separated)" value={newTags} onChange={e => setNewTags(e.target.value)} className="bg-muted/15 border-border/[0.08] rounded-xl font-mono text-sm" />
+            <Button onClick={handleCreatePost} disabled={posting || !newContent.trim()} className="w-full rounded-xl btn-bio">
               {posting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Publish'}
             </Button>
           </div>
@@ -125,89 +229,47 @@ const Feed = () => {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
           <Loader2 className="w-8 h-8 text-primary/40 animate-spin" />
-          <p className="text-sm text-muted-foreground">Loading posts...</p>
+          <p className="text-xs font-mono text-muted-foreground">Loading feed...</p>
         </div>
       ) : posts.length === 0 ? (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-          <div className="w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-4">
-            <MessageCircle className="w-7 h-7 text-muted-foreground/40" />
+          <div className="w-16 h-16 rounded-full bg-primary/[0.06] flex items-center justify-center mx-auto mb-4 breathe">
+            <MessageCircle className="w-7 h-7 text-primary/30" />
           </div>
-          <p className="text-sm text-muted-foreground">No posts yet. Be the first to share!</p>
+          <p className="text-sm font-display text-muted-foreground">No posts yet</p>
         </motion.div>
       ) : (
-        <div className="space-y-4 max-w-2xl mx-auto">
-          {posts.map((post, i) => (
-            <motion.div
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="space-y-4 max-w-2xl mx-auto"
+        >
+          {posts.map((post) => (
+            <PostCard
               key={post.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-              className="float-card group"
-            >
-              <div className="p-5">
-                <div className="flex items-start gap-3.5">
-                  {/* Avatar */}
-                  <div className="w-10 h-10 rounded-xl bg-primary/8 flex items-center justify-center text-primary font-semibold text-sm overflow-hidden shrink-0 border border-border/20">
-                    {post.profiles?.avatar_url ? (
-                      <img src={post.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <span>{(post.profiles?.name || 'U')[0].toUpperCase()}</span>
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-sm">{post.profiles?.name || 'Anonymous'}</span>
-                      <span className="text-xs text-muted-foreground">@{post.profiles?.handle}</span>
-                      <span className="text-xs text-muted-foreground/50">·</span>
-                      <span className="text-xs text-muted-foreground/50">
-                        {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-                      </span>
-                    </div>
-                    <p className="mt-2.5 text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">{post.content}</p>
-
-                    {post.image_url && (
-                      <div className="mt-3 rounded-xl overflow-hidden border border-border/10">
-                        <img src={post.image_url} alt="" className="max-h-72 object-cover w-full" />
-                      </div>
-                    )}
-
-                    {post.tags && post.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-3">
-                        {post.tags.map(tag => (
-                          <Badge key={tag} variant="secondary" className="text-[10px] rounded-md bg-primary/6 text-primary/80 border-primary/10 font-medium">
-                            #{tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-6 mt-4 pt-3 border-t border-border/10">
-                      <button
-                        onClick={() => requireAuth(() => handleLike(post.id), 'Sign in to like!')}
-                        className={`flex items-center gap-2 text-xs transition-all group/btn ${likedPosts.has(post.id) ? 'text-destructive' : 'text-muted-foreground hover:text-destructive'}`}
-                      >
-                        <Heart className={`w-4 h-4 transition-all ${likedPosts.has(post.id) ? 'fill-current scale-110' : 'group-hover/btn:scale-110'}`} />
-                        <span className="text-[11px] font-medium tabular-nums">{post.likes_count}</span>
-                      </button>
-                      <button
-                        onClick={() => requireAuth(() => {}, 'Sign in to comment!')}
-                        className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-all"
-                      >
-                        <MessageCircle className="w-4 h-4" />
-                        <span className="text-[11px] font-medium tabular-nums">{post.comments_count}</span>
-                      </button>
-                      <button className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-all">
-                        <Share2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+              post={post}
+              liked={likedPosts.has(post.id)}
+              onLike={handleLike}
+              onRequireAuth={requireAuth}
+            />
           ))}
-        </div>
+        </motion.div>
+      )}
+
+      {/* FAB */}
+      {user && (
+        <motion.button
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.5, type: 'spring' }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setCreateOpen(true)}
+          className="fixed bottom-24 md:bottom-8 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg z-40 pulse-glow"
+        >
+          <Plus className="w-6 h-6" />
+        </motion.button>
       )}
 
       <AuthPromptDialog open={showAuthPrompt} onOpenChange={setShowAuthPrompt} message={authMessage} />
