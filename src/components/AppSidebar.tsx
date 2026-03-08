@@ -1,6 +1,6 @@
 import {
   Home, Compass, GraduationCap, CalendarDays, Clock, Calculator,
-  BookOpen, Bell, User, Settings, LogOut, LogIn, Search, Radio } from
+  BookOpen, Bell, User, Settings, LogOut, LogIn, Search, ChevronRight } from
 'lucide-react';
 import infohubLogo from '@/assets/infohub-logo.png';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -38,42 +38,33 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
   const { signOut, profile, user } = useAuth();
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/30 bg-sidebar/80 backdrop-blur-xl">
-      {/* ═══ BRAND ═══ */}
+    <Sidebar collapsible="icon" className="border-r border-border/20 bg-sidebar/90 backdrop-blur-xl">
+      {/* Brand */}
       <div className="p-4 flex items-center gap-3">
-        <motion.div
-          whileHover={{ scale: 1.15, rotateY: 15 }}
-          transition={{ type: 'spring', stiffness: 400 }}
-          className="relative"
-          style={{ transformStyle: 'preserve-3d' }}>
-          <img src={infohubLogo} alt="InfoHub" className="w-9 h-9 shrink-0 relative z-10" />
-          <div className="absolute inset-0 rounded-full bg-primary/30 blur-lg -z-0 animate-glow-pulse" />
-          <div className="absolute inset-[-4px] energy-ring" />
-        </motion.div>
+        <img src={infohubLogo} alt="InfoHub" className="w-8 h-8 shrink-0 rounded-lg" />
         {!collapsed && (
-          <motion.div
-            initial={{ opacity: 0, x: -10, rotateY: -20 }}
-            animate={{ opacity: 1, x: 0, rotateY: 0 }}
-            transition={{ type: 'spring', stiffness: 300 }}
-            style={{ perspective: '600px' }}>
-            <span className="font-display font-bold text-base gradient-text-aurora tracking-widest text-3d">INFOHUB</span>
-          </motion.div>
+          <motion.span
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="font-semibold text-base tracking-tight"
+            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+          >
+            InfoHub
+          </motion.span>
         )}
       </div>
 
-      {/* ═══ SEARCH ═══ */}
+      {/* Search */}
       {!collapsed && (
-        <div className="px-3 mb-4">
-          <motion.button
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.97, y: 1 }}
+        <div className="px-3 mb-3">
+          <button
             onClick={onOpenCommand}
-            className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs text-muted-foreground bg-muted/20 hover:bg-muted/30 transition-all border border-border/30 hover:border-primary/20 group btn-3d"
-            style={{ boxShadow: '0 3px 0 hsl(var(--border) / 0.3), 0 4px 10px hsl(0 0% 0% / 0.2)' }}>
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground bg-muted/30 hover:bg-muted/50 transition-all border border-border/20 group"
+          >
             <Search className="w-3.5 h-3.5 group-hover:text-primary transition-colors" />
-            <span className="flex-1 text-left text-[11px] opacity-60">Search...</span>
-            <kbd className="text-[9px] bg-background/40 px-1.5 py-0.5 rounded border border-border/30 font-mono">⌘K</kbd>
-          </motion.button>
+            <span className="flex-1 text-left text-[11px] opacity-50">Search...</span>
+            <kbd className="text-[9px] bg-background/60 px-1.5 py-0.5 rounded border border-border/30 font-mono">⌘K</kbd>
+          </button>
         </div>
       )}
 
@@ -88,94 +79,42 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
 
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <motion.div
-                      initial={{ opacity: 0, x: -20, rotateY: -10 }}
-                      animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                      transition={{ delay: index * 0.04, duration: 0.4, type: 'spring', stiffness: 300 }}
-                      className="relative"
-                      whileHover={{ x: 4, rotateY: 3 }}
-                      style={{ perspective: '600px', transformStyle: 'preserve-3d' }}>
-                      
-                      <SidebarMenuButton asChild>
-                        <RouterNavLink
-                          to={item.url}
-                          end={item.url === '/'}
-                          className={() => cn(
-                            'relative flex items-center gap-3.5 rounded-xl px-3.5 py-3 text-sm transition-all duration-300 group overflow-hidden',
-                            isActive
-                              ? 'text-primary font-semibold'
-                              : 'text-muted-foreground hover:text-foreground'
-                          )}>
-                          
-                          {/* Active glow bg */}
-                          {isActive && (
-                            <motion.div
-                              layoutId="sidebar-active"
-                              className="absolute inset-0 rounded-xl"
-                              style={{
-                                background: 'linear-gradient(135deg, hsl(var(--neon-cyan) / 0.15), hsl(var(--neon-purple) / 0.08))',
-                                boxShadow: 'inset 0 0 25px hsl(var(--neon-cyan) / 0.08), 0 4px 0 hsl(var(--primary) / 0.15)'
-                              }}
-                              transition={{ type: 'spring', stiffness: 400, damping: 30 }} />
-                          )}
-
-                          {/* Hover glow bg */}
-                          {!isActive && (
-                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                          )}
-
-                          {/* Icon */}
+                    <SidebarMenuButton asChild>
+                      <RouterNavLink
+                        to={item.url}
+                        end={item.url === '/'}
+                        className={() => cn(
+                          'relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 group',
+                          isActive
+                            ? 'bg-primary/8 text-primary font-medium'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
+                        )}
+                      >
+                        {/* Active indicator */}
+                        {isActive && (
                           <motion.div
-                            whileHover={{ scale: 1.15, rotateZ: 5 }}
-                            whileTap={{ scale: 0.9 }}
-                            className={cn(
-                              'relative z-10 w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300',
-                              isActive
-                                ? 'bg-primary text-primary-foreground shadow-[0_0_20px_hsl(var(--neon-cyan)/0.5)]'
-                                : 'bg-muted/30 group-hover:bg-primary/15 group-hover:text-primary group-hover:shadow-[0_0_15px_hsl(var(--neon-cyan)/0.2)]'
-                            )}>
-                            <item.icon className="h-4.5 w-4.5" />
-                          </motion.div>
+                            layoutId="sidebar-indicator"
+                            className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-primary"
+                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                          />
+                        )}
 
-                          {!collapsed && (
-                            <span className={cn(
-                              'relative z-10 font-medium text-[13px] tracking-wide',
-                              isActive ? 'nav-text-3d-active' : 'nav-text-3d'
-                            )}>
-                              {item.title}
-                            </span>
-                          )}
+                        <item.icon className={cn(
+                          'h-[18px] w-[18px] transition-colors duration-200 shrink-0',
+                          isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+                        )} />
 
-                          {item.title === 'Alerts' && !collapsed && (
-                            <motion.div
-                              animate={{ scale: [1, 1.15, 1] }}
-                              transition={{ duration: 2, repeat: Infinity }}
-                              className="ml-auto relative z-10">
-                              <Badge className="text-[9px] h-5 px-1.5 bg-destructive text-destructive-foreground border-none shadow-[0_0_12px_hsl(var(--destructive)/0.5)]">
-                                3
-                              </Badge>
-                            </motion.div>
-                          )}
+                        {!collapsed && (
+                          <span className="text-[13px]">{item.title}</span>
+                        )}
 
-                          {/* Hover shimmer */}
-                          <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                            style={{
-                              background: 'linear-gradient(105deg, transparent 40%, hsl(var(--neon-cyan) / 0.06) 45%, hsl(var(--neon-cyan) / 0.12) 50%, hsl(var(--neon-cyan) / 0.06) 55%, transparent 60%)',
-                              backgroundSize: '200% 100%',
-                              animation: 'shimmer-slide 2s ease-in-out infinite'
-                            }} />
-                        </RouterNavLink>
-                      </SidebarMenuButton>
-
-                      {/* Active neon line */}
-                      {isActive && (
-                        <motion.div
-                          layoutId="sidebar-neon-edge"
-                          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 rounded-r-full bg-primary"
-                          style={{ boxShadow: '0 0 15px hsl(var(--neon-cyan) / 0.8), 3px 0 10px hsl(var(--neon-cyan) / 0.4)' }}
-                          transition={{ type: 'spring', stiffness: 400, damping: 30 }} />
-                      )}
-                    </motion.div>
+                        {item.title === 'Alerts' && !collapsed && (
+                          <Badge className="ml-auto text-[9px] h-5 px-1.5 bg-destructive/90 text-destructive-foreground border-none">
+                            3
+                          </Badge>
+                        )}
+                      </RouterNavLink>
+                    </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
               })}
@@ -186,28 +125,26 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
 
       <SidebarFooter className="p-3 space-y-2">
         {user && !collapsed && profile && (
-          <motion.div
-            whileHover={{ scale: 1.02, rotateY: 2 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex items-center gap-3 p-3 rounded-lg holo-card cursor-pointer"
+          <button
             onClick={() => navigate('/profile')}
-            style={{ perspective: '600px', transformStyle: 'preserve-3d' }}>
+            className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-muted/30 transition-colors w-full text-left group"
+          >
             {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt={profile.name || ''} className="w-9 h-9 rounded-md object-cover ring-1 ring-primary/30" />
+              <img src={profile.avatar_url} alt={profile.name || ''} className="w-8 h-8 rounded-lg object-cover" />
             ) : (
-              <div className="w-9 h-9 rounded-md bg-primary/15 flex items-center justify-center text-primary text-sm font-bold ring-1 ring-primary/30">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-sm font-semibold">
                 {(profile.name || 'U')[0].toUpperCase()}
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">{profile.name || 'User'}</p>
-              <p className="text-[9px] text-muted-foreground truncate font-mono">{profile.branch} · {profile.section}</p>
+              <p className="text-sm font-medium truncate">{profile.name || 'User'}</p>
+              <p className="text-[10px] text-muted-foreground truncate">{profile.branch} · {profile.section}</p>
             </div>
-            <Radio className="w-3 h-3 text-primary/40" />
-          </motion.div>
+            <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
+          </button>
         )}
 
-        <div className="cyber-line my-2" />
+        <div className="divider-gradient" />
 
         <SidebarMenu>
           {user && (
@@ -216,13 +153,12 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                 <RouterNavLink
                   to="/settings"
                   className={({ isActive }) => cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-300',
-                    isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted/20'
-                  )}>
-                  <div className="w-8 h-8 rounded-md bg-muted/30 flex items-center justify-center">
-                    <Settings className="h-4 w-4" />
-                  </div>
-                  {!collapsed && <span className="nav-text-3d">Settings</span>}
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200',
+                    isActive ? 'bg-primary/8 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
+                  )}
+                >
+                  <Settings className="h-[18px] w-[18px]" />
+                  {!collapsed && <span className="text-[13px]">Settings</span>}
                 </RouterNavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -231,20 +167,18 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
             {user ? (
               <SidebarMenuButton
                 onClick={signOut}
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-destructive/70 hover:text-destructive hover:bg-destructive/5 transition-all cursor-pointer">
-                <div className="w-8 h-8 rounded-md bg-destructive/10 flex items-center justify-center">
-                  <LogOut className="h-4 w-4" />
-                </div>
-                {!collapsed && <span>Sign Out</span>}
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-destructive/70 hover:text-destructive hover:bg-destructive/5 transition-all cursor-pointer"
+              >
+                <LogOut className="h-[18px] w-[18px]" />
+                {!collapsed && <span className="text-[13px]">Sign Out</span>}
               </SidebarMenuButton>
             ) : (
               <SidebarMenuButton
                 onClick={() => navigate('/auth')}
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-primary/5 transition-all cursor-pointer">
-                <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
-                  <LogIn className="h-4 w-4" />
-                </div>
-                {!collapsed && <span>Login</span>}
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-primary hover:bg-primary/5 transition-all cursor-pointer"
+              >
+                <LogIn className="h-[18px] w-[18px]" />
+                {!collapsed && <span className="text-[13px]">Sign In</span>}
               </SidebarMenuButton>
             )}
           </SidebarMenuItem>
