@@ -1,4 +1,4 @@
-import { BookOpen, Upload, Search, Loader2 } from 'lucide-react';
+import { BookOpen, Upload, Search, Download } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -14,60 +14,74 @@ const mockResources = [
 
 const Resources = () => {
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-4">
-      <h1 className="text-2xl font-mono font-bold text-primary flex items-center gap-2">
-        <BookOpen className="w-6 h-6" /> Resources
-      </h1>
+    <div className="page-container">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+        <div className="flex items-center gap-2 mb-1">
+          <BookOpen className="w-4 h-4 text-primary" />
+          <span className="section-title mb-0">Library</span>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-mono font-bold">
+          Study <span className="gradient-text">Resources</span>
+        </h1>
+      </motion.div>
 
       <Tabs defaultValue="drive">
-        <TabsList>
-          <TabsTrigger value="drive">MNNIT Drive</TabsTrigger>
-          <TabsTrigger value="search">Web Search</TabsTrigger>
+        <TabsList className="rounded-xl bg-muted/30 p-1">
+          <TabsTrigger value="drive" className="rounded-lg">MNNIT Drive</TabsTrigger>
+          <TabsTrigger value="search" className="rounded-lg">Web Search</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="drive" className="space-y-4">
+        <TabsContent value="drive" className="space-y-4 mt-4">
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Search resources..." className="pl-10" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input placeholder="Search resources..." className="pl-11 h-11 rounded-xl bg-muted/30 border-border/50" />
             </div>
-            <Button variant="outline" className="gap-1"><Upload className="w-4 h-4" /> Upload</Button>
+            <Button variant="outline" className="gap-1.5 rounded-xl border-border/50"><Upload className="w-4 h-4" /> Upload</Button>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             {mockResources.map((r, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="glass rounded-lg p-4 flex items-center justify-between hover:border-primary/30 transition-all"
+                whileHover={{ y: -2 }}
+                className="card-3d p-5 flex items-center justify-between"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary text-xs font-mono font-bold">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-xs font-mono font-bold">
                     {r.type}
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{r.title}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="secondary" className="text-[10px]">{r.branch}</Badge>
-                      <Badge variant="outline" className="text-[10px]">{r.semester} Sem</Badge>
+                    <p className="text-sm font-semibold">{r.title}</p>
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                      <Badge variant="secondary" className="text-[10px] rounded-lg bg-secondary/10 text-secondary border-secondary/20">{r.branch}</Badge>
+                      <Badge variant="outline" className="text-[10px] rounded-lg">{r.semester} Sem</Badge>
                       <span className="text-[10px] text-muted-foreground">by {r.uploader} · {r.size}</span>
                     </div>
                   </div>
                 </div>
-                <Button variant="ghost" size="sm">Download</Button>
+                <Button variant="ghost" size="sm" className="rounded-xl gap-1.5 text-primary">
+                  <Download className="w-3.5 h-3.5" /> Get
+                </Button>
               </motion.div>
             ))}
           </div>
         </TabsContent>
 
-        <TabsContent value="search" className="space-y-4">
+        <TabsContent value="search" className="mt-4 space-y-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Search for academic resources online..." className="pl-10" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input placeholder="Search for academic resources online..." className="pl-11 h-11 rounded-xl bg-muted/30 border-border/50" />
           </div>
-          <p className="text-sm text-muted-foreground text-center py-8">AI-powered resource search coming soon.</p>
+          <div className="text-center py-16">
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <Search className="w-7 h-7 text-primary" />
+            </div>
+            <p className="text-sm text-muted-foreground">AI-powered resource search coming soon.</p>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
