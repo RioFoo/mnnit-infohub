@@ -16,23 +16,28 @@ import infohubIcon from '@/assets/infohub-icon.png';
 
 const BrandLogo = ({ collapsed }: { collapsed: boolean }) => {
   return (
-    <div className="p-4 flex items-center gap-3">
+    <div className="p-4 flex items-center gap-3.5">
       <motion.div
-        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 brand-logo-3d"
-        whileHover={{ rotateY: 20, rotateX: -10, scale: 1.1 }}
+        className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 brand-logo-3d"
+        whileHover={{ rotateY: 20, rotateX: -10, scale: 1.12 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         style={{ transformStyle: 'preserve-3d', perspective: 600 }}
       >
         <img src={infohubIcon} alt="InfoHub" className="w-9 h-9 object-contain brand-icon-3d" />
       </motion.div>
       {!collapsed && (
-        <motion.span
+        <motion.div
           initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: 1, x: 0 }}
-          className="font-display font-bold text-base tracking-tight brand-text-3d block"
+          className="flex flex-col"
         >
-          INFOHUB
-        </motion.span>
+          <span className="font-display font-bold text-lg tracking-tight brand-text-3d leading-tight">
+            INFOHUB
+          </span>
+          <span className="text-[9px] font-mono text-muted-foreground/40 tracking-widest uppercase">
+            Campus Hub
+          </span>
+        </motion.div>
       )}
     </div>
   );
