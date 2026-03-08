@@ -309,200 +309,796 @@ export const CLUBS_AND_SOCIETIES = [
 
 export const TIMETABLE_DATA: Record<string, SectionData> = {
 
-  // ── CSE SECTION A ──
+  // ══════════════════════════════════════════
+  // CSE — Computer Science & Engineering
+  // Section A (Batches A1, A2)
+  // ══════════════════════════════════════════
   "CSE-A": {
-    id: "CSE-A", name: "CSE - Section A",
+    id: "CSE-A", name: "CSE — Section A",
     schedule: [
       { day: "Monday", sessions: [
-        { startTime: "09:00", endTime: "11:00", subject: "Prof. Comm Lab (HSN12600)", room: "Lang Lab", type: "LAB", batch: '1' },
-        { startTime: "09:00", endTime: "11:00", subject: "Chem Lab (CYN12501)", room: "Chem Lab", type: "LAB", batch: '2' },
-        { startTime: "14:00", endTime: "15:00", subject: "Chem Tut (CYN12501)", room: "NLH-2", type: "TUTORIAL", batch: 'ALL', combinedInfo: "(A+B)" },
+        { startTime: "09:00", endTime: "11:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '1' },
+        { startTime: "09:00", endTime: "11:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '2' },
+        { startTime: "13:00", endTime: "14:00", subject: "Engineering Chemistry Tutorial", room: "NLH-2", type: "TUTORIAL", batch: 'ALL', combinedInfo: "(A+B)" },
       ]},
       { day: "Tuesday", sessions: [
-        { startTime: "09:00", endTime: "10:00", subject: "Maths-II (MAN12104)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-        { startTime: "10:00", endTime: "11:00", subject: "Chemistry (CYN12501)", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(A+B)" },
-        { startTime: "14:00", endTime: "15:00", subject: "Data Struct (CSN12101)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-        { startTime: "16:00", endTime: "17:00", subject: "Env Sci (IDN12600)", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(A+B)" },
+        { startTime: "14:00", endTime: "15:00", subject: "Data Structures", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
       ]},
       { day: "Wednesday", sessions: [
-        { startTime: "09:00", endTime: "10:00", subject: "Maths-II (MAN12104)", room: "GS-7", type: "LECTURE", batch: 'ALL' },
-        { startTime: "10:00", endTime: "11:00", subject: "Prof. Comm (HSN12600)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-        { startTime: "11:00", endTime: "13:00", subject: "Data Struct Lab (CSN12101)", room: "CCTF", type: "LAB", batch: '1' },
-        { startTime: "14:00", endTime: "15:00", subject: "Prog. Paradigms (CSN12102)", room: "GS-5", type: "LECTURE", batch: 'ALL' },
-        { startTime: "15:00", endTime: "16:00", subject: "Maths-II Tut (MAN12104)", room: "SEW-9", type: "TUTORIAL", batch: '2' },
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-7", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Professional Communication", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Programming Paradigms", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "SEW-9", type: "TUTORIAL", batch: '2' },
+        { startTime: "15:00", endTime: "17:00", subject: "Data Structures Lab", room: "CCTF", type: "LAB", batch: '1' },
       ]},
       { day: "Thursday", sessions: [
-        { startTime: "10:00", endTime: "11:00", subject: "Data Struct (CSN12101)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-        { startTime: "12:00", endTime: "13:00", subject: "Prof. Comm (HSN12600)", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
-        { startTime: "14:00", endTime: "16:00", subject: "Data Struct Lab (CSN12101)", room: "CCTF", type: "LAB", batch: '2' },
-        { startTime: "16:00", endTime: "18:00", subject: "Chem Lab (CYN12501)", room: "Chem Lab", type: "LAB", batch: '1' },
+        { startTime: "10:00", endTime: "11:00", subject: "Data Structures", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Data Structures Lab", room: "CCTF", type: "LAB", batch: '2' },
+        { startTime: "15:00", endTime: "16:00", subject: "Professional Communication", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "18:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
       ]},
       { day: "Friday", sessions: [
-        { startTime: "10:00", endTime: "11:00", subject: "Chemistry (CYN12501)", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(A+B)" },
-        { startTime: "11:00", endTime: "12:00", subject: "Prog. Paradigms (CSN12102)", room: "GS-5", type: "LECTURE", batch: 'ALL' },
-        { startTime: "12:00", endTime: "13:00", subject: "Maths-II (MAN12104)", room: "GS-5", type: "LECTURE", batch: 'ALL' },
-        { startTime: "14:00", endTime: "16:00", subject: "Prof. Comm Lab (HSN12600)", room: "Lang Lab", type: "LAB", batch: '2' },
-        { startTime: "16:00", endTime: "17:00", subject: "Maths-II Tut (MAN12104)", room: "FE-18", type: "TUTORIAL", batch: '1' },
-        { startTime: "17:00", endTime: "18:00", subject: "Env Sci (IDN12600)", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(A+B)" },
+        { startTime: "11:00", endTime: "12:00", subject: "Programming Paradigms", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "16:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '2' },
+        { startTime: "15:00", endTime: "16:00", subject: "Mathematics-II Tutorial", room: "FE-18", type: "TUTORIAL", batch: '1' },
+        { startTime: "17:00", endTime: "18:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
       ]},
     ]
   },
 
-  // ── CSE SECTION B ──
+  // ══════════════════════════════════════════
+  // CSE — Section B (Batches B1, B2)
+  // ══════════════════════════════════════════
   "CSE-B": {
-    id: "CSE-B", name: "CSE - Section B",
+    id: "CSE-B", name: "CSE — Section B",
     schedule: [
       { day: "Monday", sessions: [
-        { startTime: "09:00", endTime: "10:00", subject: "Prof. Comm (HSN12600)", room: "GS-4", type: "LECTURE", batch: 'ALL' },
-        { startTime: "10:00", endTime: "11:00", subject: "Maths-II (MAN12104)", room: "GS-4", type: "LECTURE", batch: 'ALL' },
-        { startTime: "14:00", endTime: "15:00", subject: "Chem Tut (CYN12501)", room: "NLH-2", type: "TUTORIAL", batch: 'ALL', combinedInfo: "(A+B)" },
-        { startTime: "15:00", endTime: "17:00", subject: "Prof. Comm Lab (HSN12600)", room: "Lang Lab", type: "LAB", batch: '1' },
+        { startTime: "09:00", endTime: "10:00", subject: "Professional Communication", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Mathematics-II", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "13:00", endTime: "14:00", subject: "Engineering Chemistry Tutorial", room: "NLH-2", type: "TUTORIAL", batch: 'ALL', combinedInfo: "(A+B)" },
+        { startTime: "15:00", endTime: "17:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '1' },
       ]},
       { day: "Tuesday", sessions: [
-        { startTime: "10:00", endTime: "11:00", subject: "Chemistry (CYN12501)", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(A+B)" },
-        { startTime: "11:00", endTime: "13:00", subject: "Chem Lab (CYN12501)", room: "Chem Lab", type: "LAB", batch: '2' },
-        { startTime: "11:00", endTime: "13:00", subject: "Data Struct Lab (CSN12101)", room: "CCTF", type: "LAB", batch: '1' },
-        { startTime: "16:00", endTime: "17:00", subject: "Prog. Paradigms (CSN12102)", room: "GS-7", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(A+B)" },
+        { startTime: "11:00", endTime: "13:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '2' },
+        { startTime: "11:00", endTime: "13:00", subject: "Data Structures Lab", room: "CCTF", type: "LAB", batch: '1' },
+        { startTime: "17:00", endTime: "18:00", subject: "Programming Paradigms", room: "GS-7", type: "LECTURE", batch: 'ALL' },
       ]},
       { day: "Wednesday", sessions: [
-        { startTime: "09:00", endTime: "10:00", subject: "Maths-II Tut (MAN12104)", room: "SEW-9", type: "TUTORIAL", batch: '2' },
-        { startTime: "11:00", endTime: "13:00", subject: "Chem Lab (CYN12501)", room: "Chem Lab", type: "LAB", batch: '1' },
-        { startTime: "11:00", endTime: "13:00", subject: "Prof. Comm Lab (HSN12600)", room: "Lang Lab", type: "LAB", batch: '2' },
-        { startTime: "16:00", endTime: "17:00", subject: "Maths-II (MAN12104)", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II Tutorial", room: "SEW-9", type: "TUTORIAL", batch: '2' },
+        { startTime: "10:00", endTime: "11:00", subject: "Programming Paradigms", room: "GS-7", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
+        { startTime: "11:00", endTime: "13:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '2' },
+        { startTime: "16:00", endTime: "17:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
       ]},
       { day: "Thursday", sessions: [
-        { startTime: "11:00", endTime: "12:00", subject: "Data Struct (CSN12101)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-        { startTime: "12:00", endTime: "13:00", subject: "Env Sci (IDN12600)", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
-        { startTime: "14:00", endTime: "16:00", subject: "Data Struct Lab (CSN12101)", room: "CCTF", type: "LAB", batch: '2' },
+        { startTime: "11:00", endTime: "12:00", subject: "Data Structures", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "16:00", subject: "Data Structures Lab", room: "CCTF", type: "LAB", batch: '2' },
       ]},
       { day: "Friday", sessions: [
-        { startTime: "09:00", endTime: "10:00", subject: "Maths-II (MAN12104)", room: "GS-3", type: "LECTURE", batch: 'ALL' },
-        { startTime: "10:00", endTime: "11:00", subject: "Chemistry (CYN12501)", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(A+B)" },
-        { startTime: "11:00", endTime: "12:00", subject: "Data Struct (CSN12101)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-        { startTime: "12:00", endTime: "13:00", subject: "Prof. Comm (HSN12600)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-        { startTime: "14:00", endTime: "15:00", subject: "Maths-II Tut (MAN12104)", room: "SEW-1", type: "TUTORIAL", batch: '1' },
-        { startTime: "17:00", endTime: "18:00", subject: "Env Sci (IDN12600)", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-3", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(A+B)" },
+        { startTime: "11:00", endTime: "12:00", subject: "Data Structures", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Professional Communication", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "13:00", endTime: "14:00", subject: "Mathematics-II Tutorial", room: "SEW-1", type: "TUTORIAL", batch: '1' },
+        { startTime: "17:00", endTime: "18:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
       ]},
     ]
   },
 
-  // ── CSE SECTION C ──
+  // ══════════════════════════════════════════
+  // CSE — Section C (Batches C1, C2)
+  // ══════════════════════════════════════════
   "CSE-C": {
-    id: "CSE-C", name: "CSE - Section C",
+    id: "CSE-C", name: "CSE — Section C",
     schedule: [
       { day: "Monday", sessions: [
-        { startTime: "09:00", endTime: "11:00", subject: "Data Struct Lab (CSN12101)", room: "CCTF", type: "LAB", batch: '1' },
-        { startTime: "14:00", endTime: "15:00", subject: "Maths-II (MAN12104)", room: "GS-5", type: "LECTURE", batch: 'ALL' },
-        { startTime: "15:00", endTime: "16:00", subject: "Chem Tut (CYN12501)", room: "NLH-2", type: "TUTORIAL", batch: 'ALL', combinedInfo: "(C+D)" },
-        { startTime: "16:00", endTime: "17:00", subject: "Prog. Paradigms (CSN12102)", room: "GS-7", type: "LECTURE", batch: 'ALL' },
+        { startTime: "09:00", endTime: "11:00", subject: "Data Structures Lab", room: "CCTF", type: "LAB", batch: '1' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Engineering Chemistry Tutorial", room: "NLH-2", type: "TUTORIAL", batch: 'ALL', combinedInfo: "(C+D)" },
+        { startTime: "16:00", endTime: "17:00", subject: "Programming Paradigms", room: "GS-7", type: "LECTURE", batch: 'ALL' },
       ]},
       { day: "Tuesday", sessions: [
-        { startTime: "09:00", endTime: "11:00", subject: "Chem Lab (CYN12501)", room: "Chem Lab", type: "LAB", batch: '1' },
-        { startTime: "09:00", endTime: "11:00", subject: "Prof. Comm Lab (HSN12600)", room: "Lang Lab", type: "LAB", batch: '2' },
-        { startTime: "11:00", endTime: "12:00", subject: "Chemistry (CYN12501)", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(C+D)" },
-        { startTime: "12:00", endTime: "13:00", subject: "Prof. Comm (HSN12600)", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "09:00", endTime: "11:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
+        { startTime: "09:00", endTime: "11:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '2' },
+        { startTime: "11:00", endTime: "12:00", subject: "Programming Paradigms", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(C+D)" },
+        { startTime: "14:00", endTime: "15:00", subject: "Professional Communication", room: "GS-5", type: "LECTURE", batch: 'ALL' },
       ]},
       { day: "Wednesday", sessions: [
-        { startTime: "08:00", endTime: "10:00", subject: "Prof. Comm Lab (HSN12600)", room: "Lang Lab", type: "LAB", batch: '1' },
-        { startTime: "10:00", endTime: "11:00", subject: "Maths-II (MAN12104)", room: "GS-4", type: "LECTURE", batch: 'ALL' },
-        { startTime: "11:00", endTime: "13:00", subject: "Chem Lab (CYN12501)", room: "Chem Lab", type: "LAB", batch: '2' },
-        { startTime: "14:00", endTime: "15:00", subject: "Data Struct (CSN12101)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-      ]},
-    ]
-  },
-
-  // ── CSE SECTION D ──
-  "CSE-D": {
-    id: "CSE-D", name: "CSE - Section D",
-    schedule: [
-      { day: "Monday", sessions: [
-        { startTime: "15:00", endTime: "16:00", subject: "Chem Tut (CYN12501)", room: "NLH-2", type: "TUTORIAL", batch: 'ALL', combinedInfo: "(C+D)" },
-        { startTime: "16:00", endTime: "17:00", subject: "Data Struct (CSN12101)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-      ]},
-      { day: "Tuesday", sessions: [
-        { startTime: "08:00", endTime: "10:00", subject: "Data Struct Lab (CSN12101)", room: "CCTF", type: "LAB", batch: '2' },
-        { startTime: "10:00", endTime: "11:00", subject: "Prog. Paradigms (CSN12102)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-        { startTime: "11:00", endTime: "12:00", subject: "Maths-II (MAN12104)", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
-        { startTime: "11:00", endTime: "12:00", subject: "Chemistry (CYN12501)", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(C+D)" },
-        { startTime: "16:00", endTime: "17:00", subject: "Env Sci (IDN12600)", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
-      ]},
-      { day: "Wednesday", sessions: [
-        { startTime: "08:00", endTime: "10:00", subject: "Data Struct Lab (CSN12101)", room: "CCTF", type: "LAB", batch: '1' },
-        { startTime: "10:00", endTime: "11:00", subject: "Prof. Comm (HSN12600)", room: "GS-4", type: "LECTURE", batch: 'ALL' },
-        { startTime: "14:00", endTime: "15:00", subject: "Maths-II (MAN12104)", room: "GS-3", type: "LECTURE", batch: 'ALL' },
-        { startTime: "15:00", endTime: "16:00", subject: "Data Struct (CSN12101)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-        { startTime: "16:00", endTime: "17:00", subject: "Prof. Comm (HSN12600)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "09:00", endTime: "11:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '1' },
+        { startTime: "11:00", endTime: "12:00", subject: "Mathematics-II", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Professional Communication", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Data Structures", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "SEW-10", type: "TUTORIAL", batch: '1' },
+        { startTime: "15:00", endTime: "17:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '2' },
       ]},
       { day: "Thursday", sessions: [
-        { startTime: "08:00", endTime: "10:00", subject: "Chem Lab (CYN12501)", room: "Chem Lab", type: "LAB", batch: '1' },
-        { startTime: "08:00", endTime: "10:00", subject: "Prof. Comm Lab (HSN12600)", room: "Lang Lab", type: "LAB", batch: '2' },
-        { startTime: "11:00", endTime: "12:00", subject: "Chemistry (CYN12501)", room: "NLH-1", type: "LECTURE", batch: 'ALL', combinedInfo: "(C+D)" },
-        { startTime: "14:00", endTime: "15:00", subject: "Maths-II (MAN12104)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-        { startTime: "15:00", endTime: "16:00", subject: "Prog. Paradigms (CSN12102)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Mathematics-II Tutorial", room: "SEW-10", type: "TUTORIAL", batch: '1' },
+        { startTime: "11:00", endTime: "12:00", subject: "Engineering Chemistry", room: "NLH-1", type: "LECTURE", batch: 'ALL', combinedInfo: "(C+D)" },
+        { startTime: "11:00", endTime: "13:00", subject: "Data Structures Lab", room: "CCSF", type: "LAB", batch: '2' },
+        { startTime: "12:00", endTime: "13:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
       ]},
       { day: "Friday", sessions: [
-        { startTime: "09:00", endTime: "10:00", subject: "Maths-II Tut (MAN12104)", room: "LH-2", type: "TUTORIAL", batch: '1' },
-        { startTime: "10:00", endTime: "12:00", subject: "Chem Lab (CYN12501)", room: "Chem Lab", type: "LAB", batch: '2' },
-        { startTime: "10:00", endTime: "12:00", subject: "Prof. Comm Lab (HSN12600)", room: "Lang Lab", type: "LAB", batch: '1' },
-        { startTime: "15:00", endTime: "16:00", subject: "Prof. Comm (HSN12600)", room: "GS-8", type: "LECTURE", batch: 'ALL' },
-        { startTime: "16:00", endTime: "17:00", subject: "Env Sci (IDN12600)", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II Tutorial", room: "LH-2", type: "TUTORIAL", batch: '2' },
+        { startTime: "10:00", endTime: "11:00", subject: "Data Structures", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Mathematics-II", room: "GS-3", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Programming Paradigms", room: "GS-8", type: "LECTURE", batch: 'ALL' },
       ]},
     ]
   },
 
-  // ── ECE SECTION E ──
-  "ECE-E": {
-    id: "ECE-E", name: "ECE - Section E",
+  // ══════════════════════════════════════════
+  // CSE — Section D (Batches D1, D2)
+  // ══════════════════════════════════════════
+  "CSE-D": {
+    id: "CSE-D", name: "CSE — Section D",
     schedule: [
       { day: "Monday", sessions: [
-        { startTime: "09:00", endTime: "10:00", subject: "Comm. Engg (ECN12101)", room: "FN-1", type: "LECTURE", batch: 'ALL' },
-        { startTime: "14:00", endTime: "15:00", subject: "Maths-II (MAN12105)", room: "GS-4", type: "LECTURE", batch: 'ALL' },
-        { startTime: "15:00", endTime: "16:00", subject: "Prof. Comm (HSN12600)", room: "GS-4", type: "LECTURE", batch: 'ALL' },
-        { startTime: "16:00", endTime: "18:00", subject: "Chem Lab (CYN12501)", room: "Chem Lab", type: "LAB", batch: '2' },
+        { startTime: "15:00", endTime: "16:00", subject: "Engineering Chemistry Tutorial", room: "NLH-2", type: "TUTORIAL", batch: 'ALL', combinedInfo: "(C+D)" },
+        { startTime: "16:00", endTime: "17:00", subject: "Data Structures", room: "GS-8", type: "LECTURE", batch: 'ALL' },
       ]},
       { day: "Tuesday", sessions: [
-        { startTime: "09:00", endTime: "10:00", subject: "Prof. Comm (HSN12600)", room: "GS-5", type: "LECTURE", batch: 'ALL' },
-        { startTime: "10:00", endTime: "11:00", subject: "Maths-II (MAN12105)", room: "GS-5", type: "LECTURE", batch: 'ALL' },
-        { startTime: "14:00", endTime: "15:00", subject: "Maths-II Tut (MAN12105)", room: "SEW-9", type: "TUTORIAL", batch: '1' },
+        { startTime: "09:00", endTime: "11:00", subject: "Data Structures Lab", room: "CCTF", type: "LAB", batch: '2' },
+        { startTime: "11:00", endTime: "12:00", subject: "Mathematics-II", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(C+D)" },
+        { startTime: "17:00", endTime: "18:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
       ]},
       { day: "Wednesday", sessions: [
-        { startTime: "09:00", endTime: "10:00", subject: "Comm. Engg (ECN12101)", room: "GS-4", type: "LECTURE", batch: 'ALL' },
-        { startTime: "10:00", endTime: "11:00", subject: "Chemistry (CYN12501)", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
-        { startTime: "11:00", endTime: "12:00", subject: "CAD for Elec Lab (ECN12102)", room: "Lab", type: "LAB", batch: '2' },
-        { startTime: "14:00", endTime: "15:00", subject: "Env Sci (IDN12600)", room: "NLH-1", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
-        { startTime: "15:00", endTime: "17:00", subject: "Prof. Comm Lab (HSN12600)", room: "Lang Lab", type: "LAB", batch: '1' },
+        { startTime: "10:00", endTime: "11:00", subject: "Mathematics-II", room: "GS-3", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Data Structures Lab", room: "CCSF", type: "LAB", batch: '1' },
+        { startTime: "14:00", endTime: "15:00", subject: "Data Structures", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Professional Communication", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "SEW-1", type: "TUTORIAL", batch: '2' },
       ]},
       { day: "Thursday", sessions: [
-        { startTime: "10:00", endTime: "11:00", subject: "Chemistry (CYN12501)", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
-        { startTime: "11:00", endTime: "12:00", subject: "Prof. Comm Lab (HSN12600)", room: "Lang Lab", type: "LAB", batch: '2' },
-        { startTime: "11:00", endTime: "12:00", subject: "Comm Engg Lab (ECN12101)", room: "Lab", type: "LAB", batch: '1' },
-        { startTime: "11:00", endTime: "12:00", subject: "CAD for Elec Lab (ECN12102)", room: "Lab", type: "LAB", batch: '1' },
-        { startTime: "12:00", endTime: "13:00", subject: "Comm. Engg (ECN12101)", room: "GS-3", type: "LECTURE", batch: 'ALL' },
-        { startTime: "14:00", endTime: "15:00", subject: "Maths-II Tut (MAN12105)", room: "SEW-10", type: "TUTORIAL", batch: '2' },
+        { startTime: "09:00", endTime: "11:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
+        { startTime: "09:00", endTime: "11:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '2' },
+        { startTime: "11:00", endTime: "12:00", subject: "Engineering Chemistry", room: "NLH-1", type: "LECTURE", batch: 'ALL', combinedInfo: "(C+D)" },
+        { startTime: "16:00", endTime: "17:00", subject: "Mathematics-II", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Programming Paradigms", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II Tutorial", room: "LH-2", type: "TUTORIAL", batch: '1' },
+        { startTime: "10:00", endTime: "12:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '2' },
+        { startTime: "10:00", endTime: "12:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '1' },
+        { startTime: "15:00", endTime: "16:00", subject: "Programming Paradigms", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Professional Communication", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
       ]},
     ]
   },
 
-  // NOTE: Sections ECE-F, ME-G, ME-H, ME-Q, Civil-I, Civil-J,
-  // BioTech-K, Chem-L, Prod-M, EE-N, EngMech-O, Materials-P, GIS-Cell
-  // are defined in the original TimeTable.tsx — copy them here as needed.
+  // ══════════════════════════════════════════
+  // ECE — Electronics & Communication Engg
+  // Section E (Batches E1, E2)
+  // ══════════════════════════════════════════
+  "ECE-E": {
+    id: "ECE-E", name: "ECE — Section E",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Network & Comm. Engineering", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '2' },
+        { startTime: "14:00", endTime: "15:00", subject: "Professional Communication", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Professional Communication", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "SEW-9", type: "TUTORIAL", batch: '1' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Network & Comm. Engineering", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
+        { startTime: "11:00", endTime: "13:00", subject: "CAD for Electronics Lab", room: "Lab", type: "LAB", batch: '2' },
+        { startTime: "14:00", endTime: "15:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
+        { startTime: "15:00", endTime: "17:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '1' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Network & Comm. Engineering", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
+        { startTime: "11:00", endTime: "13:00", subject: "Network & Comm. Engg Lab", room: "Lab", type: "LAB", batch: '1' },
+        { startTime: "11:00", endTime: "13:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '2' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "SEW-10", type: "TUTORIAL", batch: '2' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
+        { startTime: "09:00", endTime: "11:00", subject: "Network & Comm. Engg Lab", room: "Lab", type: "LAB", batch: '2' },
+        { startTime: "11:00", endTime: "12:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
+        { startTime: "12:00", endTime: "13:00", subject: "Environmental Science & Climate Change", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
+        { startTime: "14:00", endTime: "15:00", subject: "CAD for Electronics", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Mathematics-II", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // ECE — Section F (Batches F1, F2)
+  // ══════════════════════════════════════════
+  "ECE-F": {
+    id: "ECE-F", name: "ECE — Section F",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "10:00", endTime: "11:00", subject: "Network & Comm. Engineering", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "17:00", subject: "CAD for Electronics Lab", room: "Lab", type: "LAB", batch: '2' },
+        { startTime: "15:00", endTime: "17:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "11:00", endTime: "13:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '1' },
+        { startTime: "11:00", endTime: "13:00", subject: "Network & Comm. Engg Lab", room: "Lab", type: "LAB", batch: '2' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "SEW-9", type: "TUTORIAL", batch: '1' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
+        { startTime: "11:00", endTime: "13:00", subject: "Network & Comm. Engg Lab", room: "Lab", type: "LAB", batch: '1' },
+        { startTime: "14:00", endTime: "15:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Network & Comm. Engineering", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
+        { startTime: "11:00", endTime: "13:00", subject: "Professional Communication Lab", room: "Lang Lab", type: "LAB", batch: '2' },
+        { startTime: "11:00", endTime: "13:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
+        { startTime: "15:00", endTime: "16:00", subject: "Professional Communication", room: "GS-3", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Mathematics-II Tutorial", room: "SEW-1", type: "TUTORIAL", batch: '1' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '2' },
+        { startTime: "09:00", endTime: "11:00", subject: "CAD for Electronics Lab", room: "Lab", type: "LAB", batch: '1' },
+        { startTime: "11:00", endTime: "12:00", subject: "Engineering Chemistry", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
+        { startTime: "12:00", endTime: "13:00", subject: "Environmental Science & Climate Change", room: "NLH-2", type: "LECTURE", batch: 'ALL', combinedInfo: "(E+F)" },
+        { startTime: "15:00", endTime: "16:00", subject: "CAD for Electronics", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Professional Communication", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // ME — Mechanical Engineering
+  // Section G (Batches G1, G2)
+  // ══════════════════════════════════════════
+  "ME-G": {
+    id: "ME-G", name: "ME — Section G",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "10:00", endTime: "12:00", subject: "Engineering Mechanics Practical", room: "Lab", type: "LAB", batch: '1' },
+        { startTime: "14:00", endTime: "15:00", subject: "Engineering Physics-II", room: "LH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "18:00", subject: "Engineering Graphics Lab", room: "SEW-8", type: "LAB", batch: '1' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "08:00", endTime: "10:00", subject: "Numerical & Statistical Techniques Practical", room: "Lab", type: "LAB", batch: '2' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Physics-II", room: "LH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Professional Ethics & Social Values", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Professional Ethics & Social Values", room: "NLH-1", type: "LECTURE", batch: 'ALL', combinedInfo: "(G+H)" },
+        { startTime: "15:00", endTime: "16:00", subject: "Engineering Physics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Engineering Physics-II", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Numerical & Statistical Techniques", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Engineering Graphics", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-3", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "12:00", subject: "Intro to AI & ML Lab", room: "CCTF", type: "LAB", batch: 'ALL' },
+        { startTime: "14:00", endTime: "16:00", subject: "Engineering Physics-II Practical", room: "Physics Lab", type: "LAB", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Mathematics-II Tutorial", room: "GW-3", type: "TUTORIAL", batch: 'ALL' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // ME — Section H (Batches H1, H2)
+  // ══════════════════════════════════════════
+  "ME-H": {
+    id: "ME-H", name: "ME — Section H",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "08:00", endTime: "10:00", subject: "Engineering Graphics Lab", room: "SEW-8", type: "LAB", batch: '2' },
+        { startTime: "11:00", endTime: "13:00", subject: "Intro to AI & ML Lab", room: "CCTF", type: "LAB", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Engineering Mechanics", room: "FEW-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Numerical & Statistical Techniques", room: "SEW-10", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Mathematics-II", room: "SEW-10", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "12:00", subject: "Engineering Mechanics Practical", room: "Lab", type: "LAB", batch: '2' },
+        { startTime: "14:00", endTime: "16:00", subject: "Engineering Innovation & Design Practical", room: "Workshop", type: "LAB", batch: 'ALL', combinedInfo: "(G+H)" },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "14:00", endTime: "15:00", subject: "Professional Ethics & Social Values", room: "NLH-1", type: "LECTURE", batch: 'ALL', combinedInfo: "(G+H)" },
+        { startTime: "16:00", endTime: "17:00", subject: "Engineering Mechanics", room: "FEW-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Mathematics-II", room: "FN-3", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Engineering Physics-II", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Numerical & Statistical Techniques", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "12:00", subject: "Engineering Mechanics Practical", room: "Lab", type: "LAB", batch: '1' },
+        { startTime: "15:00", endTime: "16:00", subject: "Engineering Physics-II Tutorial", room: "FN-1", type: "TUTORIAL", batch: '1' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "GS-5", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "15:00", endTime: "17:00", subject: "Engineering Graphics Lab", room: "SEW-8", type: "LAB", batch: '1' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // ME — Section Q (Batches Q1, Q2)
+  // ══════════════════════════════════════════
+  "ME-Q": {
+    id: "ME-Q", name: "ME — Section Q",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Physics-II", room: "LH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Intro to AI & ML", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Professional Ethics & Social Values", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "16:00", subject: "Engineering Physics-II Practical", room: "Physics Lab", type: "LAB", batch: 'ALL' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Engineering Graphics Lab", room: "SEW-8", type: "LAB", batch: '1' },
+        { startTime: "14:00", endTime: "15:00", subject: "Intro to AI & ML", room: "LH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Engineering Physics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Engineering Mechanics", room: "FEW-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "10:00", endTime: "11:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Intro to AI & ML Lab", room: "CCTF", type: "LAB", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Engineering Graphics", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Engineering Mechanics", room: "FN-4", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-3", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Engineering Physics-II Tutorial", room: "LH-2", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "14:00", endTime: "16:00", subject: "Engineering Graphics Lab", room: "SEW-8", type: "LAB", batch: '2' },
+        { startTime: "16:00", endTime: "17:00", subject: "Engineering Mechanics Practical", room: "Lab", type: "LAB", batch: '2' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // CE — Civil Engineering
+  // Section I (Batches I1, I2)
+  // ══════════════════════════════════════════
+  "CE-I": {
+    id: "CE-I", name: "CE — Section I",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-3", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Professional Ethics & Social Values", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Building Engineering-II", room: "FEW-15", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Workshop & Mfg. Process Lab", room: "SEW", type: "LAB", batch: '2' },
+        { startTime: "11:00", endTime: "13:00", subject: "Engineering Physics-I Practical", room: "Physics Lab", type: "LAB", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Professional Ethics & Social Values", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Intro to AI & ML", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Workshop & Mfg. Process", room: "FEW-15", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II", room: "FEW-15", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "FN-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Physics-I", room: "FN-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "17:00", subject: "Workshop & Mfg. Process Lab", room: "SEW", type: "LAB", batch: '1' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "10:00", endTime: "11:00", subject: "Building Engineering-II Tutorial", room: "FEW-15", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Intro to AI & ML Lab", room: "CCSF", type: "LAB", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "FEW-15", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Engineering Physics-I Tutorial", room: "FEW-15", type: "TUTORIAL", batch: 'ALL' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // CE — Section J (Batches J1, J2)
+  // ══════════════════════════════════════════
+  "CE-J": {
+    id: "CE-J", name: "CE — Section J",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "14:00", endTime: "15:00", subject: "Intro to AI & ML", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Professional Ethics & Social Values", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Workshop & Mfg. Process Lab", room: "SEW", type: "LAB", batch: '1' },
+        { startTime: "15:00", endTime: "16:00", subject: "Sustainable Urban Habitat Tutorial", room: "NLH-1", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Mathematics-II Tutorial", room: "FE-16", type: "TUTORIAL", batch: 'ALL' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "GS-6", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Workshop & Mfg. Process Lab", room: "SEW", type: "LAB", batch: '2' },
+        { startTime: "15:00", endTime: "16:00", subject: "Engineering Physics-I", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Sustainable Urban Habitat", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "10:00", endTime: "11:00", subject: "Intro to AI & ML", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Engineering Physics-I", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Building Engineering-II Tutorial", room: "LH-2", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Mathematics-II", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Professional Ethics & Social Values", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "14:00", endTime: "15:00", subject: "Engineering Physics-I Tutorial", room: "FEW-15", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Building Engineering-II", room: "FEW-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Mathematics-II", room: "FEW-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // BT — Biotechnology
+  // Section K (Batches K1, K2)
+  // ══════════════════════════════════════════
+  "BT-K": {
+    id: "BT-K", name: "BioTech — Section K",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "FEW-15", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Professional Ethics & Social Values", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Workshop & Mfg. Process Lab", room: "SEW", type: "LAB", batch: '1' },
+        { startTime: "15:00", endTime: "16:00", subject: "Mathematics-II Tutorial", room: "LH-2", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Workshop & Mfg. Process", room: "LH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Fundamentals of Biotechnology", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Intro to AI & ML Lab", room: "CCSF", type: "LAB", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Fundamentals of Biotechnology Tutorial", room: "FN-1", type: "TUTORIAL", batch: 'ALL' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Professional Ethics & Social Values", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Biosafety & Bioethics", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Engineering Physics-III", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "18:00", subject: "Engineering Physics-III Practical", room: "Physics Lab", type: "LAB", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Fundamentals of Biotechnology", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "11:00", endTime: "12:00", subject: "Intro to AI & ML", room: "GS-7", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Biosafety & Bioethics", room: "GS-7", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Engineering Physics-III", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Mathematics-II", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Intro to AI & ML", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Physics-III", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Workshop & Mfg. Process Lab", room: "SEW", type: "LAB", batch: '2' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II", room: "SEW-9", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Biosafety & Bioethics", room: "SEW-9", type: "LECTURE", batch: 'ALL' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // CH — Chemical Engineering
+  // Section L (Batches L1, L2)
+  // ══════════════════════════════════════════
+  "CH-L": {
+    id: "CH-L", name: "Chemical — Section L",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Engineering Physics-I Tutorial", room: "FN-3", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Fluid Flow Operations", room: "FN-3", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Mathematics-II", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "18:00", subject: "Engineering Physics-I Practical", room: "Physics Lab", type: "LAB", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Material Science & Engineering", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Intro to AI & ML", room: "GS-7", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Professional Ethics & Social Values", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Engineering Thermodynamics", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Material Science & Engineering", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Mathematics-II Tutorial", room: "GS-8", type: "TUTORIAL", batch: 'ALL' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Workshop & Mfg. Process Lab", room: "SEW", type: "LAB", batch: '2' },
+        { startTime: "11:00", endTime: "12:00", subject: "Engineering Physics-I", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Fluid Flow Operations", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "17:00", subject: "Intro to AI & ML Lab", room: "CCSF", type: "LAB", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Material Science & Engineering", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Engineering Thermodynamics", room: "GS-3", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Intro to AI & ML", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Fluid Flow Operations", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Workshop & Mfg. Process Lab", room: "SEW", type: "LAB", batch: '1' },
+        { startTime: "14:00", endTime: "15:00", subject: "Professional Ethics & Social Values", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Mathematics-II", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Fluid Flow Operations Practical", room: "FN-3", type: "LAB", batch: '1' },
+        { startTime: "11:00", endTime: "12:00", subject: "Mathematics-II", room: "FE-18", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Workshop & Mfg. Process", room: "SEW", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Engineering Physics-I", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "18:00", subject: "Fluid Flow Operations Practical", room: "FN-3", type: "LAB", batch: '2' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // PE — Production & Industrial Engineering
+  // Section M (Batches M1, M2)
+  // ══════════════════════════════════════════
+  "PE-M": {
+    id: "PE-M", name: "Production — Section M",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Intro to AI & ML", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Mechanics", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Workshop & Mfg. Process Lab", room: "SEW", type: "LAB", batch: '2' },
+        { startTime: "14:00", endTime: "15:00", subject: "Engineering Physics-II", room: "FN-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Engineering Innovation & Design", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Engineering Physics-II Practical", room: "Physics Lab", type: "LAB", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Numerical & Statistical Techniques", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Professional Ethics & Social Values", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "16:00", subject: "Engineering Innovation & Design Practical", room: "SEW-8", type: "LAB", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Intro to AI & ML", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Engineering Physics-II", room: "FN-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Workshop & Mfg. Process", room: "SEW", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Engineering Mechanics", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Engineering Innovation & Design", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Numerical & Statistical Techniques Practical", room: "Lab", type: "LAB", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Engineering Physics-II Tutorial", room: "FN-4", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Mathematics-II", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Professional Ethics & Social Values", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "17:00", subject: "Engineering Mechanics Practical", room: "Lab", type: "LAB", batch: '1' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Intro to AI & ML Lab", room: "CCSF", type: "LAB", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Mathematics-II Tutorial", room: "GS-5", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "14:00", endTime: "16:00", subject: "Engineering Mechanics Practical", room: "Lab", type: "LAB", batch: '2' },
+        { startTime: "16:00", endTime: "17:00", subject: "Numerical & Statistical Techniques", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // EE — Electrical Engineering
+  // Section N (Batches N1, N2)
+  // ══════════════════════════════════════════
+  "EE-N": {
+    id: "EE-N", name: "Electrical — Section N",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Network Analysis", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Chemistry", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Professional Ethics & Social Values", room: "GS-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Network Analysis", room: "FN-3", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Basic Electrical Engineering", room: "FN-4", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Network Analysis", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Intro to AI & ML Lab", room: "CCSF", type: "LAB", batch: '1' },
+        { startTime: "15:00", endTime: "17:00", subject: "Basic Electrical Engineering Practical", room: "Lab", type: "LAB", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Intro to AI & ML", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '2' },
+        { startTime: "09:00", endTime: "11:00", subject: "Electrical Workshop Lab", room: "Lab", type: "LAB", batch: '1' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Intro to AI & ML", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Engineering Chemistry Tutorial", room: "GS-4", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Basic Electrical Engineering", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Electrical Workshop", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Intro to AI & ML", room: "GS-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Engineering Chemistry Lab", room: "Chem Lab", type: "LAB", batch: '1' },
+        { startTime: "14:00", endTime: "15:00", subject: "Professional Ethics & Social Values", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "17:00", subject: "Intro to AI & ML Lab", room: "CCSF", type: "LAB", batch: '2' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Mathematics-II", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Network Analysis", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "13:00", subject: "Electrical Workshop Lab", room: "Lab", type: "LAB", batch: '2' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "SEW-1", type: "TUTORIAL", batch: '1' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // ECM — Engineering & Computational Mechanics
+  // Section O
+  // ══════════════════════════════════════════
+  "ECM-O": {
+    id: "ECM-O", name: "Eng. & Comp. Mechanics — Section O",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Intro to AI & ML", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Graphics", room: "SEW-7", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Data Structures", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Intro to AI & ML", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Engineering Graphics", room: "SEW-7", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II", room: "GW-6", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "17:00", subject: "Data Structures Practical", room: "CCSF", type: "LAB", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Engineering Physics-III", room: "SEW-9", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Engineering Graphics Lab", room: "SEW-7", type: "LAB", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Fluid Mechanics", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Engineering Physics-III Tutorial", room: "NLH-2", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Mathematics-II", room: "GW-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Data Structures", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Engineering Physics-III", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Mathematics-II", room: "GW-6", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Professional Ethics & Social Values", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Fluid Mechanics", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "12:00", endTime: "13:00", subject: "Environmental Science & Climate Change", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II Tutorial", room: "GW-4", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Professional Ethics & Social Values", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // MAT — Materials Science & Engineering
+  // Section P
+  // ══════════════════════════════════════════
+  "MAT-P": {
+    id: "MAT-P", name: "Materials — Section P",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Engineering Physics-III Practical", room: "Physics Lab", type: "LAB", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Intro to AI & ML", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Fluid Mechanics", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Metallurgical Thermodynamics", room: "GW-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "17:00", subject: "Intro to AI & ML Lab", room: "CCSF", type: "LAB", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Data Structures", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Intro to AI & ML", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Metallurgical Thermodynamics", room: "GW-5", type: "LECTURE", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Mathematics-II", room: "GW-4", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "17:00", subject: "Data Structures Practical", room: "CCSF", type: "LAB", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Engineering Physics-III", room: "SEW-9", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "11:00", endTime: "12:00", subject: "Mathematics-II", room: "GW-9", type: "LECTURE", batch: 'ALL' },
+        { startTime: "12:00", endTime: "13:00", subject: "Fluid Mechanics", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+        { startTime: "13:00", endTime: "14:00", subject: "Engineering Physics-III Tutorial", room: "NLH-2", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Environmental Science & Climate Change", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Workshop & Mfg. Process", room: "SEW-10", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Data Structures", room: "NLH-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Engineering Physics-III", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "10:00", endTime: "11:00", subject: "Mathematics-II Tutorial", room: "GW-9", type: "TUTORIAL", batch: 'ALL' },
+        { startTime: "14:00", endTime: "15:00", subject: "Professional Ethics & Social Values", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "15:00", endTime: "16:00", subject: "Fluid Mechanics", room: "GS-8", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Metallurgical Thermodynamics", room: "GW-5", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Friday", sessions: [
+        { startTime: "09:00", endTime: "11:00", subject: "Workshop & Mfg. Process Lab", room: "SEW", type: "LAB", batch: 'ALL' },
+        { startTime: "11:00", endTime: "12:00", subject: "Mathematics-II", room: "GW-9", type: "LECTURE", batch: 'ALL' },
+        { startTime: "16:00", endTime: "17:00", subject: "Metallurgical Thermodynamics", room: "GW-7", type: "LECTURE", batch: 'ALL' },
+        { startTime: "17:00", endTime: "18:00", subject: "Professional Ethics & Social Values", room: "FN-1", type: "LECTURE", batch: 'ALL' },
+      ]},
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // GIS — GIS Cell
+  // ══════════════════════════════════════════
+  "GIS": {
+    id: "GIS", name: "GIS Cell",
+    schedule: [
+      { day: "Monday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Introduction to Geoinformatics", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Tuesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Introduction to Geoinformatics", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Wednesday", sessions: [
+        { startTime: "09:00", endTime: "10:00", subject: "Introduction to Geoinformatics", room: "NLH-2", type: "LECTURE", batch: 'ALL' },
+      ]},
+      { day: "Thursday", sessions: [] },
+      { day: "Friday", sessions: [] },
+    ]
+  },
 };
 
 
 // ─────────────────────────────────────────────
-// SECTION 8: SUBJECT CODE REFERENCE
+// SECTION 8: SUBJECT CODE → FULL NAME REFERENCE
 // ─────────────────────────────────────────────
 
 export const SUBJECT_CODES: Record<string, string> = {
-  "MAN12104": "Mathematics-II (CSE/ECE)",
-  "MAN12105": "Mathematics-II (ECE variant)",
+  // CSE Subjects
+  "MAN12104": "Mathematics-II",
   "CYN12501": "Engineering Chemistry",
   "HSN12600": "Professional Communication",
   "CSN12101": "Data Structures",
   "CSN12102": "Programming Paradigms",
-  "IDN12600": "Environmental Science",
-  "ECN12101": "Communication Engineering",
+  "IDN12600": "Environmental Science & Climate Change",
+  "CSN12401*": "Data Structures (Other Branches)",
+
+  // ECE Subjects
+  "MAN12105": "Mathematics-II (ECE)",
+  "ECN12101": "Network & Communication Engineering",
   "ECN12102": "CAD for Electronics",
+  "ECN12401*": "Digital Electronics (Other Branches)",
+
+  // ME Subjects
+  "PHN12502": "Engineering Physics-II",
+  "MAN12106": "Mathematics-II (ME)",
+  "MAN12107": "Computer Based Numerical & Statistical Techniques",
+  "MEN12601": "Engineering Graphics",
+  "MEN12401": "Engineering Innovation & Design",
+  "AMN12400*": "Engineering Mechanics",
+  "EAN12700": "Professional Ethics & Social Values",
+
+  // Civil Subjects
+  "PHN12501": "Engineering Physics-I",
+  "MAN12103": "Mathematics-II (Civil)",
+  "CEN12101": "Building Engineering-II",
+  "MEN12602": "Workshop & Manufacturing Process",
+  "CEN12400*": "Sustainable Urban Habitat",
+
+  // BioTech Subjects
+  "PHN12503": "Engineering Physics-III",
+  "MAN12101": "Mathematics-II (BT)",
+  "BTN12101": "Biosafety & Bioethics",
+  "BTN12400*": "Fundamentals of Biotechnology",
+
+  // Chemical Subjects
+  "MAN12102": "Mathematics-II (Chem)",
+  "AMN12101": "Fluid Flow Operations",
+  "CHN12400*": "Engineering Thermodynamics",
+  "AMN12401*": "Material Science & Engineering",
+
+  // Production Subjects
+  // Uses MAN12106, MAN12107, PHN12502, AMN12400*, MEN12401, EAN12700
+
+  // Electrical Subjects
+  "EEN12101": "Network Analysis",
+  "EEN12102": "Electrical Workshop",
+  "EEN12400*": "Basic Electrical Engineering",
+
+  // ECM Subjects
+  "MAN12108": "Mathematics-II (ECM)",
+  "AMN12102": "Fluid Mechanics",
+
+  // Materials Subjects
+  "MAN12109": "Mathematics-II (Materials)",
+  "AMN12103": "Metallurgical Thermodynamics & Kinetics",
+
+  // AI/ML (Common)
+  "CSN12601": "Introduction to AI & Machine Learning",
+
+  // GIS
+  "GIN12401": "Introduction to Geoinformatics",
 };
 
 
