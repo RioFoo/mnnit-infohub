@@ -13,6 +13,7 @@ import { motion } from 'framer-motion';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
+import infohubIcon from '@/assets/infohub-icon.png';
 
 const brandWords = ['INFOHUB', 'MNNIT', 'NEXUS', 'CONNECT'];
 
@@ -31,12 +32,13 @@ const BrandLogo = ({ collapsed }: { collapsed: boolean }) => {
   return (
     <div className="p-4 flex items-center gap-3">
       <motion.div
-        className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0"
-        whileHover={{ rotateY: 180, scale: 1.1 }}
+        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 brand-logo-glow"
+        whileHover={{ rotateY: 180, scale: 1.15 }}
+        animate={{ rotate: [0, 0, 0] }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         style={{ transformStyle: 'preserve-3d' }}
       >
-        <span className="text-primary text-sm font-bold font-display brand-icon-3d">◈</span>
+        <img src={infohubIcon} alt="InfoHub" className="w-8 h-8 object-contain brand-icon-3d" />
       </motion.div>
       {!collapsed && (
         <div className="overflow-hidden h-5 relative">
