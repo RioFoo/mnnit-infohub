@@ -18,7 +18,10 @@ import { cn } from '@/lib/utils';
 interface Resource {
   id: string; title: string; file_url: string; file_type: string; file_size: number;
   branch: string; semester: string; user_id: string; uploader_name: string | null; created_at: string;
+  visibility: string;
 }
+
+type Visibility = 'branch' | 'followers' | 'both';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
