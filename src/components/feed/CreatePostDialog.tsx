@@ -44,8 +44,10 @@ const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogPro
       toast.error('Unsupported file type');
       return;
     }
-    if (f.size > MAX_FILE_SIZE) {
-      toast.error('File too large (max 5MB)');
+    const isVideo = f.type.startsWith('video/');
+    const limit = isVideo ? MAX_VIDEO_SIZE : MAX_FILE_SIZE;
+    if (f.size > limit) {
+      toast.error(`File too large (max ${isVideo ? '8MB' : '5MB'})`);
       return;
     }
 

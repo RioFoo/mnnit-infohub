@@ -4,13 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-
-import { Edit, Loader2, LogIn } from 'lucide-react';
+import { Edit, Loader2, LogIn, Heart, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import MediaRenderer from '@/components/feed/MediaRenderer';
 
 const Profile = () => {
   const { user, profile, refreshProfile } = useAuth();
@@ -19,16 +20,24 @@ const Profile = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
+  const [gender, setGender] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (profile) { setName(profile.name || ''); setBio(profile.bio || ''); }
+    if (profile) {
+      setName(profile.name || '');
+      setBio(profile.bio || '');
+      setGender((profile as any).gender || '');
+    }
   }, [profile]);
 
   useEffect(() => {
     const fetchPosts = async () => {
       if (!user) return;
-      const { data } = await (supabase.from as any)('posts').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
+      const { data } = await (supabase.from as any)('posts')
+        .select('*, profiles(name, handle, avatar_url, branch)')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
       if (data) setPosts(data);
     };
     fetchPosts();
@@ -37,7 +46,8 @@ const Profile = () => {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
-    const { error } = await (supabase.from as any)('profiles').update({ name, bio }).eq('id', user.id);
+    const updates: Record<string, string> = { name, bio, gender };
+    const { error } = await (supabase.from as any)('profiles').update(updates).eq('id', user.id);
     if (error) toast.error(error.message);
     else { toast.success('Profile updated!'); await refreshProfile(); setEditOpen(false); }
     setSaving(false);
@@ -100,6 +110,7 @@ const Profile = () => {
             <span className="tag-pill text-xs">{profile.branch || 'Branch'}</span>
             <span className="tag-pill text-xs">{profile.section ? `Section ${profile.section}` : 'Section'}</span>
             <span className="tag-pill text-xs">{profile.role || 'Student'}</span>
+            {(profile as any).gender && <span className="tag-pill text-xs">{(profile as any).gender}</span>}
           </div>
 
           <div className="flex gap-8 mt-6 pt-5">
@@ -123,11 +134,25 @@ const Profile = () => {
               <div className="space-y-3 mt-2">
                 <div>
                   <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Name</label>
-                  <Input value={name} onChange={e => setName(e.target.value)} className="rounded-xl bg-muted/10 border-border/[0.06] mt-1" />
+                  <Input value={name} onChange={e => setName(e.target.value)} maxLength={50} className="rounded-xl bg-muted/10 border-border/[0.06] mt-1" />
                 </div>
                 <div>
                   <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Bio</label>
-                  <Textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} className="rounded-xl bg-muted/10 border-border/[0.06] mt-1 resize-none" />
+                  <Textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} maxLength={300} className="rounded-xl bg-muted/10 border-border/[0.06] mt-1 resize-none" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Gender</label>
+                  <Select value={gender} onValueChange={setGender}>
+                    <SelectTrigger className="rounded-xl bg-muted/10 border-border/[0.06] mt-1">
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="Non-binary">Non-binary</SelectItem>
+                      <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <Button onClick={handleSave} disabled={saving} className="w-full rounded-xl btn-bio">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Changes'}
@@ -138,22 +163,47 @@ const Profile = () => {
         </div>
       </motion.div>
 
-      {/* Posts */}
-      <span className="section-title">Posts</span>
+      {/* User's Posts */}
+      <span className="section-title">Your Posts</span>
       {posts.length === 0 ? (
         <p className="text-sm font-mono text-muted-foreground text-center py-16">No posts yet</p>
       ) : (
-        <div className="space-y-2.5 mt-3">
+        <div className="space-y-4 mt-3">
           {posts.map((post, i) => (
             <motion.div
               key={post.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-              className="float-card p-4"
+              className="card-bio p-5"
             >
-              <p className="text-sm leading-relaxed">{post.content}</p>
-              <p className="text-[10px] font-mono text-muted-foreground/40 mt-2">{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</p>
+              <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/85">{post.content}</p>
+
+              {post.image_url && <MediaRenderer url={post.image_url} mediaType={post.media_type} />}
+
+              {post.tags && post.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {post.tags.map((tag: string) => (
+                    <span key={tag} className="tag-pill text-[10px]">#{tag}</span>
+                  ))}
+                </div>
+              )}
+
+              <div className="divider-glow my-3" />
+
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <Heart className="w-3.5 h-3.5" />
+                  <span className="font-mono tabular-nums text-[11px]">{post.likes_count}</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  <span className="font-mono tabular-nums text-[11px]">{post.comments_count}</span>
+                </span>
+                <span className="text-[10px] font-mono text-muted-foreground/30 ml-auto">
+                  {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                </span>
+              </div>
             </motion.div>
           ))}
         </div>
