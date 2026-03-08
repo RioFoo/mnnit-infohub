@@ -200,84 +200,84 @@ const Profile = () => {
           </div>
 
           <div className="mt-4">
-            <h2 className="text-2xl font-display font-bold">{profile.name || 'User'}</h2>
-            <p className="text-sm font-mono text-muted-foreground mt-0.5">@{profile.handle}</p>
-            {profile.bio && <p className="text-sm mt-3 text-foreground/70 max-w-md leading-relaxed">{profile.bio}</p>}
+            <h2 className="text-4xl font-display font-black transform transition-all duration-300 hover:scale-105 hover:rotate-1 hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.4)] cursor-pointer gradient-text hover:text-shadow-glow">{profile.name || 'User'}</h2>
+            <p className="text-base font-mono text-muted-foreground mt-1 font-bold transform transition-all duration-300 hover:scale-102 hover:text-primary">@{profile.handle}</p>
+            {profile.bio && <p className="text-base mt-3 text-foreground/80 max-w-md leading-relaxed font-semibold transform transition-all duration-300 hover:scale-102 hover:text-foreground cursor-pointer">{profile.bio}</p>}
           </div>
 
           <div className="flex items-center gap-2 mt-4 flex-wrap">
-            <span className="tag-pill text-xs">{profile.branch || 'Branch'}</span>
-            <span className="tag-pill text-xs">{profile.section ? `Section ${profile.section}` : 'Section'}</span>
-            {profile.semester && <span className="tag-pill text-xs">Sem {profile.semester}</span>}
-            {profile.batch && <span className="tag-pill text-xs">{profile.batch}</span>}
-            <span className="tag-pill text-xs">{profile.role || 'Student'}</span>
-            {profile.gender && <span className="tag-pill text-xs">{profile.gender}</span>}
+            <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.branch || 'Branch'}</span>
+            <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.section ? `Section ${profile.section}` : 'Section'}</span>
+            {profile.semester && <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">Sem {profile.semester}</span>}
+            {profile.batch && <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.batch}</span>}
+            <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.role || 'Student'}</span>
+            {profile.gender && <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.gender}</span>}
           </div>
 
           <div className="flex gap-6 mt-6 pt-5 relative items-center">
             <div className="divider-glow absolute left-0 right-0 top-0" />
-            <div className="text-center">
-              <p className="text-2xl font-display font-bold gradient-text">{posts.length}</p>
-              <p className="text-[10px] font-mono text-muted-foreground">Posts</p>
+            <div className="text-center transform transition-all duration-300 hover:scale-110 cursor-pointer">
+              <p className="text-3xl font-display font-black gradient-text hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.6)]">{posts.length}</p>
+              <p className="text-xs font-mono text-muted-foreground font-bold hover:text-primary transition-colors">Posts</p>
             </div>
 
             {/* Single Follow button with count */}
             <motion.button
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.08, rotateY: 5 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => { setFollowDialogTab('followers'); setFollowDialogOpen(true); }}
-              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-primary/[0.06] border border-primary/15 hover:bg-primary/[0.1] hover:border-primary/25 transition-all group cursor-pointer"
+              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-primary/[0.06] border border-primary/15 hover:bg-primary/[0.1] hover:border-primary/25 transition-all group cursor-pointer transform hover:drop-shadow-[0_8px_20px_hsl(var(--primary)/0.3)]"
             >
               <div className="relative">
-                <Users className="w-5 h-5 text-primary group-hover:drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)] transition-all" />
-                <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-primary text-primary-foreground text-[8px] font-mono font-bold flex items-center justify-center shadow-[0_0_8px_hsl(var(--primary)/0.4)]">
+                <Users className="w-6 h-6 text-primary group-hover:drop-shadow-[0_0_12px_hsl(var(--primary)/0.7)] transition-all" />
+                <span className="absolute -top-1.5 -right-2 min-w-[18px] h-5 px-1 rounded-full bg-primary text-primary-foreground text-[9px] font-mono font-black flex items-center justify-center shadow-[0_0_12px_hsl(var(--primary)/0.6)]">
                   {followerCount + followingCount}
                 </span>
               </div>
               <div className="text-left">
-                <p className="text-xs font-mono font-semibold text-foreground leading-tight">Follow</p>
-                <p className="text-[9px] font-mono text-muted-foreground/60">{followerCount} followers · {followingCount} following</p>
+                <p className="text-sm font-mono font-black text-foreground leading-tight">Follow</p>
+                <p className="text-[10px] font-mono text-muted-foreground/70 font-bold">{followerCount} followers · {followingCount} following</p>
               </div>
             </motion.button>
 
             {/* Favorites */}
             <motion.button
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.08, rotateY: 5 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => { setFollowDialogTab('favourites'); setFollowDialogOpen(true); }}
-              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-yellow-500/[0.06] border border-yellow-500/15 hover:bg-yellow-500/[0.1] hover:border-yellow-500/25 transition-all group cursor-pointer"
+              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-yellow-500/[0.06] border border-yellow-500/15 hover:bg-yellow-500/[0.1] hover:border-yellow-500/25 transition-all group cursor-pointer transform hover:drop-shadow-[0_8px_20px_hsl(45,100%,50%,0.3)]"
             >
               <div className="relative">
-                <Star className="w-5 h-5 text-yellow-500 fill-yellow-500 group-hover:drop-shadow-[0_0_6px_hsl(45,100%,50%,0.5)] transition-all" />
-                <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-yellow-500 text-yellow-950 text-[8px] font-mono font-bold flex items-center justify-center shadow-[0_0_8px_hsl(45,100%,50%,0.4)]">
+                <Star className="w-6 h-6 text-yellow-500 fill-yellow-500 group-hover:drop-shadow-[0_0_12px_hsl(45,100%,50%,0.7)] transition-all" />
+                <span className="absolute -top-1.5 -right-2 min-w-[18px] h-5 px-1 rounded-full bg-yellow-500 text-yellow-950 text-[9px] font-mono font-black flex items-center justify-center shadow-[0_0_12px_hsl(45,100%,50%,0.6)]">
                   {favouriteCount}
                 </span>
               </div>
-              <p className="text-xs font-mono font-semibold text-foreground leading-tight">Favorites</p>
+              <p className="text-sm font-mono font-black text-foreground leading-tight">Favorites</p>
             </motion.button>
 
             {/* Find People button */}
             <motion.button
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.08, rotateY: 5 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/explore?tab=people')}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/[0.06] border border-secondary/15 hover:bg-secondary/[0.1] hover:border-secondary/25 transition-all group cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary/[0.06] border border-secondary/15 hover:bg-secondary/[0.1] hover:border-secondary/25 transition-all group cursor-pointer transform hover:drop-shadow-[0_8px_20px_hsl(var(--secondary)/0.3)]"
             >
-              <UserPlus className="w-5 h-5 text-secondary group-hover:drop-shadow-[0_0_6px_hsl(var(--secondary)/0.5)] transition-all" />
-              <p className="text-xs font-mono font-semibold text-foreground leading-tight">Find People</p>
+              <UserPlus className="w-6 h-6 text-secondary group-hover:drop-shadow-[0_0_12px_hsl(var(--secondary)/0.7)] transition-all" />
+              <p className="text-sm font-mono font-black text-foreground leading-tight">Find People</p>
             </motion.button>
           </div>
 
           <Dialog open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="mt-5 rounded-xl gap-1.5 text-xs font-mono border-border/[0.08] btn-bio">
-                <Edit className="w-3 h-3" /> Edit Profile
+              <Button variant="outline" size="sm" className="mt-5 rounded-xl gap-2 text-sm font-mono font-black border-border/[0.08] btn-bio transform transition-all duration-300 hover:scale-105 hover:rotate-1 hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.4)]">
+                <Edit className="w-4 h-4" /> Edit Profile
               </Button>
             </DialogTrigger>
              <DialogContent className="bg-card border border-border/10 rounded-2xl shadow-2xl" aria-describedby="edit-profile-desc">
               <DialogHeader>
-                <DialogTitle className="text-lg font-display font-bold">Edit Profile</DialogTitle>
-                <p id="edit-profile-desc" className="text-sm text-muted-foreground">Update your profile information</p>
+                <DialogTitle className="text-2xl font-display font-black transform transition-all duration-300 hover:scale-105 gradient-text cursor-pointer">Edit Profile</DialogTitle>
+                <p id="edit-profile-desc" className="text-base text-muted-foreground font-semibold">Update your profile information</p>
               </DialogHeader>
               <div className="space-y-3 mt-2 max-h-[60vh] overflow-y-auto pr-1">
                 <div>
@@ -348,8 +348,8 @@ const Profile = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={handleSave} disabled={saving} className="w-full rounded-xl btn-bio">
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Changes'}
+                <Button onClick={handleSave} disabled={saving} className="w-full rounded-xl btn-bio font-black text-base transform transition-all duration-300 hover:scale-102 hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.4)]">
+                  {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Save Changes'}
                 </Button>
               </div>
             </DialogContent>
@@ -360,9 +360,9 @@ const Profile = () => {
       </motion.div>
 
       {/* User's Posts */}
-      <span className="section-title">Your Posts</span>
+      <span className="section-title text-2xl font-black transform transition-all duration-300 hover:scale-105 hover:rotate-1 hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.4)] cursor-pointer gradient-text">Your Posts</span>
       {posts.length === 0 ? (
-        <p className="text-sm font-mono text-muted-foreground text-center py-16">No posts yet</p>
+        <p className="text-lg font-mono text-muted-foreground text-center py-16 font-bold transform transition-all duration-300 hover:scale-105 hover:text-foreground cursor-pointer">No posts yet</p>
       ) : (
         <div className="space-y-4 mt-3">
           {posts.map((post, i) => (
@@ -373,38 +373,38 @@ const Profile = () => {
               transition={{ delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
               className="card-bio p-5"
             >
-              <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/85">{post.content}</p>
+              <p className="text-base leading-relaxed whitespace-pre-wrap text-foreground/90 font-medium transform transition-all duration-300 hover:scale-[1.02] hover:text-foreground cursor-pointer">{post.content}</p>
 
               {post.image_url && <MediaRenderer url={post.image_url} mediaType={post.media_type} />}
 
               {post.tags && post.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {post.tags.map((tag: string) => (
-                    <span key={tag} className="tag-pill text-[10px]">#{tag}</span>
+                    <span key={tag} className="tag-pill text-xs font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">#{tag}</span>
                   ))}
                 </div>
               )}
 
               <div className="divider-glow my-3" />
 
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1.5">
-                  <Heart className="w-3.5 h-3.5" />
-                  <span className="font-mono tabular-nums text-[11px]">{post.likes_count}</span>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground font-bold">
+                <span className="flex items-center gap-2 transform transition-all duration-300 hover:scale-110 hover:text-red-400 cursor-pointer">
+                  <Heart className="w-4 h-4" />
+                  <span className="font-mono tabular-nums text-xs font-black">{post.likes_count}</span>
                 </span>
-                <span className="flex items-center gap-1.5">
-                  <MessageCircle className="w-3.5 h-3.5" />
-                  <span className="font-mono tabular-nums text-[11px]">{post.comments_count}</span>
+                <span className="flex items-center gap-2 transform transition-all duration-300 hover:scale-110 hover:text-blue-400 cursor-pointer">
+                  <MessageCircle className="w-4 h-4" />
+                  <span className="font-mono tabular-nums text-xs font-black">{post.comments_count}</span>
                 </span>
-                <span className="text-[10px] font-mono text-muted-foreground/30 ml-auto">
+                <span className="text-xs font-mono text-muted-foreground/40 ml-auto font-bold transform transition-all duration-300 hover:text-muted-foreground hover:scale-105 cursor-pointer">
                   {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                 </span>
                 <button
                   onClick={() => handleDeletePost(post.id)}
-                  className="ml-2 text-muted-foreground/30 hover:text-destructive transition-colors"
+                  className="ml-2 text-muted-foreground/30 hover:text-destructive transition-all transform hover:scale-125 hover:rotate-12 hover:drop-shadow-[0_2px_8px_hsl(var(--destructive)/0.5)]"
                   title="Delete post"
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </motion.div>
