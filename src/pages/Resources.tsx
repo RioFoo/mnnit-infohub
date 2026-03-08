@@ -153,36 +153,24 @@ const Resources = () => {
     <div className="px-4 md:px-8 py-6 max-w-4xl mx-auto">
       {/* COMPACT HEADER */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+        initial={{ opacity: 0, y: -20, rotateX: -5 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0 }}
+        transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
         className="flex items-center justify-between mb-6"
+        style={{ perspective: '800px' }}
       >
-        <div className="flex items-center gap-3">
-          <motion.div
-            whileHover={{ rotateY: 180, scale: 1.1 }}
-            transition={{ type: 'spring', stiffness: 300 }}
-            className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/10 flex items-center justify-center border border-primary/20"
-            style={{ transformStyle: 'preserve-3d' }}
-          >
-            <Archive className="w-5 h-5 text-primary" />
-          </motion.div>
-          <h1 className="text-xl md:text-2xl font-display font-bold tracking-wider gradient-text">
-            RESOURCES
-          </h1>
-        </div>
+        <h1 className="text-xl md:text-2xl page-header-3d">RESOURCES</h1>
         <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.92 }}
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.92, y: 1 }}
         >
           <Button
             onClick={() => requireAuth(() => setUploadOpen(true), 'Sign in to upload')}
             size="sm"
-            className="gap-2 rounded-xl font-display text-[10px] tracking-widest uppercase relative overflow-hidden group"
+            className="gap-2 rounded-xl font-display text-[10px] tracking-widest uppercase btn-3d"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary-foreground/10 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-            <Upload className="w-3.5 h-3.5 relative z-10" />
-            <span className="relative z-10 hidden sm:inline">Upload</span>
+            <Upload className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Upload</span>
           </Button>
         </motion.div>
       </motion.div>
