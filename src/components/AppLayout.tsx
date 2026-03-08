@@ -38,7 +38,7 @@ const MobileNavItem = ({ item }: { item: (typeof mobileNavItems)[number] }) => {
     <RouterNavLink
       to={item.url}
       end={item.url === '/'}
-      className="relative flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all duration-300 min-w-[52px]"
+      className="relative flex flex-col items-center gap-1 px-5 py-2.5 rounded-xl transition-all duration-300 min-w-[56px]"
     >
       {isActive && (
         <motion.div
@@ -94,8 +94,8 @@ const AppLayout = () => {
             <div className="flex items-center gap-3">
               <SidebarTrigger className="hidden md:flex text-muted-foreground hover:text-primary transition-colors" />
               <div className="md:hidden flex items-center gap-2.5">
-                <img src={infohubIcon} alt="InfoHub" className="w-6 h-6 object-contain brand-icon-3d" />
-                <span className="font-display font-bold text-sm tracking-tight brand-text-3d">INFOHUB</span>
+                <img src={infohubIcon} alt="InfoHub" className="w-7 h-7 object-contain brand-icon-3d" />
+                <span className="font-display font-bold text-base tracking-tight brand-text-3d">INFOHUB</span>
               </div>
             </div>
 
@@ -131,8 +131,8 @@ const AppLayout = () => {
 
           {/* Mobile Nav */}
           <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50">
-            <div className="glass-panel border-t border-border/[0.06] px-2 py-1 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
-              <div className="flex items-center justify-around max-w-sm mx-auto">
+            <div className="glass-panel border-t border-border/[0.06] px-2 py-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+              <div className="flex items-center justify-around max-w-sm mx-auto gap-1">
                 {mobileNavItems.map((item) => (
                   <MobileNavItem key={item.url} item={item} />
                 ))}
