@@ -478,8 +478,7 @@ const Auth = () => {
                     <Label htmlFor="login-password" className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Password</Label>
                     <motion.div
                       className="relative mt-1"
-                      whileHover={{ translateZ: 10, rotateX: 2, rotateY: 1 }}
-                      style={{ transformStyle: 'preserve-3d' }}
+                      whileHover={{ scale: 1.01 }}
                     >
                       <Input
                         id="login-password"
