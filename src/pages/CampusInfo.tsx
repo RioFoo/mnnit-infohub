@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ExternalLink, Mail, Phone, Search, Users, Globe, Megaphone } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
+import { PageHeader } from '@/components/PageHeader';
 
 const NOTICE_CATS = ['ALL', 'RESULT', 'EXAM', 'ACADEMIC', 'FEE', 'ADMISSION'];
 const CLUB_CATS = ['All', 'Technical', 'Cultural', 'Sports', 'Arts'];

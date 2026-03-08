@@ -6,6 +6,7 @@ import { ACADEMIC_NOTIFICATIONS } from '@/data/infohub-data';
 import { Button } from '@/components/ui/button';
 import { CheckCheck, LogIn, Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { PageHeader } from '@/components/PageHeader';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
