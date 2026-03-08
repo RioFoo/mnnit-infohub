@@ -1,12 +1,37 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, NavLink as RouterNavLink } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
-import { Home, Compass, CalendarDays, Bell, User, LogIn, Menu } from 'lucide-react';
-import { NavLink } from '@/components/NavLink';
+import { Home, Compass, CalendarDays, Bell, User, LogIn } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { CommandPalette } from '@/components/CommandPalette';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import { cn } from '@/lib/utils';
+
+const MobileNavItem = ({ item }: { item: typeof mobileNavItems[number] }) => {
+  const location = useLocation();
+  const isActive = item.url === '/' ? location.pathname === '/' : location.pathname.startsWith(item.url);
+  
+  return (
+    <RouterNavLink
+      to={item.url}
+      end={item.url === '/'}
+      className="relative flex flex-col items-center gap-0.5 p-2 rounded-xl transition-all duration-300"
+    >
+      {isActive && (
+        <motion.div
+          layoutId="mobile-nav-active"
+          className="absolute inset-0 rounded-xl bg-primary/10"
+          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+        />
+      )}
+      <motion.div whileTap={{ scale: 0.85 }} className="relative z-10">
+        <item.icon className={cn('w-5 h-5 transition-all', isActive ? 'text-primary drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]' : 'text-muted-foreground')} />
+      </motion.div>
+      <span className={cn('text-[9px] font-medium relative z-10', isActive ? 'text-primary' : 'text-muted-foreground')}>{item.title}</span>
+    </RouterNavLink>
+  );
+};
 
 const mobileNavItems = [
   { title: 'Feed', url: '/', icon: Home },
