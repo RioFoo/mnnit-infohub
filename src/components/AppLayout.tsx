@@ -147,7 +147,7 @@ const AppLayout = () => {
                   className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold font-display tracking-wider uppercase bg-primary/10 text-primary hover:bg-primary/20 transition-all btn-neon border border-primary/20"
                 >
                   <LogIn className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Enter</span>
+                  <span className="hidden sm:inline">Login</span>
                 </motion.button>
               )}
             </div>
