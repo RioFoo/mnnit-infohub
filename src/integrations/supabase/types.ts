@@ -46,6 +46,27 @@ export type Database = {
           },
         ]
       }
+      followers: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
       likes: {
         Row: {
           created_at: string
@@ -152,6 +173,7 @@ export type Database = {
           bio: string | null
           branch: string | null
           created_at: string
+          default_resource_visibility: string | null
           gender: string | null
           handle: string | null
           id: string
@@ -168,6 +190,7 @@ export type Database = {
           bio?: string | null
           branch?: string | null
           created_at?: string
+          default_resource_visibility?: string | null
           gender?: string | null
           handle?: string | null
           id: string
@@ -184,6 +207,7 @@ export type Database = {
           bio?: string | null
           branch?: string | null
           created_at?: string
+          default_resource_visibility?: string | null
           gender?: string | null
           handle?: string | null
           id?: string
@@ -239,6 +263,7 @@ export type Database = {
           title: string
           uploader_name: string | null
           user_id: string
+          visibility: string
         }
         Insert: {
           branch?: string | null
@@ -251,6 +276,7 @@ export type Database = {
           title: string
           uploader_name?: string | null
           user_id: string
+          visibility?: string
         }
         Update: {
           branch?: string | null
@@ -263,6 +289,7 @@ export type Database = {
           title?: string
           uploader_name?: string | null
           user_id?: string
+          visibility?: string
         }
         Relationships: []
       }
@@ -271,7 +298,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_view_resource: {
+        Args: {
+          _resource_branch: string
+          _resource_semester: string
+          _resource_user_id: string
+          _visibility: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Upload, Search, Download, FileText, X, Loader2, CloudUpload } from 'lucide-react';
+import { Upload, Search, Download, FileText, X, Loader2, CloudUpload, Eye, Users, GitBranch } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -18,7 +18,10 @@ import { cn } from '@/lib/utils';
 interface Resource {
   id: string; title: string; file_url: string; file_type: string; file_size: number;
   branch: string; semester: string; user_id: string; uploader_name: string | null; created_at: string;
+  visibility: string;
 }
+
+type Visibility = 'branch' | 'followers' | 'both';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -61,9 +64,17 @@ const Resources = () => {
   const [uploadTitle, setUploadTitle] = useState('');
   const [uploadBranch, setUploadBranch] = useState('All');
   const [uploadSemester, setUploadSemester] = useState('1st');
+  const [uploadVisibility, setUploadVisibility] = useState<Visibility>('branch');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load default visibility from profile
+  useEffect(() => {
+    if (profile && (profile as any).default_resource_visibility) {
+      setUploadVisibility((profile as any).default_resource_visibility as Visibility);
+    }
+  }, [profile]);
 
   const fetchResources = async () => {
     const { data, error } = await supabase.from('resources' as any).select('*').order('created_at', { ascending: false });
@@ -103,10 +114,11 @@ const Resources = () => {
         title: uploadTitle.trim(), file_url: publicUrl, file_type: getFileExtension(selectedFile.name),
         file_size: selectedFile.size, branch: uploadBranch, semester: uploadSemester,
         user_id: user.id, uploader_name: profile?.name || user.email?.split('@')[0] || 'Anonymous',
+        visibility: uploadVisibility,
       } as any);
       if (dbError) throw dbError;
       toast.success('Uploaded!');
-      setUploadOpen(false); setSelectedFile(null); setUploadTitle(''); setUploadBranch('All'); setUploadSemester('1st');
+      setUploadOpen(false); setSelectedFile(null); setUploadTitle(''); setUploadBranch('All'); setUploadSemester('1st'); setUploadVisibility((profile as any)?.default_resource_visibility || 'branch');
       fetchResources();
     } catch (err: any) { toast.error(err.message || 'Upload failed'); }
     finally { setUploading(false); }
@@ -176,6 +188,11 @@ const Resources = () => {
                     <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{r.title}</p>
                     <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                       <span className="tag-pill text-[8px] px-2 py-0">{r.branch}</span>
+                      {r.visibility && r.visibility !== 'branch' && (
+                        <span className="tag-pill text-[8px] px-2 py-0 bg-accent/10 text-accent-foreground/60">
+                          {r.visibility === 'followers' ? '👥 Followers' : '🌐 Both'}
+                        </span>
+                      )}
                       <span className="text-[10px] font-mono text-muted-foreground/30">{formatFileSize(r.file_size)} · {getTimeAgo(r.created_at)}</span>
                     </div>
                   </div>
@@ -251,6 +268,31 @@ const Resources = () => {
                     <SelectTrigger className="mt-1.5 h-9 rounded-xl bg-muted/10 border-border/[0.06] text-sm font-mono"><SelectValue /></SelectTrigger>
                     <SelectContent>{['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                   </Select>
+                </div>
+              </div>
+              <div>
+                <Label className="text-[10px] font-mono font-medium uppercase tracking-wider text-muted-foreground/50">Who can see</Label>
+                <div className="grid grid-cols-3 gap-1.5 mt-1.5">
+                  {([
+                    { value: 'branch' as Visibility, label: 'Branch', icon: GitBranch, desc: 'Same branch & sem' },
+                    { value: 'followers' as Visibility, label: 'Followers', icon: Users, desc: 'Your followers' },
+                    { value: 'both' as Visibility, label: 'Both', icon: Eye, desc: 'Branch + followers' },
+                  ]).map(opt => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setUploadVisibility(opt.value)}
+                      className={cn(
+                        'flex flex-col items-center gap-1 p-2.5 rounded-xl border text-center transition-all',
+                        uploadVisibility === opt.value
+                          ? 'border-primary/20 bg-primary/[0.06] text-primary'
+                          : 'border-border/[0.06] hover:border-primary/10 text-muted-foreground/50 hover:text-muted-foreground'
+                      )}
+                    >
+                      <opt.icon className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-mono font-medium">{opt.label}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
               <Button onClick={handleUpload} disabled={uploading || !selectedFile || !uploadTitle.trim()} className="w-full rounded-xl btn-bio">
