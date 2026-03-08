@@ -24,7 +24,8 @@ const ALLOWED_TYPES: Record<string, string[]> = {
 
 const ALL_ALLOWED = Object.values(ALLOWED_TYPES).flat();
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB for non-video
+const MAX_VIDEO_SIZE = 8 * 1024 * 1024; // 8MB for video
 
 const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogProps) => {
   const { user } = useAuth();
@@ -43,8 +44,10 @@ const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogPro
       toast.error('Unsupported file type');
       return;
     }
-    if (f.size > MAX_FILE_SIZE) {
-      toast.error('File too large (max 5MB)');
+    const isVideo = f.type.startsWith('video/');
+    const limit = isVideo ? MAX_VIDEO_SIZE : MAX_FILE_SIZE;
+    if (f.size > limit) {
+      toast.error(`File too large (max ${isVideo ? '8MB' : '5MB'})`);
       return;
     }
 
