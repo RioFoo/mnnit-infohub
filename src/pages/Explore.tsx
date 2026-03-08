@@ -4,12 +4,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2, Users, Compass, UserPlus, UserCheck, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PageHeader } from '@/components/PageHeader';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useFollowState } from '@/hooks/useFollowState';
 import { AuthPromptDialog } from '@/components/AuthPromptDialog';
 import PostCard, { type Post } from '@/components/feed/PostCard';
-import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 
 interface ReactionRow {
@@ -37,7 +38,9 @@ const Explore = () => {
   const { isFollowing, isFavourite, toggleFollow, toggleFavourite } = useFollowState();
   const [search, setSearch] = useState('');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [mode, setMode] = useState<ViewMode>('discover');
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') === 'people' ? 'people' : 'discover';
+  const [mode, setMode] = useState<ViewMode>(initialTab);
   const [posts, setPosts] = useState<Post[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [allReactions, setAllReactions] = useState<ReactionRow[]>([]);
