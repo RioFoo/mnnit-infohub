@@ -19,6 +19,7 @@ import Resources from "@/pages/Resources";
 import Notifications from "@/pages/Notifications";
 import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
+import UserProfile from "@/pages/UserProfile";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ const App = () => (
                 <Route path="resources" element={<Resources />} />
                 <Route path="notifications" element={<Notifications />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="profile/:userId" element={<UserProfile />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
               <Route path="*" element={<NotFound />} />

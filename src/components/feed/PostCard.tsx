@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Share2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
@@ -46,6 +47,7 @@ const itemVariants = {
 };
 
 const PostCard = ({ post, reactions, onReact, onRequireAuth, isAuthenticated }: PostCardProps) => {
+  const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement>(null);
   const [showComments, setShowComments] = useState(false);
   const [localCommentsCount, setLocalCommentsCount] = useState(post.comments_count);
@@ -84,7 +86,7 @@ const PostCard = ({ post, reactions, onReact, onRequireAuth, isAuthenticated }: 
         style={{ transformStyle: 'preserve-3d' }}
       >
         <div className="flex items-start gap-3.5">
-          <div className="avatar-orbital shrink-0">
+          <button onClick={() => navigate(`/profile/${post.user_id}`)} className="avatar-orbital shrink-0 cursor-pointer">
             {post.profiles?.avatar_url ? (
               <img src={post.profiles.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
             ) : (
@@ -92,11 +94,11 @@ const PostCard = ({ post, reactions, onReact, onRequireAuth, isAuthenticated }: 
                 {(post.profiles?.name || 'U')[0].toUpperCase()}
               </div>
             )}
-          </div>
+          </button>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold text-sm">{post.profiles?.name || 'Anonymous'}</span>
+              <button onClick={() => navigate(`/profile/${post.user_id}`)} className="font-semibold text-sm hover:text-primary transition-colors">{post.profiles?.name || 'Anonymous'}</button>
               <span className="text-[11px] font-mono text-muted-foreground">@{post.profiles?.handle}</span>
               {post.profiles?.branch && (
                 <span className="text-[10px] font-mono text-muted-foreground/40">· {post.profiles.branch}</span>
