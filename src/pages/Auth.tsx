@@ -306,9 +306,14 @@ const Auth = () => {
             animate={{ opacity: 1, y: 0, rotateX: 0 }}
             transition={{ duration: 1, type: 'spring' }}
           >
-            <div className="relative inline-block mb-8">
-              <InfoHubLogo size={96} />
-            </div>
+            <motion.div
+              className="relative inline-block mb-8"
+              animate={{ rotateY: [0, 360] }}
+              transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              <InfoHubLogo size={96} animate={false} />
+            </motion.div>
             <h1 className="text-6xl font-mono font-bold text-primary glow-text mb-4 tracking-tight">
               MNNIT
               <br />
