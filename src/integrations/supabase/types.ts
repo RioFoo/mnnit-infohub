@@ -183,6 +183,45 @@ export type Database = {
         }
         Relationships: []
       }
+      resources: {
+        Row: {
+          branch: string | null
+          created_at: string
+          file_size: number
+          file_type: string
+          file_url: string
+          id: string
+          semester: string | null
+          title: string
+          uploader_name: string | null
+          user_id: string
+        }
+        Insert: {
+          branch?: string | null
+          created_at?: string
+          file_size: number
+          file_type: string
+          file_url: string
+          id?: string
+          semester?: string | null
+          title: string
+          uploader_name?: string | null
+          user_id: string
+        }
+        Update: {
+          branch?: string | null
+          created_at?: string
+          file_size?: number
+          file_type?: string
+          file_url?: string
+          id?: string
+          semester?: string | null
+          title?: string
+          uploader_name?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
