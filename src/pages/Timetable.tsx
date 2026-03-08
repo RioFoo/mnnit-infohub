@@ -360,6 +360,11 @@ const Timetable = () => {
                           <span className={cn('text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded', style.bg, style.text)}>
                             {session.type}
                           </span>
+                          {session.combinedInfo && (
+                            <span className="text-[9px] font-mono text-muted-foreground px-1.5 py-0.5 rounded bg-muted/30 border border-border/40">
+                              {session.combinedInfo}
+                            </span>
+                          )}
                           {session.room && (
                             <span className="text-[10px] font-mono text-muted-foreground/50">
                               {session.room}
