@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Edit, Loader2, LogIn, Heart, MessageCircle, Camera, ImagePlus, Trash2 } from 'lucide-react';
+import { Edit, Loader2, LogIn, Heart, MessageCircle, Camera, ImagePlus, Trash2, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
@@ -25,6 +25,7 @@ const Profile = () => {
   const [posts, setPosts] = useState<any[]>([]);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
+  const [favouriteCount, setFavouriteCount] = useState(0);
   const [editOpen, setEditOpen] = useState(false);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
@@ -55,17 +56,19 @@ const Profile = () => {
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
-      const [postsRes, followersRes, followingRes] = await Promise.all([
+      const [postsRes, followersRes, followingRes, favCountRes] = await Promise.all([
         (supabase.from as any)('posts')
           .select('*, profiles(name, handle, avatar_url, branch)')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false }),
         (supabase.from as any)('followers').select('id', { count: 'exact', head: true }).eq('following_id', user.id),
         (supabase.from as any)('followers').select('id', { count: 'exact', head: true }).eq('follower_id', user.id),
+        (supabase.from as any)('followers').select('id', { count: 'exact', head: true }).eq('following_id', user.id).eq('favourite', true),
       ]);
       if (postsRes.data) setPosts(postsRes.data);
       setFollowerCount(followersRes.count || 0);
       setFollowingCount(followingRes.count || 0);
+      setFavouriteCount(favCountRes.count || 0);
     };
     fetchData();
   }, [user]);
@@ -225,6 +228,12 @@ const Profile = () => {
               <p className="text-2xl font-display font-bold gradient-text">{followingCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Following</p>
             </button>
+            <div className="text-center">
+              <p className="text-2xl font-display font-bold text-yellow-500">{favouriteCount}</p>
+              <p className="text-[10px] font-mono text-muted-foreground flex items-center gap-1 justify-center">
+                <Star className="w-3 h-3 text-yellow-500/50" /> Favorites
+              </p>
+            </div>
           </div>
 
           <Dialog open={editOpen} onOpenChange={setEditOpen}>

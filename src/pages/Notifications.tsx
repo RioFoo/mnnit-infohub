@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-
-
 import { Button } from '@/components/ui/button';
-import { CheckCheck, LogIn, Bell, Star } from 'lucide-react';
+import { CheckCheck, LogIn, Bell, Star, UserPlus, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { PageHeader } from '@/components/PageHeader';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { playNotificationAlert } from '@/lib/notificationAlert';
+import { useFollowState } from '@/hooks/useFollowState';
+import { cn } from '@/lib/utils';
 
 interface Notification {
   id: string; type: string; message: string; read: boolean; link: string | null; created_at: string;
@@ -39,14 +39,22 @@ const itemVariants = {
   show: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const } }
 };
 
-// Only show post and library related notifications
 const RELEVANT_TYPES = ['FOLLOW_POST', 'FAVOURITE_POST', 'LIKE', 'COMMENT', 'FOLLOW'];
+
+// Extract sender user id from notification link (e.g. /profile/uuid)
+const getSenderIdFromLink = (link: string | null): string | null => {
+  if (!link) return null;
+  const match = link.match(/\/profile\/([a-f0-9-]+)/);
+  return match ? match[1] : null;
+};
 
 const Notifications = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { isFollowing, toggleFollow } = useFollowState();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [followBackLoading, setFollowBackLoading] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -61,17 +69,11 @@ const Notifications = () => {
     };
     fetchNotifications();
 
-    // Real-time subscription
     const channel = supabase
       .channel('notifications-realtime')
       .on(
         'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${user.id}`,
-        },
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
         (payload) => {
           const newNotif = payload.new as Notification;
           setNotifications(prev => [newNotif, ...prev]);
@@ -84,9 +86,7 @@ const Notifications = () => {
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [user]);
 
   const markAllRead = async () => {
@@ -95,7 +95,12 @@ const Notifications = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
-  // Filter to relevant types and sort favourites on top
+  const handleFollowBack = async (senderId: string, notifId: string) => {
+    setFollowBackLoading(notifId);
+    await toggleFollow(senderId);
+    setFollowBackLoading(null);
+  };
+
   const filtered = notifications
     .filter(n => RELEVANT_TYPES.includes(n.type))
     .sort((a, b) => {
@@ -151,33 +156,62 @@ const Notifications = () => {
         </div>
       ) : (
         <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-2">
-          {filtered.map((n) => (
-            <motion.div
-              key={n.id}
-              variants={itemVariants}
-              onClick={() => n.link && navigate(n.link)}
-              className={`float-card p-4 flex items-start gap-3.5 cursor-pointer hover:bg-muted/5 transition-colors ${typeBorderColors[n.type] || ''} ${!n.read ? 'bg-primary/[0.02]' : 'opacity-50'}`}
-            >
-              <span className="text-base mt-0.5">{typeIcon[n.type] || '🔔'}</span>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm">{n.message}</p>
-                  {n.type === 'FAVOURITE_POST' && (
-                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-500 shrink-0" />
-                  )}
+          {filtered.map((n) => {
+            const senderId = getSenderIdFromLink(n.link);
+            const isFollowNotif = n.type === 'FOLLOW';
+            const isFavNotif = n.type === 'FAVOURITE_POST';
+            const showFollowBack = isFollowNotif && senderId && !isFollowing(senderId);
+
+            return (
+              <motion.div
+                key={n.id}
+                variants={itemVariants}
+                onClick={() => n.link && navigate(n.link)}
+                className={cn(
+                  'float-card p-4 flex items-start gap-3.5 cursor-pointer hover:bg-muted/5 transition-colors',
+                  typeBorderColors[n.type] || '',
+                  !n.read ? 'bg-primary/[0.02]' : 'opacity-50',
+                  isFavNotif && !n.read && 'bg-yellow-500/[0.03] border-l-yellow-500'
+                )}
+              >
+                <span className="text-base mt-0.5">{typeIcon[n.type] || '🔔'}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm">{n.message}</p>
+                    {isFavNotif && (
+                      <Star className="w-3 h-3 text-yellow-500 fill-yellow-500 shrink-0" />
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="tag-pill text-[9px]">
+                      {n.type === 'FAVOURITE_POST' ? 'FAVOURITE' : n.type === 'FOLLOW_POST' ? 'POST' : n.type}
+                    </span>
+                    <span className="text-[10px] font-mono text-muted-foreground/40">
+                      {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="tag-pill text-[9px]">
-                    {n.type === 'FAVOURITE_POST' ? 'FAVOURITE' : n.type === 'FOLLOW_POST' ? 'POST' : n.type}
-                  </span>
-                  <span className="text-[10px] font-mono text-muted-foreground/40">
-                    {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
-                  </span>
-                </div>
-              </div>
-              {!n.read && <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0 shadow-[0_0_6px_hsl(var(--primary)/0.5)]" />}
-            </motion.div>
-          ))}
+
+                {/* Follow back button */}
+                {showFollowBack && (
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => { e.stopPropagation(); handleFollowBack(senderId!, n.id); }}
+                    disabled={followBackLoading === n.id}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-mono bg-primary/[0.08] text-primary border border-primary/20 hover:bg-primary/[0.15] transition-all shrink-0"
+                  >
+                    {followBackLoading === n.id ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <><UserPlus className="w-3 h-3" /> Follow back</>
+                    )}
+                  </motion.button>
+                )}
+
+                {!n.read && <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0 shadow-[0_0_6px_hsl(var(--primary)/0.5)]" />}
+              </motion.div>
+            );
+          })}
         </motion.div>
       )}
     </div>

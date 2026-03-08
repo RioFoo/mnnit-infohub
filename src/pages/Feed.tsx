@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,7 @@ import { Plus, Loader2, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { PageHeader } from '@/components/PageHeader';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useFollowState } from '@/hooks/useFollowState';
 import { AuthPromptDialog } from '@/components/AuthPromptDialog';
 import PostCard, { type Post } from '@/components/feed/PostCard';
 import CreatePostDialog from '@/components/feed/CreatePostDialog';
@@ -24,6 +25,7 @@ const containerVariants = {
 const Feed = () => {
   const { user } = useAuth();
   const { showAuthPrompt, setShowAuthPrompt, authMessage, requireAuth } = useAuthGuard();
+  const { isFollowing, isFavourite, toggleFollow, toggleFavourite, favouriteIds, followedIds } = useFollowState();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
@@ -51,6 +53,20 @@ const Feed = () => {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [user]);
+
+  // Sort posts: favourite authors first, then followed, then others
+  const sortedPosts = useMemo(() => {
+    if (!user) return posts;
+    const favSet = new Set(favouriteIds);
+    const followSet = new Set(followedIds);
+
+    return [...posts].sort((a, b) => {
+      const aFav = favSet.has(a.user_id) ? 0 : followSet.has(a.user_id) ? 1 : 2;
+      const bFav = favSet.has(b.user_id) ? 0 : followSet.has(b.user_id) ? 1 : 2;
+      if (aFav !== bFav) return aFav - bFav;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+  }, [posts, favouriteIds, followedIds, user]);
 
   const getReactionsForPost = (postId: string) => {
     const postReactions = allReactions.filter(r => r.post_id === postId);
@@ -105,7 +121,7 @@ const Feed = () => {
         </motion.div>
       ) : (
         <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-4 max-w-2xl mx-auto">
-          {posts.map(post => (
+          {sortedPosts.map(post => (
             <PostCard
               key={post.id}
               post={post}
@@ -113,11 +129,16 @@ const Feed = () => {
               onReact={handleReact}
               onRequireAuth={requireAuth}
               isAuthenticated={!!user}
+              currentUserId={user?.id}
+              isFollowingAuthor={isFollowing(post.user_id)}
+              isFavouriteAuthor={isFavourite(post.user_id)}
+              isFavouritePost={isFavourite(post.user_id)}
+              onToggleFollow={toggleFollow}
+              onToggleFavourite={toggleFavourite}
             />
           ))}
         </motion.div>
       )}
-
 
       <AuthPromptDialog open={showAuthPrompt} onOpenChange={setShowAuthPrompt} message={authMessage} />
     </div>

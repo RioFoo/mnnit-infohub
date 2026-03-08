@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Loader2, UserPlus, UserMinus, Heart, MessageCircle, ArrowLeft, Star } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Loader2, UserPlus, UserMinus, Heart, MessageCircle, ArrowLeft, Star, Users } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import MediaRenderer from '@/components/feed/MediaRenderer';
@@ -39,6 +39,8 @@ const UserProfile = () => {
   const [favouriteLoading, setFavouriteLoading] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
+  const [favouriteCount, setFavouriteCount] = useState(0);
+  const [followsMe, setFollowsMe] = useState(false);
   const [followDialogOpen, setFollowDialogOpen] = useState(false);
   const [followDialogTab, setFollowDialogTab] = useState<'followers' | 'following'>('followers');
 
@@ -52,32 +54,42 @@ const UserProfile = () => {
     if (!userId) return;
     const load = async () => {
       setLoading(true);
-      const [profileRes, postsRes, followersRes, followingRes] = await Promise.all([
+      const [profileRes, postsRes, followersRes, followingRes, favCountRes] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', userId).single(),
         (supabase.from as any)('posts').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
         (supabase.from as any)('followers').select('id', { count: 'exact', head: true }).eq('following_id', userId),
         (supabase.from as any)('followers').select('id', { count: 'exact', head: true }).eq('follower_id', userId),
+        (supabase.from as any)('followers').select('id', { count: 'exact', head: true }).eq('following_id', userId).eq('favourite', true),
       ]);
       if (profileRes.data) setProfileData(profileRes.data as unknown as UserProfileData);
       if (postsRes.data) setPosts(postsRes.data);
       setFollowerCount(followersRes.count || 0);
       setFollowingCount(followingRes.count || 0);
+      setFavouriteCount(favCountRes.count || 0);
       setLoading(false);
     };
     load();
   }, [userId]);
 
-  // Check follow + favourite status
+  // Check follow + favourite + mutual status
   useEffect(() => {
     if (!user || !userId) return;
     const check = async () => {
-      const { data } = await (supabase.from as any)('followers')
-        .select('id, favourite')
-        .eq('follower_id', user.id)
-        .eq('following_id', userId)
-        .maybeSingle();
-      setIsFollowing(!!data);
-      setIsFavourite(data?.favourite || false);
+      const [myFollowRes, theirFollowRes] = await Promise.all([
+        (supabase.from as any)('followers')
+          .select('id, favourite')
+          .eq('follower_id', user.id)
+          .eq('following_id', userId)
+          .maybeSingle(),
+        (supabase.from as any)('followers')
+          .select('id')
+          .eq('follower_id', userId)
+          .eq('following_id', user.id)
+          .maybeSingle(),
+      ]);
+      setIsFollowing(!!myFollowRes.data);
+      setIsFavourite(myFollowRes.data?.favourite || false);
+      setFollowsMe(!!theirFollowRes.data);
     };
     check();
   }, [user, userId]);
@@ -90,9 +102,7 @@ const UserProfile = () => {
     setFollowLoading(true);
     if (isFollowing) {
       const { error } = await (supabase.from as any)('followers')
-        .delete()
-        .eq('follower_id', user.id)
-        .eq('following_id', userId);
+        .delete().eq('follower_id', user.id).eq('following_id', userId);
       if (error) toast.error('Failed to unfollow');
       else {
         setIsFollowing(false);
@@ -124,7 +134,8 @@ const UserProfile = () => {
     if (error) toast.error('Failed to update');
     else {
       setIsFavourite(newVal);
-      toast.success(newVal ? 'Added to favourites — posts will appear on top in alerts' : 'Removed from favourites');
+      setFavouriteCount(c => newVal ? c + 1 : c - 1);
+      toast.success(newVal ? 'Added to favourites' : 'Removed from favourites');
     }
     setFavouriteLoading(false);
   };
@@ -186,59 +197,72 @@ const UserProfile = () => {
             {/* Follow + Favourite Buttons */}
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="flex items-center gap-2">
               {/* Favourite (only visible when following) */}
-              {isFollowing && (
-                <motion.button
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 400 }}
-                  onClick={handleFavourite}
-                  disabled={favouriteLoading}
-                  className={cn(
-                    'w-9 h-9 rounded-xl flex items-center justify-center border transition-all',
-                    isFavourite
-                      ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500 shadow-[0_0_12px_hsl(45,100%,50%,0.2)]'
-                      : 'bg-muted/10 border-border/[0.08] text-muted-foreground/40 hover:text-yellow-500 hover:border-yellow-500/20'
-                  )}
-                  title={isFavourite ? 'Remove from favourites' : 'Add to favourites — their posts appear on top in alerts'}
-                >
-                  {favouriteLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Star className={cn('w-4 h-4', isFavourite && 'fill-current')} />
-                  )}
-                </motion.button>
-              )}
+              <AnimatePresence>
+                {isFollowing && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0 }}
+                    transition={{ type: 'spring', stiffness: 400 }}
+                    onClick={handleFavourite}
+                    disabled={favouriteLoading}
+                    className={cn(
+                      'w-9 h-9 rounded-xl flex items-center justify-center border transition-all',
+                      isFavourite
+                        ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500 shadow-[0_0_12px_hsl(45,100%,50%,0.2)]'
+                        : 'bg-muted/10 border-border/[0.08] text-muted-foreground/40 hover:text-yellow-500 hover:border-yellow-500/20'
+                    )}
+                    title={isFavourite ? 'Remove from favourites' : 'Add to favourites'}
+                  >
+                    {favouriteLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Star className={cn('w-4 h-4', isFavourite && 'fill-current')} />
+                    )}
+                  </motion.button>
+                )}
+              </AnimatePresence>
 
               {/* Follow/Unfollow */}
-              <Button
-                onClick={handleFollow}
-                disabled={followLoading}
-                size="sm"
-                variant={isFollowing ? 'outline' : 'default'}
-                className={cn(
-                  'rounded-xl gap-1.5 text-xs font-mono',
-                  isFollowing
-                    ? 'border-border/[0.08] hover:border-destructive/30 hover:text-destructive hover:bg-destructive/[0.04]'
-                    : 'btn-bio'
-                )}
-              >
-                {followLoading ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : isFollowing ? (
-                  <>
-                    <UserMinus className="w-3.5 h-3.5" /> Unfollow
-                  </>
-                ) : (
-                  <>
-                    <UserPlus className="w-3.5 h-3.5" /> Follow
-                  </>
-                )}
-              </Button>
+              <motion.div whileTap={{ scale: 0.9 }}>
+                <Button
+                  onClick={handleFollow}
+                  disabled={followLoading}
+                  size="sm"
+                  variant={isFollowing ? 'outline' : 'default'}
+                  className={cn(
+                    'rounded-xl gap-1.5 text-xs font-mono',
+                    isFollowing
+                      ? 'border-border/[0.08] hover:border-destructive/30 hover:text-destructive hover:bg-destructive/[0.04]'
+                      : 'btn-bio'
+                  )}
+                >
+                  {followLoading ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : isFollowing ? (
+                    <><UserMinus className="w-3.5 h-3.5" /> Unfollow</>
+                  ) : (
+                    <><UserPlus className="w-3.5 h-3.5" /> Follow</>
+                  )}
+                </Button>
+              </motion.div>
             </motion.div>
           </div>
 
           <div className="mt-4">
-            <h2 className="text-2xl font-display font-bold">{profileData.name || 'User'}</h2>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-2xl font-display font-bold">{profileData.name || 'User'}</h2>
+              {/* Mutual follow badge */}
+              {followsMe && (
+                <motion.span
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="tag-pill text-[9px] bg-primary/[0.08] text-primary border-primary/20"
+                >
+                  Follows you
+                </motion.span>
+              )}
+            </div>
             <p className="text-sm font-mono text-muted-foreground mt-0.5">@{profileData.handle}</p>
             {profileData.bio && <p className="text-sm mt-3 text-foreground/70 max-w-md leading-relaxed">{profileData.bio}</p>}
           </div>
@@ -265,6 +289,12 @@ const UserProfile = () => {
               <p className="text-2xl font-display font-bold gradient-text">{followingCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Following</p>
             </button>
+            <div className="text-center">
+              <p className="text-2xl font-display font-bold text-yellow-500">{favouriteCount}</p>
+              <p className="text-[10px] font-mono text-muted-foreground flex items-center gap-1 justify-center">
+                <Star className="w-3 h-3 text-yellow-500/50" /> Favorites
+              </p>
+            </div>
           </div>
 
           {userId && <FollowersDialog open={followDialogOpen} onOpenChange={setFollowDialogOpen} userId={userId} tab={followDialogTab} />}
