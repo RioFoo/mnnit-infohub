@@ -4,9 +4,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Heart, MessageCircle, Share2, Plus, Loader2 } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Plus, Loader2, Sparkles, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
@@ -54,11 +54,9 @@ const Feed = () => {
   useEffect(() => {
     fetchPosts();
     if (user) fetchLikes();
-
     const channel = supabase.channel('posts-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => fetchPosts())
       .subscribe();
-
     return () => { supabase.removeChannel(channel); };
   }, [user]);
 
@@ -66,19 +64,9 @@ const Feed = () => {
     if (!newContent.trim() || !user) return;
     setPosting(true);
     const tags = newTags.split(',').map(t => t.trim()).filter(Boolean);
-    const { error } = await (supabase.from as any)('posts').insert({
-      user_id: user.id,
-      content: newContent,
-      tags,
-    });
+    const { error } = await (supabase.from as any)('posts').insert({ user_id: user.id, content: newContent, tags });
     if (error) toast.error(error.message);
-    else {
-      toast.success('Post created!');
-      setNewContent('');
-      setNewTags('');
-      setCreateOpen(false);
-      fetchPosts();
-    }
+    else { toast.success('Post created!'); setNewContent(''); setNewTags(''); setCreateOpen(false); fetchPosts(); }
     setPosting(false);
   };
 
@@ -96,93 +84,143 @@ const Feed = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-mono font-bold text-primary">Feed</h1>
-        <Button
-          size="sm"
-          className="gap-1"
-          onClick={() => requireAuth(() => setCreateOpen(true), 'Sign in to create posts and share with the campus!')}
-        >
-          <Plus className="w-4 h-4" /> Post
-        </Button>
-      </div>
+    <div className="page-container">
+      {/* Hero header */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between mb-8"
+      >
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <TrendingUp className="w-4 h-4 text-primary" />
+            <span className="section-title mb-0">Live Feed</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-mono font-bold">
+            What's <span className="gradient-text">Happening</span>
+          </h1>
+        </div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button
+            onClick={() => requireAuth(() => setCreateOpen(true), 'Sign in to create posts!')}
+            className="gap-2 rounded-xl btn-glow bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <Plus className="w-4 h-4" /> <span className="hidden sm:inline">New Post</span>
+          </Button>
+        </motion.div>
+      </motion.div>
 
-      {/* Create post dialog - only opens when authenticated */}
+      {/* Create dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent>
-          <DialogHeader><DialogTitle className="font-mono">Create Post</DialogTitle></DialogHeader>
+        <DialogContent className="card-3d border-border/50">
+          <DialogHeader>
+            <DialogTitle className="font-mono flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" /> Create Post
+            </DialogTitle>
+          </DialogHeader>
           <div className="space-y-3">
-            <Textarea placeholder="What's happening at MNNIT?" value={newContent} onChange={e => setNewContent(e.target.value)} rows={4} />
-            <Input placeholder="Tags (comma separated)" value={newTags} onChange={e => setNewTags(e.target.value)} />
-            <Button onClick={handleCreatePost} disabled={posting || !newContent.trim()} className="w-full">
+            <Textarea placeholder="What's happening at campus?" value={newContent} onChange={e => setNewContent(e.target.value)} rows={4} className="bg-muted/30 border-border/50 rounded-xl" />
+            <Input placeholder="Tags (comma separated)" value={newTags} onChange={e => setNewTags(e.target.value)} className="bg-muted/30 border-border/50 rounded-xl" />
+            <Button onClick={handleCreatePost} disabled={posting || !newContent.trim()} className="w-full rounded-xl btn-glow">
               {posting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Post'}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
+      {/* Posts */}
       {loading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        <div className="flex justify-center py-16">
+          <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>
+            <Loader2 className="w-8 h-8 text-primary" />
+          </motion.div>
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <p>No posts yet. Be the first to post!</p>
-        </div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
+          <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+            <Sparkles className="w-8 h-8 text-primary" />
+          </div>
+          <p className="text-muted-foreground">No posts yet. Be the first to share!</p>
+        </motion.div>
       ) : (
-        posts.map((post, i) => (
-          <motion.div
-            key={post.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="glass rounded-xl p-4 hover:border-primary/30 transition-all"
-          >
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm shrink-0">
-                {(post.profiles?.name || 'U')[0].toUpperCase()}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm">{post.profiles?.name || 'Anonymous'}</span>
-                  <span className="text-xs text-muted-foreground">@{post.profiles?.handle}</span>
-                  <span className="text-xs text-muted-foreground">· {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
-                </div>
-                <p className="mt-1 text-sm whitespace-pre-wrap">{post.content}</p>
-                {post.image_url && (
-                  <img src={post.image_url} alt="" className="mt-2 rounded-lg max-h-64 object-cover" />
-                )}
-                {post.tags && post.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {post.tags.map(tag => (
-                      <Badge key={tag} variant="secondary" className="text-[10px]">{tag}</Badge>
-                    ))}
+        <div className="space-y-4 max-w-2xl mx-auto">
+          {posts.map((post, i) => (
+            <motion.div
+              key={post.id}
+              initial={{ opacity: 0, y: 20, rotateX: -3 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{ delay: i * 0.06, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+              className="card-3d p-5 group"
+              style={{ perspective: '800px' }}
+            >
+              <div className="flex items-start gap-4">
+                {/* Avatar */}
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="w-11 h-11 rounded-xl bg-primary/15 flex items-center justify-center text-primary font-bold text-sm shrink-0 ring-2 ring-primary/10"
+                >
+                  {post.profiles?.avatar_url ? (
+                    <img src={post.profiles.avatar_url} alt="" className="w-full h-full rounded-xl object-cover" />
+                  ) : (
+                    (post.profiles?.name || 'U')[0].toUpperCase()
+                  )}
+                </motion.div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold text-sm">{post.profiles?.name || 'Anonymous'}</span>
+                    <span className="text-xs text-muted-foreground">@{post.profiles?.handle}</span>
+                    <span className="text-xs text-muted-foreground/60">· {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
                   </div>
-                )}
-                <div className="flex items-center gap-4 mt-3">
-                  <button
-                    onClick={() => requireAuth(() => handleLike(post.id), 'Sign in to like posts!')}
-                    className={`flex items-center gap-1 text-xs transition-colors ${likedPosts.has(post.id) ? 'text-destructive' : 'text-muted-foreground hover:text-destructive'}`}
-                  >
-                    <Heart className={`w-4 h-4 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
-                    {post.likes_count}
-                  </button>
-                  <button
-                    onClick={() => requireAuth(() => {}, 'Sign in to comment on posts!')}
-                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    {post.comments_count}
-                  </button>
-                  <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
-                    <Share2 className="w-4 h-4" />
-                  </button>
+                  <p className="mt-2 text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>
+
+                  {post.image_url && (
+                    <motion.img
+                      src={post.image_url}
+                      alt=""
+                      className="mt-3 rounded-xl max-h-72 object-cover w-full"
+                      whileHover={{ scale: 1.02 }}
+                    />
+                  )}
+
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-3">
+                      {post.tags.map(tag => (
+                        <Badge key={tag} variant="secondary" className="text-[10px] rounded-lg bg-secondary/10 text-secondary border-secondary/20">{tag}</Badge>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-5 mt-4 pt-3 border-t border-border/30">
+                    <motion.button
+                      whileTap={{ scale: 0.8 }}
+                      onClick={() => requireAuth(() => handleLike(post.id), 'Sign in to like!')}
+                      className={`flex items-center gap-1.5 text-xs transition-all ${likedPosts.has(post.id) ? 'text-destructive' : 'text-muted-foreground hover:text-destructive'}`}
+                    >
+                      <Heart className={`w-4 h-4 ${likedPosts.has(post.id) ? 'fill-current drop-shadow-[0_0_6px_hsl(var(--destructive)/0.5)]' : ''}`} />
+                      <span className="font-medium">{post.likes_count}</span>
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.8 }}
+                      onClick={() => requireAuth(() => {}, 'Sign in to comment!')}
+                      className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-all"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span className="font-medium">{post.comments_count}</span>
+                    </motion.button>
+                    <motion.button
+                      whileTap={{ scale: 0.8 }}
+                      className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-all"
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </motion.button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        ))
+            </motion.div>
+          ))}
+        </div>
       )}
 
       <AuthPromptDialog open={showAuthPrompt} onOpenChange={setShowAuthPrompt} message={authMessage} />

@@ -4,16 +4,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
+import { Clock, Zap } from 'lucide-react';
 
 const sectionIds = Object.keys(TIMETABLE_DATA);
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const TIME_SLOTS = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
-const typeColors: Record<string, string> = {
-  LECTURE: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
-  LAB: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-  TUTORIAL: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-  WORKSHOP: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+const typeStyles: Record<string, string> = {
+  LECTURE: 'bg-sky-500/15 text-sky-300 border-sky-500/30 shadow-[inset_0_1px_0_hsl(200_90%_60%/0.1)]',
+  LAB: 'bg-purple-500/15 text-purple-300 border-purple-500/30 shadow-[inset_0_1px_0_hsl(270_70%_60%/0.1)]',
+  TUTORIAL: 'bg-amber-500/15 text-amber-300 border-amber-500/30 shadow-[inset_0_1px_0_hsl(40_90%_55%/0.1)]',
+  WORKSHOP: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 shadow-[inset_0_1px_0_hsl(150_70%_55%/0.1)]',
 };
 
 const Timetable = () => {
@@ -38,12 +39,27 @@ const Timetable = () => {
   }, [sectionData, batch]);
 
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-4">
-      <h1 className="text-2xl font-mono font-bold text-primary">Timetable</h1>
+    <div className="page-container">
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+        <div className="flex items-center gap-2 mb-1">
+          <Clock className="w-4 h-4 text-primary" />
+          <span className="section-title mb-0">Schedule</span>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-mono font-bold">
+          Your <span className="gradient-text">Timetable</span>
+        </h1>
+      </motion.div>
 
-      <div className="flex flex-wrap gap-3 items-center">
+      {/* Controls */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="flex flex-wrap gap-3 items-center mb-6"
+      >
         <Select value={section} onValueChange={setSection}>
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="w-48 rounded-xl bg-muted/30 border-border/50">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -54,66 +70,94 @@ const Timetable = () => {
         </Select>
 
         <Tabs value={batch} onValueChange={(v) => setBatch(v as 'ALL' | '1' | '2')}>
-          <TabsList>
-            <TabsTrigger value="ALL">All</TabsTrigger>
-            <TabsTrigger value="1">Batch 1</TabsTrigger>
-            <TabsTrigger value="2">Batch 2</TabsTrigger>
+          <TabsList className="rounded-xl bg-muted/30">
+            <TabsTrigger value="ALL" className="rounded-lg">All</TabsTrigger>
+            <TabsTrigger value="1" className="rounded-lg">Batch 1</TabsTrigger>
+            <TabsTrigger value="2" className="rounded-lg">Batch 2</TabsTrigger>
           </TabsList>
         </Tabs>
 
-        <div className="flex gap-3 ml-auto">
-          {Object.entries(typeColors).map(([type, cls]) => (
-            <div key={type} className="flex items-center gap-1">
-              <div className={`w-3 h-3 rounded ${cls.split(' ')[0]}`} />
-              <span className="text-[10px] text-muted-foreground">{type}</span>
+        <div className="flex gap-3 ml-auto flex-wrap">
+          {Object.entries(typeStyles).map(([type, cls]) => (
+            <div key={type} className="flex items-center gap-1.5">
+              <div className={`w-2.5 h-2.5 rounded-md ${cls.split(' ')[0]}`} />
+              <span className="text-[10px] text-muted-foreground font-medium">{type}</span>
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
-      {/* Weekly Grid */}
-      <div className="overflow-x-auto">
+      {/* Grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="overflow-x-auto card-3d p-1"
+      >
         <div className="min-w-[800px]">
-          <div className="grid grid-cols-6 gap-1">
+          <div className="grid grid-cols-6 gap-px bg-border/20 rounded-xl overflow-hidden">
             {/* Header */}
-            <div className="text-xs font-mono text-muted-foreground p-2">Time</div>
+            <div className="text-[10px] font-mono text-muted-foreground p-3 bg-card/80 backdrop-blur-sm">Time</div>
             {DAYS.map(day => (
               <div
                 key={day}
-                className={`text-xs font-mono p-2 text-center rounded-t-lg ${
-                  day === currentDay ? 'bg-primary/10 text-primary font-bold' : 'text-muted-foreground'
+                className={`text-xs font-mono p-3 text-center bg-card/80 backdrop-blur-sm ${
+                  day === currentDay ? 'text-primary font-bold' : 'text-muted-foreground'
                 }`}
               >
-                {day.slice(0, 3)}
+                <span className="hidden sm:inline">{day.slice(0, 3)}</span>
+                <span className="sm:hidden">{day[0]}</span>
+                {day === currentDay && (
+                  <motion.div
+                    className="h-0.5 bg-primary rounded-full mt-1 mx-auto w-4"
+                    layoutId="today-indicator"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                )}
               </div>
             ))}
 
-            {/* Time rows */}
-            {TIME_SLOTS.map(time => (
+            {/* Rows */}
+            {TIME_SLOTS.map((time, ti) => (
               <>
-                <div key={time} className="text-[10px] font-mono text-muted-foreground p-1 border-t border-border">
+                <div key={time} className="text-[10px] font-mono text-muted-foreground/70 p-2 bg-card/40 flex items-start">
                   {time}
                 </div>
                 {DAYS.map(day => {
                   const dayData = filteredSchedule.find(d => d.day === day);
                   const sessions = dayData?.sessions.filter(s => s.startTime === time) || [];
+                  const isToday = day === currentDay;
 
                   return (
-                    <div key={`${day}-${time}`} className={`min-h-[50px] border-t border-border p-0.5 ${day === currentDay ? 'bg-primary/5' : ''}`}>
-                      {sessions.map((s, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          className={`rounded-md p-1.5 text-[10px] border mb-0.5 ${typeColors[s.type] || ''} ${
-                            isCurrentSession(s, day) ? 'pulse-glow ring-1 ring-primary' : ''
-                          }`}
-                        >
-                          <p className="font-medium truncate">{s.subject.split('(')[0].trim()}</p>
-                          <p className="opacity-70">{s.room} {s.batch !== 'ALL' ? `· B${s.batch}` : ''}</p>
-                          <p className="opacity-50">{s.startTime}-{s.endTime}</p>
-                        </motion.div>
-                      ))}
+                    <div
+                      key={`${day}-${time}`}
+                      className={`min-h-[56px] p-1 bg-card/40 ${isToday ? 'bg-primary/[0.03]' : ''}`}
+                    >
+                      {sessions.map((s, i) => {
+                        const isCurrent = isCurrentSession(s, day);
+                        return (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: ti * 0.02 }}
+                            whileHover={{ scale: 1.03, zIndex: 10 }}
+                            className={`rounded-lg p-2 text-[10px] border mb-1 cursor-default transition-all ${typeStyles[s.type] || ''} ${
+                              isCurrent ? 'pulse-glow ring-1 ring-primary' : ''
+                            }`}
+                          >
+                            {isCurrent && (
+                              <div className="flex items-center gap-1 mb-0.5">
+                                <Zap className="w-2.5 h-2.5 text-primary animate-pulse" />
+                                <span className="text-primary text-[8px] font-bold uppercase tracking-wider">Live</span>
+                              </div>
+                            )}
+                            <p className="font-semibold truncate leading-tight">{s.subject.split('(')[0].trim()}</p>
+                            <p className="opacity-60 mt-0.5">{s.room} {s.batch !== 'ALL' ? `· B${s.batch}` : ''}</p>
+                          </motion.div>
+                        );
+                      })}
                     </div>
                   );
                 })}
@@ -121,7 +165,7 @@ const Timetable = () => {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
