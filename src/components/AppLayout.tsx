@@ -16,7 +16,7 @@ const mobileNavItems = [
   { title: 'Profile', url: '/profile', icon: User },
 ];
 
-const MobileNavItem = ({ item }: { item: typeof mobileNavItems[number] }) => {
+const MobileNavItem = ({ item }: { item: (typeof mobileNavItems)[number] }) => {
   const location = useLocation();
   const isActive = item.url === '/' ? location.pathname === '/' : location.pathname.startsWith(item.url);
 
