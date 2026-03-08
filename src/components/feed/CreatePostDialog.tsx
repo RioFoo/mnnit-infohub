@@ -24,7 +24,8 @@ const ALLOWED_TYPES: Record<string, string[]> = {
 
 const ALL_ALLOWED = Object.values(ALLOWED_TYPES).flat();
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB for non-video
+const MAX_VIDEO_SIZE = 8 * 1024 * 1024; // 8MB for video
 
 const CreatePostDialog = ({ open, onOpenChange, onCreated }: CreatePostDialogProps) => {
   const { user } = useAuth();
