@@ -127,9 +127,10 @@ const Profile = () => {
                 <Edit className="w-3 h-3" /> Edit Profile
               </Button>
             </DialogTrigger>
-            <DialogContent className="card-bio glow-border border-border/[0.06]">
+             <DialogContent className="bg-card border border-border/10 rounded-2xl shadow-2xl" aria-describedby="edit-profile-desc">
               <DialogHeader>
                 <DialogTitle className="text-lg font-display font-bold">Edit Profile</DialogTitle>
+                <p id="edit-profile-desc" className="text-sm text-muted-foreground">Update your profile information</p>
               </DialogHeader>
               <div className="space-y-3 mt-2">
                 <div>
