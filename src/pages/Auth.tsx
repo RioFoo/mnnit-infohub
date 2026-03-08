@@ -292,8 +292,13 @@ const Auth = () => {
           }}
           transition={{ type: 'spring', stiffness: 100, damping: 30 }}
         >
-          {/* Glowing backdrop */}
+          {/* Glowing backdrop with INFOHUB watermark */}
           <div className="absolute inset-0 -m-8 rounded-3xl bg-primary/5 blur-3xl" />
+          <div className="absolute inset-0 -m-8 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+            <span className="text-[8rem] font-mono font-black tracking-widest text-primary/[0.04] blur-[2px] uppercase" style={{ textShadow: '0 0 60px hsl(var(--primary) / 0.08)' }}>
+              INFOHUB
+            </span>
+          </div>
           
           <motion.div
             initial={{ opacity: 0, y: 30, rotateX: -15 }}
