@@ -962,3 +962,187 @@
   animation: blink-cursor 1s step-end infinite;
   vertical-align: text-bottom;
 }
+
+/* ═══════════════════════════════════════════════
+   ✦ 3D TEXT DEPTH EFFECT
+   ═══════════════════════════════════════════════ */
+.text-3d {
+  text-shadow:
+    0 1px 0 hsl(var(--foreground) / 0.15),
+    0 2px 0 hsl(var(--foreground) / 0.12),
+    0 3px 0 hsl(var(--foreground) / 0.09),
+    0 4px 0 hsl(var(--foreground) / 0.06),
+    0 5px 10px hsl(0 0% 0% / 0.4),
+    0 8px 25px hsl(0 0% 0% / 0.2);
+}
+
+.text-3d-glow {
+  text-shadow:
+    0 1px 0 hsl(var(--neon-cyan) / 0.3),
+    0 2px 0 hsl(var(--neon-cyan) / 0.2),
+    0 3px 0 hsl(var(--neon-purple) / 0.15),
+    0 4px 0 hsl(var(--neon-purple) / 0.1),
+    0 5px 15px hsl(0 0% 0% / 0.5),
+    0 0 30px hsl(var(--neon-cyan) / 0.3),
+    0 0 60px hsl(var(--neon-cyan) / 0.15);
+}
+
+/* ═══════════════════════════════════════════════
+   ✦ 3D NAV ITEM TEXT
+   ═══════════════════════════════════════════════ */
+.nav-text-3d {
+  text-shadow:
+    0 1px 0 hsl(var(--foreground) / 0.08),
+    0 2px 0 hsl(var(--foreground) / 0.05),
+    0 3px 6px hsl(0 0% 0% / 0.25);
+  transition: text-shadow 0.3s ease;
+}
+
+.nav-text-3d:hover,
+.nav-text-3d-active {
+  text-shadow:
+    0 1px 0 hsl(var(--neon-cyan) / 0.3),
+    0 2px 0 hsl(var(--neon-cyan) / 0.2),
+    0 3px 8px hsl(0 0% 0% / 0.4),
+    0 0 20px hsl(var(--neon-cyan) / 0.2);
+}
+
+/* ═══════════════════════════════════════════════
+   ✦ ENHANCED 3D CARD
+   ═══════════════════════════════════════════════ */
+.card-3d-pro {
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    hsl(var(--card) / 0.95),
+    hsl(var(--card) / 0.7)
+  );
+  backdrop-filter: blur(30px) saturate(1.8);
+  border: 1px solid hsl(var(--border) / 0.4);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-style: preserve-3d;
+}
+
+.card-3d-pro::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--neon-cyan) / 0.03) 0%,
+    transparent 50%,
+    hsl(var(--neon-purple) / 0.02) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.5s ease;
+}
+
+.card-3d-pro:hover {
+  transform: perspective(800px) translateY(-8px) rotateX(3deg) rotateY(-2deg) translateZ(15px);
+  box-shadow:
+    0 35px 70px -20px hsl(0 0% 0% / 0.5),
+    0 0 50px -15px hsl(var(--neon-cyan) / 0.2),
+    inset 0 1px 0 hsl(var(--foreground) / 0.08),
+    -5px 5px 0 hsl(var(--neon-cyan) / 0.03),
+    -10px 10px 0 hsl(var(--neon-purple) / 0.02);
+  border-color: hsl(var(--neon-cyan) / 0.25);
+}
+
+.card-3d-pro:hover::before {
+  opacity: 1;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--neon-cyan) / 0.06) 0%,
+    transparent 40%,
+    hsl(var(--neon-purple) / 0.04) 100%
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   ✦ 3D BUTTON PRESS EFFECT
+   ═══════════════════════════════════════════════ */
+.btn-3d {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow:
+    0 4px 0 hsl(var(--primary) / 0.4),
+    0 6px 15px hsl(0 0% 0% / 0.3);
+}
+
+.btn-3d:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 0 hsl(var(--primary) / 0.4),
+    0 10px 25px hsl(0 0% 0% / 0.3),
+    0 0 20px hsl(var(--neon-cyan) / 0.15);
+}
+
+.btn-3d:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 1px 0 hsl(var(--primary) / 0.4),
+    0 2px 5px hsl(0 0% 0% / 0.2);
+}
+
+/* ═══════════════════════════════════════════════
+   ✦ SHIMMER SLIDE
+   ═══════════════════════════════════════════════ */
+@keyframes shimmer-slide {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ═══════════════════════════════════════════════
+   ✦ GLOW PULSE
+   ═══════════════════════════════════════════════ */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════
+   ✦ 3D PAGE HEADER
+   ═══════════════════════════════════════════════ */
+.page-header-3d {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  background: var(--gradient-aurora);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: aurora-text 4s ease-in-out infinite;
+  text-shadow: none;
+  filter: drop-shadow(0 2px 4px hsl(0 0% 0% / 0.3))
+          drop-shadow(0 0 20px hsl(var(--neon-cyan) / 0.2));
+}
+
+/* ═══════════════════════════════════════════════
+   ✦ 3D TAB INDICATOR
+   ═══════════════════════════════════════════════ */
+.tab-3d {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-style: preserve-3d;
+}
+
+.tab-3d:hover {
+  transform: perspective(400px) translateZ(5px);
+}
+
+.tab-3d-active {
+  transform: perspective(400px) translateZ(8px);
+  box-shadow:
+    0 4px 0 hsl(var(--primary) / 0.3),
+    0 8px 20px hsl(0 0% 0% / 0.2),
+    0 0 15px hsl(var(--neon-cyan) / 0.1);
+}

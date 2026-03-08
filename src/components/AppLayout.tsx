@@ -1,7 +1,7 @@
 import { Outlet, useLocation, useNavigate, NavLink as RouterNavLink } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
-import { Home, Compass, CalendarDays, Bell, User, LogIn, Menu } from 'lucide-react';
+import { Home, Compass, CalendarDays, Bell, User, LogIn } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { CommandPalette } from '@/components/CommandPalette';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,14 +9,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 
 const mobileNavItems = [
-{ title: 'Feed', url: '/', icon: Home },
-{ title: 'Explore', url: '/explore', icon: Compass },
-{ title: 'Calendar', url: '/calendar', icon: CalendarDays },
-{ title: 'Alerts', url: '/notifications', icon: Bell },
-{ title: 'Profile', url: '/profile', icon: User }];
+  { title: 'Feed', url: '/', icon: Home },
+  { title: 'Explore', url: '/explore', icon: Compass },
+  { title: 'Calendar', url: '/calendar', icon: CalendarDays },
+  { title: 'Alerts', url: '/notifications', icon: Bell },
+  { title: 'Profile', url: '/profile', icon: User },
+];
 
-
-const MobileNavItem = ({ item }: {item: (typeof mobileNavItems)[number];}) => {
+const MobileNavItem = ({ item }: { item: (typeof mobileNavItems)[number] }) => {
   const location = useLocation();
   const isActive = item.url === '/' ? location.pathname === '/' : location.pathname.startsWith(item.url);
 
@@ -24,43 +24,42 @@ const MobileNavItem = ({ item }: {item: (typeof mobileNavItems)[number];}) => {
     <RouterNavLink
       to={item.url}
       end={item.url === '/'}
-      className="relative flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all duration-300">
+      className="relative flex flex-col items-center gap-0.5 px-4 py-2.5 rounded-xl transition-all duration-300 min-w-[52px]">
       
-      {isActive &&
-      <motion.div
-        layoutId="mobile-active"
-        className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary"
-        style={{ boxShadow: '0 0 12px hsl(var(--neon-cyan) / 0.8), 0 0 30px hsl(var(--neon-cyan) / 0.3)' }}
-        transition={{ type: 'spring', stiffness: 500, damping: 30 }} />
-
-      }
+      {isActive && (
+        <motion.div
+          layoutId="mobile-active"
+          className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-primary"
+          style={{ boxShadow: '0 0 12px hsl(var(--neon-cyan) / 0.8), 0 0 30px hsl(var(--neon-cyan) / 0.3)' }}
+          transition={{ type: 'spring', stiffness: 500, damping: 30 }} />
+      )}
       <motion.div
         whileTap={{ scale: 0.7, rotateY: 180 }}
         transition={{ type: 'spring', stiffness: 400 }}
-        className="relative z-10">
-        
+        className="relative z-10"
+        style={{ transformStyle: 'preserve-3d' }}>
         <item.icon className={cn(
           'w-5 h-5 transition-all duration-300',
-          isActive ?
-          'text-primary drop-shadow-[0_0_8px_hsl(var(--neon-cyan)/0.7)]' :
-          'text-muted-foreground'
+          isActive
+            ? 'text-primary drop-shadow-[0_0_8px_hsl(var(--neon-cyan)/0.7)]'
+            : 'text-muted-foreground'
         )} />
       </motion.div>
       <span className={cn(
         'text-[8px] font-display uppercase tracking-wider relative z-10',
-        isActive ? 'text-primary' : 'text-muted-foreground/60'
+        isActive ? 'text-primary nav-text-3d-active' : 'text-muted-foreground/60'
       )}>
         {item.title}
       </span>
-      {isActive &&
-      <motion.div
-        layoutId="mobile-bg"
-        className="absolute inset-0 rounded-lg bg-primary/5"
-        transition={{ type: 'spring', stiffness: 400, damping: 30 }} />
-
-      }
-    </RouterNavLink>);
-
+      {isActive && (
+        <motion.div
+          layoutId="mobile-bg"
+          className="absolute inset-0 rounded-xl bg-primary/8"
+          style={{ boxShadow: '0 4px 0 hsl(var(--primary) / 0.1), 0 6px 15px hsl(0 0% 0% / 0.15)' }}
+          transition={{ type: 'spring', stiffness: 400, damping: 30 }} />
+      )}
+    </RouterNavLink>
+  );
 };
 
 const AppLayout = () => {
@@ -105,11 +104,10 @@ const AppLayout = () => {
 
         {/* ═══ CURSOR SPOTLIGHT ═══ */}
         <div
-          className="fixed inset-0 pointer-events-none z-[1] transition-all duration-1000"
+          className="fixed inset-0 pointer-events-none z-[1] transition-all duration-500"
           style={{
-            background: `radial-gradient(ellipse 600px 400px at ${mousePos.x}% ${mousePos.y}%, hsl(var(--neon-cyan) / 0.04), transparent)`
+            background: `radial-gradient(ellipse 700px 500px at ${mousePos.x}% ${mousePos.y}%, hsl(var(--neon-cyan) / 0.05), transparent)`
           }} />
-        
 
         <div className="hidden md:block relative z-20">
           <AppSidebar onOpenCommand={() => setCommandOpen(true)} />
@@ -119,7 +117,7 @@ const AppLayout = () => {
           className="flex-1 flex flex-col min-h-screen relative z-10"
           onMouseMove={handleMouseMove}>
           
-          {/* ═══ HEADER - HUD BAR ═══ */}
+          {/* ═══ HEADER ═══ */}
           <header className="h-14 flex items-center justify-between px-5 sticky top-0 z-40 glass-panel border-b border-border/30">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="hidden md:flex text-muted-foreground hover:text-primary transition-colors" />
@@ -132,24 +130,17 @@ const AppLayout = () => {
               </div>
             </div>
 
-            {/* HUD Status */}
-            <div className="hidden md:flex items-center gap-4 text-[9px] font-mono text-muted-foreground/50 uppercase tracking-widest">
-              
-              <span>v2.0</span>
-            </div>
-
             <div className="flex items-center gap-3">
-              {!user &&
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/auth')}
-                className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold font-display tracking-wider uppercase bg-primary/10 text-primary hover:bg-primary/20 transition-all btn-neon border border-primary/20">
-                
+              {!user && (
+                <motion.button
+                  whileHover={{ scale: 1.05, y: -1 }}
+                  whileTap={{ scale: 0.95, y: 1 }}
+                  onClick={() => navigate('/auth')}
+                  className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold font-display tracking-wider uppercase bg-primary/10 text-primary hover:bg-primary/20 transition-all btn-neon border border-primary/20">
                   <LogIn className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Login</span>
                 </motion.button>
-              }
+              )}
             </div>
           </header>
 
@@ -158,18 +149,17 @@ const AppLayout = () => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}
-                initial={{ opacity: 0, y: 30, scale: 0.98, rotateX: -3 }}
-                animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
-                exit={{ opacity: 0, y: -20, scale: 0.97, filter: 'blur(4px)' }}
-                transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
-                style={{ transformOrigin: 'top center', perspective: '1200px' }}>
-                
+                initial={{ opacity: 0, rotateY: -8, scale: 0.97, filter: 'blur(6px)' }}
+                animate={{ opacity: 1, rotateY: 0, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, rotateY: 8, scale: 0.97, filter: 'blur(6px)' }}
+                transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                style={{ transformOrigin: 'center center', perspective: '1200px' }}>
                 <Outlet />
               </motion.div>
             </AnimatePresence>
           </main>
 
-          {/* ═══ MOBILE NAV - FLOATING HUD ═══ */}
+          {/* ═══ MOBILE NAV ═══ */}
           <nav className="md:hidden fixed bottom-4 left-3 right-3 z-50">
             <motion.div
               initial={{ y: 120, opacity: 0 }}
@@ -177,13 +167,12 @@ const AppLayout = () => {
               transition={{ delay: 0.4, type: 'spring', stiffness: 300, damping: 25 }}
               className="glass-panel rounded-2xl px-1 py-2 mx-auto max-w-sm border border-primary/10"
               style={{
-                boxShadow: '0 -5px 40px hsl(var(--neon-cyan) / 0.08), 0 10px 40px hsl(0 0% 0% / 0.4)'
+                boxShadow: '0 -5px 40px hsl(var(--neon-cyan) / 0.08), 0 10px 40px hsl(0 0% 0% / 0.4), 0 4px 0 hsl(var(--primary) / 0.05)'
               }}>
-              
               <div className="flex items-center justify-around">
-                {mobileNavItems.map((item) =>
-                <MobileNavItem key={item.url} item={item} />
-                )}
+                {mobileNavItems.map((item) => (
+                  <MobileNavItem key={item.url} item={item} />
+                ))}
               </div>
             </motion.div>
           </nav>
@@ -191,8 +180,8 @@ const AppLayout = () => {
       </div>
 
       <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
-    </SidebarProvider>);
-
+    </SidebarProvider>
+  );
 };
 
 export default AppLayout;
