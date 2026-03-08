@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import TypewriterText from '@/components/TypewriterText';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -200,7 +201,13 @@ const Profile = () => {
           </div>
 
           <div className="mt-4">
-            <h2 className="text-4xl font-display font-black transform transition-all duration-300 hover:scale-105 hover:rotate-1 hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.4)] cursor-pointer gradient-text hover:text-shadow-glow">{profile.name || 'User'}</h2>
+            <TypewriterText
+              text={profile.name || 'User'}
+              as="h2"
+              speed={50}
+              delay={400}
+              className="text-4xl font-display font-black transform transition-all duration-300 hover:scale-105 hover:rotate-1 hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.4)] cursor-pointer gradient-text"
+            />
             <p className="text-base font-mono text-muted-foreground mt-1 font-bold transform transition-all duration-300 hover:scale-102 hover:text-primary">@{profile.handle}</p>
             {profile.bio && <p className="text-base mt-3 text-foreground/80 max-w-md leading-relaxed font-semibold transform transition-all duration-300 hover:scale-102 hover:text-foreground cursor-pointer">{profile.bio}</p>}
           </div>

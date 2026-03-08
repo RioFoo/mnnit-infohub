@@ -51,7 +51,7 @@ const TypewriterText = ({
         {cursor && (
           <motion.span
             animate={{ opacity: done ? [1, 0] : 1 }}
-            transition={done ? { repeat: Infinity, duration: 0.8, ease: 'steps(2)' } : {}}
+            transition={done ? { repeat: Infinity, duration: 0.8, ease: 'linear' } : {}}
             className="inline-block w-[3px] h-[0.8em] bg-primary ml-0.5 align-baseline translate-y-[0.05em] rounded-full shadow-[0_0_8px_hsl(var(--primary)/0.6)]"
           />
         )}
