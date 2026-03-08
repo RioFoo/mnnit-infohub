@@ -16,7 +16,7 @@ import MediaRenderer from '@/components/feed/MediaRenderer';
 const BRANCHES = ['CSE', 'ECE', 'EE', 'ME', 'CE', 'GIS'];
 const SECTIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 const SEMESTERS = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'];
-const BATCHES = ['Batch 1', 'Batch 2', 'Batch 3'];
+const getBatches = (sec: string) => sec ? [`${sec}1`, `${sec}2`] : [];
 
 const Profile = () => {
   const { user, profile, refreshProfile } = useAuth();
@@ -197,7 +197,7 @@ const Profile = () => {
                         <SelectValue placeholder="Batch" />
                       </SelectTrigger>
                       <SelectContent>
-                        {BATCHES.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                        {getBatches(section).map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>
