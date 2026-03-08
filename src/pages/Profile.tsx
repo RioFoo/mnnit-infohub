@@ -197,7 +197,7 @@ const Profile = () => {
                         <SelectValue placeholder="Batch" />
                       </SelectTrigger>
                       <SelectContent>
-                        {BATCHES.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                        {getBatches(section).map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>
