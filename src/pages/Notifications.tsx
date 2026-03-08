@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { ACADEMIC_NOTIFICATIONS } from '@/data/infohub-data';
+
 
 import { Button } from '@/components/ui/button';
 import { CheckCheck, LogIn, Bell, Star } from 'lucide-react';

@@ -1,21 +1,17 @@
+import { useState, useEffect } from 'react';
 import {
   Home, Compass, GraduationCap, CalendarDays, Clock, Calculator,
   BookOpen, Bell, User, Settings, LogOut, LogIn
 } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, NavLink as RouterNavLink } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Badge } from '@/components/ui/badge';
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar
 } from '@/components/ui/sidebar';
 import { motion } from 'framer-motion';
-import { NavLink as RouterNavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import InfoHubLogo from '@/components/InfoHubLogo';
 
