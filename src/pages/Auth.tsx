@@ -7,17 +7,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Loader2, Mail, UserPlus, Eye, EyeOff, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { Zap, Loader2, Mail, UserPlus, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 const BRANCHES = ['CSE', 'ECE', 'EE', 'ME', 'CE', 'BioTech', 'Chem', 'Prod', 'GIS'];
 const SECTIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
 
-const DEMO_ACCOUNTS = [
-  { key: 'student' as const, label: '👨‍💻 Student', email: 'demo.student@mnnit.ac.in', password: 'Demo@1234' },
-  { key: 'senior' as const, label: '🎓 Senior', email: 'senior.dev@mnnit.ac.in', password: 'Demo@1234' },
-  { key: 'admin' as const, label: '⚙️ Admin', email: 'admin.infohub@mnnit.ac.in', password: 'Demo@1234' },
-];
 
 // Floating 3D particle component
 const FloatingParticles = () => {
@@ -116,15 +111,15 @@ const Auth = () => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedDemo, setSelectedDemo] = useState<string | null>(null);
+  
 
   // Signup state
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [branch, setBranch] = useState('');
-  const [section, setSection] = useState('');
+  const [branch, setBranch] = useState('CSE');
+  const [section, setSection] = useState('A');
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -156,7 +151,7 @@ const Auth = () => {
   const getErrorMessage = (msg: string) => {
     switch (msg) {
       case 'Invalid login credentials':
-        return 'Wrong email or password. Try a demo account below.';
+        return 'Wrong email or password. Please try again.';
       case 'Email not confirmed':
         return 'Please check your email and click the confirmation link first.';
       case 'User already registered':
@@ -210,16 +205,6 @@ const Auth = () => {
     }
   };
 
-  const handleDemoFill = (demo: typeof DEMO_ACCOUNTS[0]) => {
-    setLoginEmail(demo.email);
-    setLoginPassword(demo.password);
-    setShowPassword(true);
-    setSelectedDemo(demo.key);
-    setActiveTab('login');
-    setShowForgot(false);
-    setError(null);
-    toast.success('Demo credentials filled! Click Sign In.', { icon: '✓' });
-  };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -264,9 +249,9 @@ const Auth = () => {
   }
 
   return (
-    <div ref={containerRef} className="min-h-screen flex relative overflow-hidden bg-background">
+    <div ref={containerRef} className="min-h-screen flex relative overflow-x-hidden bg-background">
       {/* Animated background grid */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
         backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)`,
         backgroundSize: '60px 60px',
       }} />
@@ -358,7 +343,7 @@ const Auth = () => {
       </div>
 
       {/* Right form — Glass card with 3D effect */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-8 relative">
+      <div className="w-full lg:w-1/2 flex items-start md:items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, x: 40, rotateY: -5 }}
           animate={{ opacity: 1, x: 0, rotateY: 0 }}
@@ -367,13 +352,13 @@ const Auth = () => {
           style={{ perspective: 1000 }}
         >
           <motion.div
-            className="glass-strong rounded-2xl p-8 shadow-2xl relative overflow-hidden"
+            className="glass-strong rounded-2xl p-5 sm:p-8 shadow-2xl relative overflow-hidden my-6 w-full"
             style={{ transformStyle: 'preserve-3d' }}
             whileHover={{ scale: 1.01 }}
             transition={{ type: 'spring', stiffness: 300 }}
           >
             {/* Animated border glow */}
-            <div className="absolute inset-0 rounded-2xl opacity-50" style={{
+            <div className="absolute inset-0 rounded-2xl opacity-50 pointer-events-none" style={{
               background: 'var(--gradient-primary)',
               mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
               maskComposite: 'xor',
@@ -382,8 +367,8 @@ const Auth = () => {
             }} />
 
             {/* Corner accents */}
-            <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-primary/30 rounded-tl-2xl" />
-            <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-primary/30 rounded-br-2xl" />
+            <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-primary/30 rounded-tl-2xl pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-primary/30 rounded-br-2xl pointer-events-none" />
 
             {/* Mobile logo */}
             <div className="lg:hidden text-center mb-8">
@@ -457,17 +442,11 @@ const Auth = () => {
                       id="login-email"
                       type="email"
                       value={loginEmail}
-                      onChange={(e) => { setLoginEmail(e.target.value); setSelectedDemo(null); }}
+                      onChange={(e) => setLoginEmail(e.target.value)}
                       placeholder="you@mnnit.ac.in"
                       required
                       className="mt-1 bg-background/50 border-border/50 focus:border-primary/50 transition-all duration-300 focus:shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
                     />
-                    {selectedDemo && (
-                      <p className="mt-1 text-xs text-primary flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" />
-                        Demo account selected — Password: Demo@1234
-                      </p>
-                    )}
                   </motion.div>
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                     <Label htmlFor="login-password" className="text-foreground/80">Password</Label>
@@ -501,7 +480,7 @@ const Auth = () => {
                   </div>
                   <Button
                     type="submit"
-                    className={`w-full h-11 text-base font-semibold transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.3)] ${selectedDemo ? 'animate-pulse shadow-[0_0_15px_hsl(var(--primary)/0.5)]' : ''}`}
+                    className="w-full h-11 text-base font-semibold transition-all duration-300 hover:shadow-[0_0_25px_hsl(var(--primary)/0.3)]"
                     disabled={loading}
                   >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sign In →'}
@@ -519,7 +498,7 @@ const Auth = () => {
                     <Label className="text-foreground/80">College Email</Label>
                     <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@mnnit.ac.in" required className="mt-1 bg-background/50 border-border/50 focus:border-primary/50" />
                   </motion.div>
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="grid grid-cols-2 gap-3">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <Label className="text-foreground/80">Branch</Label>
                       <Select value={branch} onValueChange={setBranch}>
