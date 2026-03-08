@@ -123,30 +123,29 @@ const Timetable = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-3rem)] md:h-[calc(100vh-3rem)] overflow-hidden">
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-4 md:px-6 py-3 border-b border-border/[0.06] shrink-0">
-        <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-primary" />
-          <h1 className="font-display font-bold text-sm tracking-wider uppercase text-foreground">Timetable</h1>
-        </div>
+      {/* Top bar with PageHeader typewriter */}
+      <div className="px-4 md:px-6 pt-4 pb-2 border-b border-border/[0.06] shrink-0">
+        <PageHeader title="TIMETABLE" className="mb-4">
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileTap={{ scale: 0.92 }}
+              onClick={toggleReminders}
+              className={cn(
+                'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono transition-all',
+                remindersEnabled
+                  ? 'bg-primary/10 text-primary border border-primary/20'
+                  : 'bg-muted/15 text-muted-foreground border border-border/[0.08]'
+              )}
+            >
+              {remindersEnabled ? <Bell className="w-3.5 h-3.5" /> : <BellOff className="w-3.5 h-3.5" />}
+              <span>{remindersEnabled ? 'Reminders On' : 'Reminders Off'}</span>
+            </motion.button>
+          </div>
+        </PageHeader>
 
-        <div className="flex items-center gap-2">
-          <motion.button
-            whileTap={{ scale: 0.92 }}
-            onClick={toggleReminders}
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-mono transition-all',
-              remindersEnabled
-                ? 'bg-primary/10 text-primary border border-primary/20'
-                : 'bg-muted/15 text-muted-foreground border border-border/[0.08]'
-            )}
-          >
-            {remindersEnabled ? <Bell className="w-3 h-3" /> : <BellOff className="w-3 h-3" />}
-            <span className="hidden sm:inline">{remindersEnabled ? 'On' : 'Off'}</span>
-          </motion.button>
-
+        <div className="flex flex-wrap items-center gap-3">
           <Select value={section} onValueChange={setSection}>
-            <SelectTrigger className="w-36 h-8 rounded-lg bg-muted/15 border-border/[0.08] text-xs font-mono">
+            <SelectTrigger className="w-44 h-10 rounded-xl bg-muted/15 border-border/[0.08] text-sm font-mono">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -157,14 +156,24 @@ const Timetable = () => {
           </Select>
 
           <Tabs value={batch} onValueChange={(v) => setBatch(v as 'ALL' | '1' | '2')}>
-            <TabsList className="h-8 rounded-lg bg-muted/15 border border-border/[0.08]">
+            <TabsList className="h-10 rounded-xl bg-muted/15 border border-border/[0.08]">
               {['ALL', '1', '2'].map(v => (
-                <TabsTrigger key={v} value={v} className="h-6 rounded text-[10px] font-mono px-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
-                  {v === 'ALL' ? 'All' : `B${v}`}
+                <TabsTrigger key={v} value={v} className="h-8 rounded-lg text-xs font-mono px-4 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                  {v === 'ALL' ? 'All Batches' : `Batch ${v}`}
                 </TabsTrigger>
               ))}
             </TabsList>
           </Tabs>
+
+          {/* Legend */}
+          <div className="hidden md:flex items-center gap-4 ml-auto">
+            {Object.entries(typeStyles).map(([type, style]) => (
+              <div key={type} className="flex items-center gap-2">
+                <div className={cn('w-2 h-2 rounded-full', style.dot)} />
+                <span className="text-[10px] text-muted-foreground/50 font-mono capitalize">{type.toLowerCase()}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
