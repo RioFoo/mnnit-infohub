@@ -1,10 +1,9 @@
 import { useState, useMemo } from 'react';
 import { TIMETABLE_DATA, type ClassSession } from '@/data/infohub-data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
-import { Clock, Zap, Cpu, Activity } from 'lucide-react';
+import { Activity } from 'lucide-react';
 
 const sectionIds = Object.keys(TIMETABLE_DATA);
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
@@ -40,23 +39,14 @@ const Timetable = () => {
 
   return (
     <div className="page-container">
-      {/* ═══ HEADER ═══ */}
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="relative mb-10">
-        <div className="absolute -left-4 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[hsl(200,90%,50%,0.3)] to-transparent" />
-        
-        <div className="flex items-center gap-4 mb-3">
-          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20 relative">
-            <Cpu className="w-6 h-6 text-primary" />
-          </div>
-          <div>
-            <span className="section-title mb-0">Schedule Matrix</span>
-            <h1 className="text-3xl md:text-4xl font-display font-bold tracking-wider">
-              <span className="text-foreground">TIME</span>{' '}
-              <span className="gradient-text">GRID</span>
-            </h1>
-          </div>
-        </div>
-        <div className="cyber-line mt-4" />
+      <motion.div
+        initial={{ opacity: 0, y: 20, rotateX: -5 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0 }}
+        transition={{ duration: 0.6, type: 'spring', stiffness: 200 }}
+        className="mb-8"
+        style={{ perspective: '800px' }}
+      >
+        <h1 className="text-3xl md:text-4xl page-header-3d">TIMETABLE</h1>
       </motion.div>
 
       {/* ═══ CONTROLS ═══ */}
@@ -67,7 +57,7 @@ const Timetable = () => {
         className="flex flex-wrap gap-3 items-center mb-6"
       >
         <Select value={section} onValueChange={setSection}>
-          <SelectTrigger className="w-48 rounded-lg bg-card/60 border-border/30 backdrop-blur-sm font-mono text-sm">
+          <SelectTrigger className="w-48 rounded-xl bg-card/60 border-border/30 backdrop-blur-sm font-mono text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -78,10 +68,12 @@ const Timetable = () => {
         </Select>
 
         <Tabs value={batch} onValueChange={(v) => setBatch(v as 'ALL' | '1' | '2')}>
-          <TabsList className="rounded-lg bg-card/60 border border-border/30">
-            <TabsTrigger value="ALL" className="rounded-md font-display text-xs tracking-wider">All</TabsTrigger>
-            <TabsTrigger value="1" className="rounded-md font-display text-xs tracking-wider">B1</TabsTrigger>
-            <TabsTrigger value="2" className="rounded-md font-display text-xs tracking-wider">B2</TabsTrigger>
+          <TabsList className="rounded-xl bg-card/60 border border-border/30">
+            {['ALL', '1', '2'].map(v => (
+              <TabsTrigger key={v} value={v} className="rounded-lg font-display text-xs tracking-wider tab-3d data-[state=active]:tab-3d-active">
+                {v === 'ALL' ? 'All' : `B${v}`}
+              </TabsTrigger>
+            ))}
           </TabsList>
         </Tabs>
 
@@ -97,13 +89,14 @@ const Timetable = () => {
 
       {/* ═══ GRID ═══ */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="overflow-x-auto holo-card p-1"
+        initial={{ opacity: 0, y: 20, rotateX: -3 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0 }}
+        transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+        className="overflow-x-auto card-3d-pro p-1"
+        style={{ perspective: '1200px' }}
       >
         <div className="min-w-[800px]">
-          <div className="grid grid-cols-6 gap-px rounded-lg overflow-hidden" style={{ background: 'hsl(var(--border) / 0.15)' }}>
+          <div className="grid grid-cols-6 gap-px rounded-xl overflow-hidden" style={{ background: 'hsl(var(--border) / 0.15)' }}>
             <div className="text-[9px] font-display tracking-widest text-muted-foreground p-3 bg-card/80 backdrop-blur-sm uppercase">Time</div>
             {DAYS.map(day => (
               <div
@@ -147,8 +140,8 @@ const Timetable = () => {
                             initial={{ opacity: 0, scale: 0.85 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: ti * 0.02 }}
-                            whileHover={{ scale: 1.05, zIndex: 20 }}
-                            className={`rounded-md p-2 text-[9px] border mb-1 cursor-default transition-all ${typeStyles[s.type] || ''} ${
+                            whileHover={{ scale: 1.08, y: -2, zIndex: 20 }}
+                            className={`rounded-lg p-2 text-[9px] border mb-1 cursor-default transition-all ${typeStyles[s.type] || ''} ${
                               isCurrent ? 'neon-border ring-1 ring-primary/50' : ''
                             }`}
                           >

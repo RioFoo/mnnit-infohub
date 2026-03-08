@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Heart, MessageCircle, Share2, Plus, Loader2, TrendingUp, Zap, Radio, Signal } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Plus, Loader2, Zap, Radio } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
@@ -66,7 +66,7 @@ const Feed = () => {
     const tags = newTags.split(',').map(t => t.trim()).filter(Boolean);
     const { error } = await (supabase.from as any)('posts').insert({ user_id: user.id, content: newContent, tags });
     if (error) toast.error(error.message);
-    else { toast.success('Post created!'); setNewContent(''); setNewTags(''); setCreateOpen(false); fetchPosts(); }
+    else { toast.success('Posted!'); setNewContent(''); setNewTags(''); setCreateOpen(false); fetchPosts(); }
     setPosting(false);
   };
 
@@ -85,67 +85,39 @@ const Feed = () => {
 
   return (
     <div className="page-container">
-      {/* ═══ HERO HEADER ═══ */}
+      {/* ═══ HEADER ═══ */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative mb-10"
+        initial={{ opacity: 0, y: 20, rotateX: -5 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0 }}
+        transition={{ duration: 0.6, type: 'spring', stiffness: 200 }}
+        className="flex items-center justify-between mb-8"
+        style={{ perspective: '800px' }}
       >
-        {/* Decorative HUD lines */}
-        <div className="absolute -left-4 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/30 to-transparent" />
-        
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex items-center gap-3 mb-3"
-            >
-              <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center border border-primary/20 neon-border">
-                <Signal className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <span className="section-title mb-0">Transmission Feed</span>
-              </div>
-            </motion.div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold tracking-wider">
-              <span className="text-foreground">LIVE</span>{' '}
-              <span className="gradient-text-aurora">STREAM</span>
-            </h1>
-            <p className="text-sm text-muted-foreground mt-2 max-w-md">
-              Real-time campus communications • <span className="status-live text-primary text-xs">Broadcasting</span>
-            </p>
-          </div>
-
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              onClick={() => requireAuth(() => setCreateOpen(true), 'Sign in to create posts!')}
-              className="gap-2 rounded-lg btn-neon bg-primary text-primary-foreground hover:bg-primary/90 font-display tracking-wider text-xs uppercase"
-            >
-              <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Transmit</span>
-            </Button>
-          </motion.div>
-        </div>
-        
-        <div className="cyber-line mt-6" />
+        <h1 className="text-3xl md:text-4xl page-header-3d">FEED</h1>
+        <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.92, y: 1 }}>
+          <Button
+            onClick={() => requireAuth(() => setCreateOpen(true), 'Sign in to post')}
+            className="gap-2 rounded-xl btn-3d bg-primary text-primary-foreground hover:bg-primary/90 font-display tracking-wider text-xs uppercase"
+          >
+            <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Post</span>
+          </Button>
+        </motion.div>
       </motion.div>
 
       {/* Create dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="holo-card border-border/30 p-0 overflow-hidden">
-          <div className="data-stream-bg p-6">
+        <DialogContent className="card-3d-pro border-border/30 p-0 overflow-hidden">
+          <div className="p-6">
             <DialogHeader>
               <DialogTitle className="font-display tracking-wider flex items-center gap-2 text-sm uppercase">
-                <Zap className="w-4 h-4 text-primary" /> New Transmission
+                <Zap className="w-4 h-4 text-primary" /> New Post
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4 mt-4">
-              <Textarea placeholder="Broadcast your message..." value={newContent} onChange={e => setNewContent(e.target.value)} rows={4} className="bg-background/40 border-border/30 rounded-lg backdrop-blur-sm" />
-              <Input placeholder="Tags (comma separated)" value={newTags} onChange={e => setNewTags(e.target.value)} className="bg-background/40 border-border/30 rounded-lg" />
-              <Button onClick={handleCreatePost} disabled={posting || !newContent.trim()} className="w-full rounded-lg btn-neon font-display tracking-wider uppercase text-xs">
-                {posting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Transmit'}
+              <Textarea placeholder="What's on your mind?" value={newContent} onChange={e => setNewContent(e.target.value)} rows={4} className="bg-background/40 border-border/30 rounded-xl backdrop-blur-sm" />
+              <Input placeholder="Tags (comma separated)" value={newTags} onChange={e => setNewTags(e.target.value)} className="bg-background/40 border-border/30 rounded-xl" />
+              <Button onClick={handleCreatePost} disabled={posting || !newContent.trim()} className="w-full rounded-xl btn-3d font-display tracking-wider uppercase text-xs">
+                {posting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Post'}
               </Button>
             </div>
           </div>
@@ -158,48 +130,44 @@ const Feed = () => {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-            className="w-16 h-16 rounded-full border-2 border-primary/20 border-t-primary"
+            className="w-14 h-14 rounded-full border-2 border-primary/20 border-t-primary"
           />
-          <span className="text-xs font-display text-muted-foreground tracking-widest uppercase">Loading transmissions...</span>
         </div>
       ) : posts.length === 0 ? (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-          <div className="w-24 h-24 rounded-xl bg-primary/5 flex items-center justify-center mx-auto mb-6 neon-border">
-            <Radio className="w-10 h-10 text-primary/60" />
+          <div className="w-20 h-20 rounded-xl bg-primary/5 flex items-center justify-center mx-auto mb-6 neon-border">
+            <Radio className="w-8 h-8 text-primary/60" />
           </div>
-          <h3 className="font-display text-lg tracking-wider text-foreground/80">No Transmissions</h3>
-          <p className="text-muted-foreground text-sm mt-2">Be the first to broadcast.</p>
+          <h3 className="font-display text-lg tracking-wider text-foreground/80">No Posts Yet</h3>
         </motion.div>
       ) : (
-        <div className="space-y-5 max-w-2xl mx-auto">
+        <div className="space-y-4 max-w-2xl mx-auto">
           {posts.map((post, i) => (
             <motion.div
               key={post.id}
-              initial={{ opacity: 0, y: 30, rotateX: -5 }}
-              animate={{ opacity: 1, y: 0, rotateX: 0 }}
-              transition={{ delay: i * 0.08, duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-              className="holo-card p-0 group"
+              initial={{ opacity: 0, y: 30, rotateY: -5 }}
+              animate={{ opacity: 1, y: 0, rotateY: 0 }}
+              transition={{ delay: i * 0.06, duration: 0.5, type: 'spring', stiffness: 250 }}
+              className="card-3d-pro p-0 group"
               style={{ perspective: '1000px' }}
             >
-              {/* Top accent line */}
-              <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-              
+              <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
               <div className="p-5">
                 <div className="flex items-start gap-4">
-                  {/* Avatar with energy ring */}
                   <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    className="relative w-12 h-12 shrink-0"
+                    whileHover={{ scale: 1.1, rotateZ: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="relative w-11 h-11 shrink-0"
                   >
-                    <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center text-primary font-bold text-sm overflow-hidden border border-primary/20">
+                    <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-sm overflow-hidden border border-primary/20">
                       {post.profiles?.avatar_url ? (
                         <img src={post.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <span className="font-display">{(post.profiles?.name || 'U')[0].toUpperCase()}</span>
                       )}
                     </div>
-                    <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-primary/80 border-2 border-background" 
-                      style={{ boxShadow: '0 0 8px hsl(var(--neon-cyan) / 0.6)' }} />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary/80 border-2 border-background"
+                      style={{ boxShadow: '0 0 6px hsl(var(--neon-cyan) / 0.6)' }} />
                   </motion.div>
 
                   <div className="flex-1 min-w-0">
@@ -213,7 +181,7 @@ const Feed = () => {
                     <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">{post.content}</p>
 
                     {post.image_url && (
-                      <motion.div whileHover={{ scale: 1.02 }} className="mt-4 rounded-lg overflow-hidden hud-corner">
+                      <motion.div whileHover={{ scale: 1.02 }} className="mt-4 rounded-xl overflow-hidden">
                         <img src={post.image_url} alt="" className="max-h-72 object-cover w-full" />
                       </motion.div>
                     )}
@@ -231,7 +199,8 @@ const Feed = () => {
                     {/* Actions */}
                     <div className="flex items-center gap-6 mt-4 pt-3 border-t border-border/20">
                       <motion.button
-                        whileTap={{ scale: 0.7 }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.7, y: 2 }}
                         onClick={() => requireAuth(() => handleLike(post.id), 'Sign in to like!')}
                         className={`flex items-center gap-2 text-xs transition-all group/btn ${likedPosts.has(post.id) ? 'text-destructive' : 'text-muted-foreground hover:text-destructive'}`}
                       >
@@ -239,7 +208,8 @@ const Feed = () => {
                         <span className="font-mono text-[11px]">{post.likes_count}</span>
                       </motion.button>
                       <motion.button
-                        whileTap={{ scale: 0.7 }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.7, y: 2 }}
                         onClick={() => requireAuth(() => {}, 'Sign in to comment!')}
                         className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-all"
                       >
@@ -247,7 +217,8 @@ const Feed = () => {
                         <span className="font-mono text-[11px]">{post.comments_count}</span>
                       </motion.button>
                       <motion.button
-                        whileTap={{ scale: 0.7 }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.7, y: 2 }}
                         className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-all"
                       >
                         <Share2 className="w-4 h-4" />
