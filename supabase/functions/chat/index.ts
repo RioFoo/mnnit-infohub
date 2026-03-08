@@ -34,9 +34,44 @@ serve(async (req) => {
       });
     }
 
-    const { messages, type } = await req.json();
+    const body = await req.json();
+    const { messages, type } = body;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    // Validate type
+    const validTypes = ["feed", "campus", "study", "resource"];
+    const safeType = validTypes.includes(type) ? type : "campus";
+
+    // Validate messages
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return new Response(JSON.stringify({ error: "messages must be a non-empty array" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (messages.length > 20) {
+      return new Response(JSON.stringify({ error: "Too many messages (max 20)" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const MAX_CONTENT_LENGTH = 2000;
+    const sanitizedMessages = messages
+      .filter((m: any) => m && typeof m.role === "string" && typeof m.content === "string" && m.role !== "system")
+      .map((m: any) => ({
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: m.content.slice(0, MAX_CONTENT_LENGTH),
+      }));
+
+    if (sanitizedMessages.length === 0) {
+      return new Response(JSON.stringify({ error: "No valid messages provided" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const systemPrompts: Record<string, string> = {
       feed: "You are an AI assistant for MNNIT InfoHub. Summarize the given social media posts by topic (Academic, Events, Tech, Sports, Cultural). Be concise and helpful.",
@@ -45,7 +80,7 @@ serve(async (req) => {
       resource: "You are an academic resource finder. Help MNNIT students find study materials, textbooks, online courses, and academic resources for their subjects.",
     };
 
-    const systemContent = systemPrompts[type] || systemPrompts.campus;
+    const systemContent = systemPrompts[safeType];
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -57,7 +92,7 @@ serve(async (req) => {
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemContent },
-          ...messages,
+          ...sanitizedMessages,
         ],
         stream: true,
       }),
