@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Edit, Loader2, LogIn, Heart, MessageCircle, Camera, ImagePlus, Trash2, Star } from 'lucide-react';
+import { Edit, Loader2, LogIn, Heart, MessageCircle, Camera, ImagePlus, Trash2, Star, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
@@ -214,36 +214,47 @@ const Profile = () => {
             {profile.gender && <span className="tag-pill text-xs">{profile.gender}</span>}
           </div>
 
-          <div className="flex gap-8 mt-6 pt-5 relative">
+          <div className="flex gap-6 mt-6 pt-5 relative items-center">
             <div className="divider-glow absolute left-0 right-0 top-0" />
             <div className="text-center">
               <p className="text-2xl font-display font-bold gradient-text">{posts.length}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Posts</p>
             </div>
-            <button className="text-center hover:opacity-70 transition-opacity" onClick={() => { setFollowDialogTab('followers'); setFollowDialogOpen(true); }}>
-              <p className="text-2xl font-display font-bold gradient-text">{followerCount}</p>
-              <p className="text-[10px] font-mono text-muted-foreground">Followers</p>
-            </button>
-            <button className="text-center hover:opacity-70 transition-opacity" onClick={() => { setFollowDialogTab('following'); setFollowDialogOpen(true); }}>
-              <p className="text-2xl font-display font-bold gradient-text">{followingCount}</p>
-              <p className="text-[10px] font-mono text-muted-foreground">Following</p>
-            </button>
-            <button
-              className="text-center hover:opacity-70 transition-opacity group"
-              onClick={() => { setFollowDialogTab('favourites'); setFollowDialogOpen(true); }}
+
+            {/* Single Follow button with count */}
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => { setFollowDialogTab('followers'); setFollowDialogOpen(true); }}
+              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-primary/[0.06] border border-primary/15 hover:bg-primary/[0.1] hover:border-primary/25 transition-all group cursor-pointer"
             >
-              <p className="text-2xl font-display font-bold text-yellow-500">{favouriteCount}</p>
-              <p className="text-[10px] font-mono text-muted-foreground flex items-center gap-1 justify-center">
-                <motion.span
-                  whileHover={{ scale: 1.3, rotate: 15 }}
-                  whileTap={{ scale: 0.8 }}
-                  className="inline-flex"
-                >
-                  <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500 drop-shadow-[0_0_4px_hsl(45,100%,50%,0.5)] group-hover:drop-shadow-[0_0_8px_hsl(45,100%,50%,0.7)] transition-all" />
-                </motion.span>
-                Favorites
-              </p>
-            </button>
+              <div className="relative">
+                <Users className="w-5 h-5 text-primary group-hover:drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)] transition-all" />
+                <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-primary text-primary-foreground text-[8px] font-mono font-bold flex items-center justify-center shadow-[0_0_8px_hsl(var(--primary)/0.4)]">
+                  {followerCount + followingCount}
+                </span>
+              </div>
+              <div className="text-left">
+                <p className="text-xs font-mono font-semibold text-foreground leading-tight">Follow</p>
+                <p className="text-[9px] font-mono text-muted-foreground/60">{followerCount} followers · {followingCount} following</p>
+              </div>
+            </motion.button>
+
+            {/* Favorites */}
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => { setFollowDialogTab('favourites'); setFollowDialogOpen(true); }}
+              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-yellow-500/[0.06] border border-yellow-500/15 hover:bg-yellow-500/[0.1] hover:border-yellow-500/25 transition-all group cursor-pointer"
+            >
+              <div className="relative">
+                <Star className="w-5 h-5 text-yellow-500 fill-yellow-500 group-hover:drop-shadow-[0_0_6px_hsl(45,100%,50%,0.5)] transition-all" />
+                <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-yellow-500 text-yellow-950 text-[8px] font-mono font-bold flex items-center justify-center shadow-[0_0_8px_hsl(45,100%,50%,0.4)]">
+                  {favouriteCount}
+                </span>
+              </div>
+              <p className="text-xs font-mono font-semibold text-foreground leading-tight">Favorites</p>
+            </motion.button>
           </div>
 
           <Dialog open={editOpen} onOpenChange={setEditOpen}>
