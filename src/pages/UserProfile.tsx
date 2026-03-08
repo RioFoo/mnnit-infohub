@@ -42,7 +42,7 @@ const UserProfile = () => {
   const [favouriteCount, setFavouriteCount] = useState(0);
   const [followsMe, setFollowsMe] = useState(false);
   const [followDialogOpen, setFollowDialogOpen] = useState(false);
-  const [followDialogTab, setFollowDialogTab] = useState<'followers' | 'following'>('followers');
+  const [followDialogTab, setFollowDialogTab] = useState<'followers' | 'following' | 'favourites'>('followers');
 
   useEffect(() => {
     if (user && userId === user.id) {
