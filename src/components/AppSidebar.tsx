@@ -1,7 +1,8 @@
 import {
   Home, Search, GraduationCap, CalendarDays, Clock, Calculator,
-  BookOpen, Bell, User, Settings, LogOut, LogIn, Zap, Command
+  BookOpen, Bell, User, Settings, LogOut, LogIn, Command
 } from 'lucide-react';
+import infohubLogo from '@/assets/infohub-logo.png';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
@@ -40,8 +41,8 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" className="border-r border-border">
       <div className="p-4 flex items-center gap-2">
-        <motion.div whileHover={{ rotate: 20, scale: 1.2 }} transition={{ type: 'spring', stiffness: 300 }}>
-          <Zap className="w-6 h-6 text-primary shrink-0" />
+        <motion.div whileHover={{ rotate: 10, scale: 1.15 }} transition={{ type: 'spring', stiffness: 300 }}>
+          <img src={infohubLogo} alt="InfoHub" className="w-8 h-8 shrink-0 drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
         </motion.div>
         {!collapsed && (
           <motion.span
