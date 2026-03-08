@@ -4,14 +4,11 @@ import { useSearchParams, Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Loader2, Mail, UserPlus, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
-const BRANCHES = ['CSE', 'ECE', 'EE', 'ME', 'CE', 'BioTech', 'Chem', 'Prod', 'GIS'];
-const SECTIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
 
 
 // Floating 3D particle component
@@ -120,8 +117,8 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [branch, setBranch] = useState('CSE');
-  const [section, setSection] = useState('A');
+
+
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -185,7 +182,7 @@ const Auth = () => {
     }
     setLoading(true);
     setError(null);
-    const { error } = await signUp(email, password, { name, branch, section });
+    const { error } = await signUp(email, password, { name });
     if (error) {
       setError(getErrorMessage(error.message));
       toast.error(getErrorMessage(error.message));
@@ -441,21 +438,49 @@ const Auth = () => {
 
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4 mt-6">
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="group/field">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, rotateX: -15 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+                    className="group/field"
+                    style={{ perspective: 800, transformStyle: 'preserve-3d' }}
+                  >
                     <Label htmlFor="login-email" className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Email</Label>
-                    <Input
-                      id="login-email"
-                      type="email"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      placeholder="you@mnnit.ac.in"
-                      required
-                      className="mt-1 bg-background/50 border-border/50 focus:border-primary/60 transition-all duration-300 focus:shadow-[0_0_20px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60"
-                    />
+                    <motion.div
+                      className="relative mt-1"
+                      whileFocus={{ scale: 1.02 }}
+                      whileHover={{ translateZ: 10, rotateX: 2, rotateY: -1 }}
+                      style={{ transformStyle: 'preserve-3d' }}
+                    >
+                      <Input
+                        id="login-email"
+                        type="email"
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        placeholder="you@mnnit.ac.in"
+                        required
+                        className="bg-background/50 border-border/50 focus:border-primary/60 transition-all duration-300 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 focus:translate-y-[-2px]"
+                      />
+                      <motion.div
+                        className="absolute inset-0 rounded-md pointer-events-none border border-primary/0 group-focus-within/field:border-primary/30"
+                        style={{ boxShadow: '0 4px 20px -4px hsl(var(--primary) / 0)' }}
+                        animate={{}}
+                      />
+                    </motion.div>
                   </motion.div>
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="group/field">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, rotateX: -15 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+                    className="group/field"
+                    style={{ perspective: 800, transformStyle: 'preserve-3d' }}
+                  >
                     <Label htmlFor="login-password" className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Password</Label>
-                    <div className="relative mt-1">
+                    <motion.div
+                      className="relative mt-1"
+                      whileHover={{ translateZ: 10, rotateX: 2, rotateY: 1 }}
+                      style={{ transformStyle: 'preserve-3d' }}
+                    >
                       <Input
                         id="login-password"
                         type={showPassword ? 'text' : 'password'}
@@ -463,18 +488,19 @@ const Auth = () => {
                         onChange={(e) => setLoginPassword(e.target.value)}
                         placeholder="••••••••"
                         required
-                        className="pr-10 bg-background/50 border-border/50 focus:border-primary/60 transition-all duration-300 focus:shadow-[0_0_20px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60"
+                        className="pr-10 bg-background/50 border-border/50 focus:border-primary/60 transition-all duration-300 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 focus:translate-y-[-2px]"
                       />
                       <motion.button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
-                        whileHover={{ scale: 1.2 }}
+                        whileHover={{ scale: 1.2, rotateY: 180 }}
                         whileTap={{ scale: 0.9 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </motion.button>
-                    </div>
+                    </motion.div>
                   </motion.div>
                   <div className="flex justify-end">
                     <motion.button
@@ -486,10 +512,17 @@ const Auth = () => {
                       Forgot Password?
                     </motion.button>
                   </div>
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, rotateX: -10 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{ delay: 0.3, type: 'spring' }}
+                    whileHover={{ scale: 1.02, translateZ: 15 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{ perspective: 600 }}
+                  >
                     <Button
                       type="submit"
-                      className="w-full h-11 text-base font-semibold transition-all duration-300 hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)] relative overflow-hidden group/btn"
+                      className="w-full h-11 text-base font-semibold transition-all duration-300 hover:shadow-[0_0_30px_hsl(var(--primary)/0.4),0_10px_40px_-10px_hsl(var(--primary)/0.3)] relative overflow-hidden group/btn"
                       disabled={loading}
                     >
                       <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 pointer-events-none" />
@@ -501,44 +534,63 @@ const Auth = () => {
 
               <TabsContent value="register">
                 <form onSubmit={handleSignup} className="space-y-4 mt-6">
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="group/field">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, rotateX: -15 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+                    className="group/field"
+                    style={{ perspective: 800 }}
+                  >
                     <Label className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Full Name</Label>
-                    <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Rahul Sharma" required className="mt-1 bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_20px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300" />
+                    <motion.div className="mt-1" whileHover={{ translateZ: 10, rotateX: 2, rotateY: -1 }} style={{ transformStyle: 'preserve-3d' }}>
+                      <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Rahul Sharma" required className="bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
+                    </motion.div>
                   </motion.div>
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="group/field">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, rotateX: -15 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{ delay: 0.15, type: 'spring', stiffness: 200 }}
+                    className="group/field"
+                    style={{ perspective: 800 }}
+                  >
                     <Label className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">College Email</Label>
-                    <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@mnnit.ac.in" required className="mt-1 bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_20px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300" />
+                    <motion.div className="mt-1" whileHover={{ translateZ: 10, rotateX: 2, rotateY: 1 }} style={{ transformStyle: 'preserve-3d' }}>
+                      <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@mnnit.ac.in" required className="bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
+                    </motion.div>
                   </motion.div>
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="group/field">
-                      <Label className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Branch</Label>
-                      <Select value={branch} onValueChange={setBranch}>
-                        <SelectTrigger className="mt-1 bg-background/50 border-border/50 hover:border-border/80 hover:bg-background/60 transition-all duration-300"><SelectValue placeholder="Branch" /></SelectTrigger>
-                        <SelectContent>
-                          {BRANCHES.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="group/field">
-                      <Label className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Section</Label>
-                      <Select value={section} onValueChange={setSection}>
-                        <SelectTrigger className="mt-1 bg-background/50 border-border/50 hover:border-border/80 hover:bg-background/60 transition-all duration-300"><SelectValue placeholder="Section" /></SelectTrigger>
-                        <SelectContent>
-                          {SECTIONS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </motion.div>
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="group/field">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, rotateX: -15 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+                    className="group/field"
+                    style={{ perspective: 800 }}
+                  >
                     <Label className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Password</Label>
-                    <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" required minLength={6} className="mt-1 bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_20px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300" />
+                    <motion.div className="mt-1" whileHover={{ translateZ: 10, rotateX: 2, rotateY: -1 }} style={{ transformStyle: 'preserve-3d' }}>
+                      <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" required minLength={6} className="bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
+                    </motion.div>
                   </motion.div>
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="group/field">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, rotateX: -15 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{ delay: 0.25, type: 'spring', stiffness: 200 }}
+                    className="group/field"
+                    style={{ perspective: 800 }}
+                  >
                     <Label className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Confirm Password</Label>
-                    <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter password" required minLength={6} className="mt-1 bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_20px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300" />
+                    <motion.div className="mt-1" whileHover={{ translateZ: 10, rotateX: 2, rotateY: 1 }} style={{ transformStyle: 'preserve-3d' }}>
+                      <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter password" required minLength={6} className="bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
+                    </motion.div>
                   </motion.div>
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button type="submit" className="w-full h-11 text-base font-semibold transition-all duration-300 hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)] relative overflow-hidden group/btn" disabled={loading}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, rotateX: -10 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{ delay: 0.3, type: 'spring' }}
+                    whileHover={{ scale: 1.02, translateZ: 15 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{ perspective: 600 }}
+                  >
+                    <Button type="submit" className="w-full h-11 text-base font-semibold transition-all duration-300 hover:shadow-[0_0_30px_hsl(var(--primary)/0.4),0_10px_40px_-10px_hsl(var(--primary)/0.3)] relative overflow-hidden group/btn" disabled={loading}>
                       <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 pointer-events-none" />
                       {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Account →'}
                     </Button>
