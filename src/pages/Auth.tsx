@@ -309,7 +309,7 @@ const Auth = () => {
             <motion.div
               className="relative inline-block mb-8"
               animate={{ rotateY: [0, 360] }}
-              transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
               style={{ transformStyle: 'preserve-3d' }}
             >
               <InfoHubLogo size={96} animate={false} />
