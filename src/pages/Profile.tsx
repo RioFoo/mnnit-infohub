@@ -137,13 +137,27 @@ const Profile = () => {
         className="card-bio p-0 mb-8 overflow-hidden"
       >
         {/* Banner */}
-        <div className="h-32 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
-          <div className="absolute inset-0 surface-shimmer" />
+        <div className="h-32 relative overflow-hidden group cursor-pointer" onClick={() => bannerInputRef.current?.click()}>
+          {(profile as any).banner_url ? (
+            <img src={(profile as any).banner_url} alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
+          ) : (
+            <>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
+              <div className="absolute inset-0 surface-shimmer" />
+            </>
+          )}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+            {uploadingBanner ? (
+              <Loader2 className="w-6 h-6 text-foreground animate-spin opacity-0 group-hover:opacity-100 transition-opacity" />
+            ) : (
+              <ImagePlus className="w-6 h-6 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            )}
+          </div>
+          <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerUpload} />
         </div>
 
         <div className="px-6 sm:px-8 pb-8 -mt-14 relative">
-          <div className="avatar-orbital avatar-orbital-lg inline-block">
+          <div className="avatar-orbital avatar-orbital-lg inline-block relative group cursor-pointer" onClick={() => avatarInputRef.current?.click()}>
             {profile.avatar_url ? (
               <img src={profile.avatar_url} alt={profile.name || ''} className="w-24 h-24 rounded-full object-cover border-4 border-background" />
             ) : (
@@ -151,6 +165,14 @@ const Profile = () => {
                 {(profile.name || 'U')[0].toUpperCase()}
               </div>
             )}
+            <div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center border-4 border-transparent">
+              {uploadingAvatar ? (
+                <Loader2 className="w-5 h-5 text-foreground animate-spin opacity-0 group-hover:opacity-100 transition-opacity" />
+              ) : (
+                <Camera className="w-5 h-5 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              )}
+            </div>
+            <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
           </div>
 
           <div className="mt-4">
