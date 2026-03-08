@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Bell, BellOff, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { PageHeader } from '@/components/PageHeader';
 
 const sectionIds = Object.keys(TIMETABLE_DATA);
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
