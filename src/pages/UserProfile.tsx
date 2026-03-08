@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import MediaRenderer from '@/components/feed/MediaRenderer';
 import { cn } from '@/lib/utils';
+import FollowersDialog from '@/components/FollowersDialog';
 
 interface UserProfileData {
   id: string;
