@@ -265,6 +265,31 @@ const Resources = () => {
                   </Select>
                 </div>
               </div>
+              <div>
+                <Label className="text-[10px] font-mono font-medium uppercase tracking-wider text-muted-foreground/50">Who can see</Label>
+                <div className="grid grid-cols-3 gap-1.5 mt-1.5">
+                  {([
+                    { value: 'branch' as Visibility, label: 'Branch', icon: GitBranch, desc: 'Same branch & sem' },
+                    { value: 'followers' as Visibility, label: 'Followers', icon: Users, desc: 'Your followers' },
+                    { value: 'both' as Visibility, label: 'Both', icon: Eye, desc: 'Branch + followers' },
+                  ]).map(opt => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setUploadVisibility(opt.value)}
+                      className={cn(
+                        'flex flex-col items-center gap-1 p-2.5 rounded-xl border text-center transition-all',
+                        uploadVisibility === opt.value
+                          ? 'border-primary/20 bg-primary/[0.06] text-primary'
+                          : 'border-border/[0.06] hover:border-primary/10 text-muted-foreground/50 hover:text-muted-foreground'
+                      )}
+                    >
+                      <opt.icon className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-mono font-medium">{opt.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
               <Button onClick={handleUpload} disabled={uploading || !selectedFile || !uploadTitle.trim()} className="w-full rounded-xl btn-bio">
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upload'}
               </Button>
