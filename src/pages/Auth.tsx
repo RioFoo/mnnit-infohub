@@ -94,6 +94,7 @@ const OrbitRing = ({ size = 200, duration = 8, delay = 0 }: { size?: number; dur
 );
 
 const Auth = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { session, signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
