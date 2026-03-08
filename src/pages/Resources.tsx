@@ -122,13 +122,13 @@ const Resources = () => {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="flex items-center justify-between mb-6"
       >
-        <h1 className="text-2xl md:text-3xl page-header gradient-text">Resources</h1>
+        <h1 className="text-2xl md:text-3xl page-header-bio gradient-text">LIBRARY</h1>
         <Button
           onClick={() => requireAuth(() => setUploadOpen(true), 'Sign in to upload')}
-          size="sm" className="gap-2 rounded-xl text-xs btn-premium"
+          size="sm" className="gap-2 rounded-xl text-xs btn-bio"
         >
           <Upload className="w-3.5 h-3.5" /> Upload
         </Button>
@@ -136,11 +136,11 @@ const Resources = () => {
 
       {/* Search */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="relative mb-6">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
         <Input
           placeholder="Search resources..."
           value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-          className="pl-10 h-10 rounded-xl bg-muted/20 border-border/20 text-sm focus:border-primary/30 transition-all"
+          className="pl-10 h-10 rounded-xl bg-muted/15 border-border/[0.08] text-sm font-mono"
         />
         {searchQuery && (
           <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
@@ -157,10 +157,10 @@ const Resources = () => {
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
-            <div className="w-14 h-14 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-6 h-6 text-muted-foreground/30" />
+            <div className="w-14 h-14 rounded-full bg-primary/[0.06] flex items-center justify-center mx-auto mb-4 breathe">
+              <FileText className="w-6 h-6 text-primary/30" />
             </div>
-            <p className="text-sm text-muted-foreground/60">{searchQuery ? 'No matches' : 'No resources yet'}</p>
+            <p className="text-sm font-mono text-muted-foreground/50">{searchQuery ? 'No matches' : 'No resources yet'}</p>
           </div>
         ) : (
           <div className="grid gap-2.5">
@@ -170,22 +170,22 @@ const Resources = () => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
-                transition={{ delay: i * 0.03, duration: 0.3 }}
+                transition={{ delay: i * 0.03, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 className="group"
               >
                 <div className="float-card p-3.5 md:p-4 flex items-center gap-3 md:gap-4">
-                  <div className={cn('w-11 h-11 md:w-12 md:h-12 rounded-xl flex items-center justify-center text-[9px] md:text-[10px] font-semibold border shrink-0', getFileColor(r.file_type))}>
+                  <div className={cn('w-11 h-11 md:w-12 md:h-12 rounded-xl flex items-center justify-center text-[9px] md:text-[10px] font-mono font-bold border shrink-0', getFileColor(r.file_type))}>
                     {r.file_type}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate group-hover:text-primary transition-colors">{r.title}</p>
+                    <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{r.title}</p>
                     <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                      <Badge variant="secondary" className="text-[9px] rounded-md px-1.5 py-0 h-4 bg-muted/40 text-muted-foreground border-border/15 font-medium">{r.branch}</Badge>
-                      <span className="text-[10px] text-muted-foreground/50">{formatFileSize(r.file_size)} · {getTimeAgo(r.created_at)}</span>
+                      <span className="tag-pill text-[8px] px-2 py-0">{r.branch}</span>
+                      <span className="text-[10px] font-mono text-muted-foreground/30">{formatFileSize(r.file_size)} · {getTimeAgo(r.created_at)}</span>
                     </div>
                   </div>
                   <a href={r.file_url} target="_blank" rel="noopener noreferrer"
-                    className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-primary/6 hover:bg-primary/12 flex items-center justify-center text-primary/60 hover:text-primary transition-all border border-primary/8 hover:border-primary/20 shrink-0"
+                    className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-primary/[0.06] hover:bg-primary/10 flex items-center justify-center text-primary/50 hover:text-primary transition-all border border-primary/[0.08] hover:border-primary/20 hover:shadow-[0_0_12px_hsl(var(--primary)/0.15)] shrink-0"
                   >
                     <Download className="w-4 h-4" />
                   </a>
@@ -198,13 +198,13 @@ const Resources = () => {
 
       {/* Upload Dialog */}
       <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>
-        <DialogContent className="sm:max-w-md p-0 overflow-hidden float-card border-border/15">
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden card-bio glow-border border-border/[0.06]">
           <div className="p-6">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-primary/[0.06] flex items-center justify-center">
                 <CloudUpload className="w-4.5 h-4.5 text-primary" />
               </div>
-              <h2 className="text-base font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Upload Resource</h2>
+              <h2 className="text-base font-display font-bold">Upload Resource</h2>
             </div>
             <div className="space-y-4">
               <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelect} />
@@ -215,50 +215,50 @@ const Resources = () => {
                 onClick={() => !selectedFile && fileInputRef.current?.click()}
                 className={cn(
                   'rounded-xl border-2 border-dashed p-6 text-center cursor-pointer transition-all duration-200',
-                  dragOver ? 'border-primary/40 bg-primary/5' : selectedFile ? 'border-primary/20 bg-primary/3' : 'border-border/30 hover:border-primary/20'
+                  dragOver ? 'border-primary/30 bg-primary/[0.04]' : selectedFile ? 'border-primary/15 bg-primary/[0.02]' : 'border-border/[0.08] hover:border-primary/15'
                 )}
               >
                 {selectedFile ? (
                   <div className="flex items-center gap-3">
-                    <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center text-[9px] font-semibold border shrink-0', getFileColor(getFileExtension(selectedFile.name)))}>
+                    <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center text-[9px] font-mono font-bold border shrink-0', getFileColor(getFileExtension(selectedFile.name)))}>
                       {getFileExtension(selectedFile.name)}
                     </div>
                     <div className="flex-1 min-w-0 text-left">
                       <p className="text-sm font-medium truncate">{selectedFile.name}</p>
-                      <p className="text-[10px] text-muted-foreground">{formatFileSize(selectedFile.size)}</p>
+                      <p className="text-[10px] font-mono text-muted-foreground">{formatFileSize(selectedFile.size)}</p>
                     </div>
-                    <button onClick={e => { e.stopPropagation(); setSelectedFile(null); }} className="w-7 h-7 rounded-lg bg-destructive/8 hover:bg-destructive/15 flex items-center justify-center text-destructive/60 hover:text-destructive transition-colors">
+                    <button onClick={e => { e.stopPropagation(); setSelectedFile(null); }} className="w-7 h-7 rounded-lg bg-destructive/[0.06] hover:bg-destructive/10 flex items-center justify-center text-destructive/60 hover:text-destructive transition-colors">
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 ) : (
                   <div>
-                    <Upload className="w-6 h-6 text-muted-foreground/30 mx-auto mb-2" />
-                    <p className="text-xs text-muted-foreground/50">Drop file or click · max 5 MB</p>
+                    <Upload className="w-6 h-6 text-muted-foreground/20 mx-auto mb-2" />
+                    <p className="text-xs font-mono text-muted-foreground/30">Drop file or click · max 5 MB</p>
                   </div>
                 )}
               </div>
               <div>
-                <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">Title</Label>
-                <Input value={uploadTitle} onChange={e => setUploadTitle(e.target.value)} placeholder="Resource name" className="mt-1.5 h-9 rounded-xl bg-muted/15 border-border/20 text-sm" />
+                <Label className="text-[10px] font-mono font-medium uppercase tracking-wider text-muted-foreground/50">Title</Label>
+                <Input value={uploadTitle} onChange={e => setUploadTitle(e.target.value)} placeholder="Resource name" className="mt-1.5 h-9 rounded-xl bg-muted/10 border-border/[0.06] text-sm" />
               </div>
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">Branch</Label>
+                  <Label className="text-[10px] font-mono font-medium uppercase tracking-wider text-muted-foreground/50">Branch</Label>
                   <Select value={uploadBranch} onValueChange={setUploadBranch}>
-                    <SelectTrigger className="mt-1.5 h-9 rounded-xl bg-muted/15 border-border/20 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="mt-1.5 h-9 rounded-xl bg-muted/10 border-border/[0.06] text-sm font-mono"><SelectValue /></SelectTrigger>
                     <SelectContent>{['All', 'CSE', 'ECE', 'EE', 'ME', 'CE', 'CHE', 'MNC', 'BT'].map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">Semester</Label>
+                  <Label className="text-[10px] font-mono font-medium uppercase tracking-wider text-muted-foreground/50">Semester</Label>
                   <Select value={uploadSemester} onValueChange={setUploadSemester}>
-                    <SelectTrigger className="mt-1.5 h-9 rounded-xl bg-muted/15 border-border/20 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="mt-1.5 h-9 rounded-xl bg-muted/10 border-border/[0.06] text-sm font-mono"><SelectValue /></SelectTrigger>
                     <SelectContent>{['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
               </div>
-              <Button onClick={handleUpload} disabled={uploading || !selectedFile || !uploadTitle.trim()} className="w-full rounded-xl btn-premium">
+              <Button onClick={handleUpload} disabled={uploading || !selectedFile || !uploadTitle.trim()} className="w-full rounded-xl btn-bio">
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upload'}
               </Button>
             </div>
