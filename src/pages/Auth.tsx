@@ -318,8 +318,11 @@ const Auth = () => {
                 InfoHub
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-md mx-auto mt-4">
-              Your campus. <span className="text-primary font-semibold">Supercharged.</span>
+            <p className="text-lg text-muted-foreground max-w-md mx-auto mt-4 leading-relaxed">
+              One hub. Every update. <span className="text-primary font-semibold">Zero FOMO.</span>
+            </p>
+            <p className="text-sm text-muted-foreground/50 font-mono mt-2 tracking-wide">
+              Stay ahead. Stay connected. Stay informed.
             </p>
           </motion.div>
 
