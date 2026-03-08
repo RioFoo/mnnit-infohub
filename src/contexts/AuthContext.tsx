@@ -20,6 +20,7 @@ interface AuthContextType {
   loading: boolean;
   signUp: (email: string, password: string, metadata: Record<string, string>) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signInWithGoogle: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -35,8 +36,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
-    if (data) setProfile(data as Profile);
+    const { data } = await supabase.from('profiles' as any).select('*').eq('id', userId).single();
+    if (data) setProfile(data as unknown as Profile);
+  };
+
+  const ensureProfile = async (currentUser: User) => {
+    const { data: existing } = await supabase.from('profiles' as any).select('*').eq('id', currentUser.id).single();
+    if (existing) {
+      setProfile(existing as unknown as Profile);
+    } else {
+      // Auto-create profile (trigger should handle this, but fallback)
+      const meta = currentUser.user_metadata;
+      const profileData = {
+        id: currentUser.id,
+        name: meta?.full_name || meta?.name || currentUser.email?.split('@')[0],
+        handle: currentUser.email?.split('@')[0],
+        avatar_url: meta?.avatar_url || null,
+        bio: 'MNNIT Student',
+        role: 'Student',
+        branch: meta?.branch || 'CSE',
+        section: meta?.section || 'A',
+      };
+      const { data: newProfile } = await supabase.from('profiles' as any).insert(profileData as any).select().single();
+      if (newProfile) setProfile(newProfile as unknown as Profile);
+    }
   };
 
   useEffect(() => {
@@ -44,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        setTimeout(() => fetchProfile(session.user.id), 500);
+        setTimeout(() => ensureProfile(session.user), 500);
       } else {
         setProfile(null);
       }
@@ -54,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
+      if (session?.user) ensureProfile(session.user);
       setLoading(false);
     });
 
@@ -78,6 +101,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    });
+    return { error };
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setProfile(null);
@@ -88,7 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, profile, loading, signUp, signIn, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ session, user, profile, loading, signUp, signIn, signInWithGoogle, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );
