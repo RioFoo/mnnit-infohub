@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { getNotifPrefs, setNotifPrefs, playNotificationAlert } from '@/lib/notificationAlert';
+import { LucideIcon } from 'lucide-react';
 
 type Visibility = 'branch' | 'followers' | 'both';
 
@@ -17,6 +18,29 @@ const VISIBILITY_OPTIONS: { value: Visibility; label: string; icon: typeof Eye; 
   { value: 'followers', label: 'Followers', icon: Users, desc: 'Your followers only' },
   { value: 'both', label: 'Both', icon: Eye, desc: 'Branch + followers' },
 ];
+
+const NotifToggle = ({ icon: Icon, label, description, checked, onToggle }: {
+  icon: LucideIcon; label: string; description: string; checked: boolean; onToggle: (val: boolean) => void;
+}) => {
+  const [on, setOn] = useState(checked);
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-muted/10 flex items-center justify-center">
+          <Icon className="w-4 h-4 text-muted-foreground" />
+        </div>
+        <div>
+          <p className="text-xs font-semibold">{label}</p>
+          <p className="text-[9px] font-mono text-muted-foreground/40">{description}</p>
+        </div>
+      </div>
+      <Switch
+        checked={on}
+        onCheckedChange={(val) => { setOn(val); onToggle(val); }}
+      />
+    </div>
+  );
+};
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
