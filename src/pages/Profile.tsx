@@ -358,6 +358,13 @@ const Profile = () => {
                 <span className="text-[10px] font-mono text-muted-foreground/30 ml-auto">
                   {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                 </span>
+                <button
+                  onClick={() => handleDeletePost(post.id)}
+                  className="ml-2 text-muted-foreground/30 hover:text-destructive transition-colors"
+                  title="Delete post"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
               </div>
             </motion.div>
           ))}
