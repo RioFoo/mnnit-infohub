@@ -9,10 +9,53 @@ import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar
 } from '@/components/ui/sidebar';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
+
+const brandWords = ['INFOHUB', 'MNNIT', 'NEXUS', 'CONNECT'];
+
+const BrandLogo = ({ collapsed }: { collapsed: boolean }) => {
+  const [wordIndex, setWordIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWordIndex((i) => (i + 1) % brandWords.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentWord = brandWords[wordIndex];
+
+  return (
+    <div className="p-4 flex items-center gap-3">
+      <motion.div
+        className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0"
+        whileHover={{ rotateY: 180, scale: 1.1 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        style={{ transformStyle: 'preserve-3d' }}
+      >
+        <span className="text-primary text-sm font-bold font-display brand-icon-3d">◈</span>
+      </motion.div>
+      {!collapsed && (
+        <div className="overflow-hidden h-5 relative">
+          <motion.span
+            key={currentWord}
+            initial={{ opacity: 0, y: 14, rotateX: -90 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            exit={{ opacity: 0, y: -14, rotateX: 90 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+            className="font-display font-bold text-sm tracking-tight brand-text-3d block"
+            style={{ transformStyle: 'preserve-3d', perspective: 600 }}
+          >
+            {currentWord}
+          </motion.span>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const navItems = [
   { title: 'For You', url: '/', icon: Home },
