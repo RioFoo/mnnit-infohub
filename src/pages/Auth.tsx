@@ -404,7 +404,7 @@ const Auth = () => {
             {/* Mobile logo */}
             <div className="lg:hidden text-center mb-8">
               <motion.div whileHover={{ rotate: 15, scale: 1.1 }} transition={{ type: 'spring' }}>
-                <Zap className="w-12 h-12 text-primary mx-auto mb-2 drop-shadow-[0_0_15px_hsl(var(--primary)/0.5)]" />
+                <Zap className="w-12 h-12 mx-auto mb-2 drop-shadow-[0_0_15px_hsl(270_80%_60%/0.5)]" style={{ color: 'hsl(270 80% 70%)' }} />
               </motion.div>
               <h1 className="text-2xl font-mono font-bold" style={{ color: 'hsl(270 80% 70%)', textShadow: '0 0 20px hsl(270 80% 60% / 0.5)' }}>MNNIT InfoHub</h1>
             </div>
@@ -427,13 +427,13 @@ const Auth = () => {
               <TabsList className="grid w-full grid-cols-2 bg-muted/30 backdrop-blur-sm p-1 rounded-xl">
                 <TabsTrigger
                   value="login"
-                  className="gap-1.5 rounded-lg transition-all duration-300 data-[state=active]:bg-primary/15 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_15px_hsl(var(--primary)/0.25)] data-[state=active]:font-semibold hover:bg-muted/50"
+                  className="gap-1.5 rounded-lg transition-all duration-300 data-[state=active]:bg-[hsl(270_80%_60%/0.15)] data-[state=active]:text-[hsl(270_80%_70%)] data-[state=active]:shadow-[0_0_15px_hsl(270_80%_60%/0.25)] data-[state=active]:font-semibold hover:bg-muted/50"
                 >
                   <Mail className="w-3.5 h-3.5" /> Login
                 </TabsTrigger>
                 <TabsTrigger
                   value="register"
-                  className="gap-1.5 rounded-lg transition-all duration-300 data-[state=active]:bg-primary/15 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_15px_hsl(var(--primary)/0.25)] data-[state=active]:font-semibold hover:bg-muted/50"
+                  className="gap-1.5 rounded-lg transition-all duration-300 data-[state=active]:bg-[hsl(270_80%_60%/0.15)] data-[state=active]:text-[hsl(270_80%_70%)] data-[state=active]:shadow-[0_0_15px_hsl(270_80%_60%/0.25)] data-[state=active]:font-semibold hover:bg-muted/50"
                 >
                   <UserPlus className="w-3.5 h-3.5" /> Register
                 </TabsTrigger>
