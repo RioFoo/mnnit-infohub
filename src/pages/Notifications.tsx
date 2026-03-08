@@ -4,9 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ACADEMIC_NOTIFICATIONS } from '@/data/infohub-data';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Bell, Check, CheckCheck } from 'lucide-react';
+import { Bell, Check, CheckCheck, LogIn } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 interface Notification {
   id: string;
@@ -19,6 +20,7 @@ interface Notification {
 
 const Notifications = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,6 +54,19 @@ const Notifications = () => {
 
   const allNotifs = [...notifications, ...systemNotices];
   const typeIcon: Record<string, string> = { LIKE: '❤️', COMMENT: '💬', FOLLOW: '👤', SYSTEM: '📢' };
+
+  if (!user) {
+    return (
+      <div className="max-w-2xl mx-auto p-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass rounded-xl p-8 text-center space-y-4">
+          <Bell className="w-10 h-10 text-primary mx-auto" />
+          <h2 className="text-xl font-mono font-bold">Notifications</h2>
+          <p className="text-muted-foreground text-sm">Sign in to see your notifications and stay updated.</p>
+          <Button onClick={() => navigate('/auth')} className="gap-2"><LogIn className="w-4 h-4" /> Sign In</Button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-4 space-y-4">
