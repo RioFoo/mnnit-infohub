@@ -110,7 +110,9 @@ const Auth = () => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  
+  const [showRegPassword, setShowRegPassword] = useState(false);
+  const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   // Signup state
   const [name, setName] = useState('');
