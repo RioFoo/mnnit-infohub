@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Loader2, Mail, UserPlus, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Zap, Loader2, Mail, UserPlus, Lock, LockOpen, ArrowLeft, CheckCircle2, PartyPopper } from 'lucide-react';
 import { toast } from 'sonner';
 
 
