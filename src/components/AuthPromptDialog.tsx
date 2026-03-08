@@ -14,7 +14,7 @@ export const AuthPromptDialog = ({ open, onOpenChange, message }: AuthPromptDial
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="card-bio glow-border-bright max-w-sm text-center border-border/[0.06]">
+      <DialogContent className="max-w-sm text-center bg-card border border-border/10 rounded-2xl shadow-2xl">
         <DialogHeader className="items-center">
           <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2 breathe">
             <Zap className="w-7 h-7 text-primary" />
