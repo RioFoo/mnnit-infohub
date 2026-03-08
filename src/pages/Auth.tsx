@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Loader2, Mail, UserPlus, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Zap, Loader2, Mail, UserPlus, Eye, EyeOff, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 const BRANCHES = ['CSE', 'ECE', 'EE', 'ME', 'CE', 'BioTech', 'Chem', 'Prod', 'GIS'];
@@ -20,7 +20,7 @@ const DEMO_ACCOUNTS = [
 ];
 
 const Auth = () => {
-  const { session, signIn, signUp, signInWithGoogle } = useAuth();
+  const { session, signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
@@ -28,6 +28,9 @@ const Auth = () => {
   const [userName, setUserName] = useState('');
   const [activeTab, setActiveTab] = useState('login');
   const [error, setError] = useState<string | null>(null);
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('');
@@ -118,8 +121,24 @@ const Auth = () => {
     setShowPassword(true);
     setSelectedDemo(demo.key);
     setActiveTab('login');
+    setShowForgot(false);
     setError(null);
     toast.success('Demo credentials filled! Click Sign In.', { icon: '✓' });
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    setError(null);
+    const { error } = await resetPassword(forgotEmail);
+    if (error) {
+      setError(getErrorMessage(error.message));
+      toast.error(getErrorMessage(error.message));
+    } else {
+      toast.success('Password reset email sent! Check your inbox.');
+      setShowForgot(false);
+    }
+    setForgotLoading(false);
   };
 
   if (showIntro) {
@@ -244,6 +263,15 @@ const Auth = () => {
                     </button>
                   </div>
                 </div>
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setShowForgot(true)}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
                 <Button
                   type="submit"
                   className={`w-full ${selectedDemo ? 'animate-pulse shadow-[0_0_15px_hsl(var(--primary)/0.5)]' : ''}`}
@@ -328,6 +356,48 @@ const Auth = () => {
           </div>
 
           <p className="text-xs text-muted-foreground text-center mt-6">By signing in, you agree to our Terms of Service</p>
+
+          {/* Forgot Password Overlay */}
+          <AnimatePresence>
+            {showForgot && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4"
+              >
+                <motion.div
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.95, opacity: 0 }}
+                  className="w-full max-w-sm rounded-lg border border-border bg-card p-6 shadow-lg"
+                >
+                  <h2 className="text-lg font-mono font-bold text-foreground mb-1">Reset Password</h2>
+                  <p className="text-sm text-muted-foreground mb-4">Enter your email and we'll send a reset link.</p>
+                  <form onSubmit={handleForgotPassword} className="space-y-4">
+                    <div>
+                      <Label htmlFor="forgot-email">Email</Label>
+                      <Input
+                        id="forgot-email"
+                        type="email"
+                        value={forgotEmail}
+                        onChange={e => setForgotEmail(e.target.value)}
+                        placeholder="you@mnnit.ac.in"
+                        required
+                        className="mt-1"
+                      />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={forgotLoading}>
+                      {forgotLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send Reset Link'}
+                    </Button>
+                    <Button variant="ghost" type="button" onClick={() => setShowForgot(false)} className="w-full gap-2">
+                      <ArrowLeft className="w-4 h-4" /> Back to Login
+                    </Button>
+                  </form>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
     </div>
