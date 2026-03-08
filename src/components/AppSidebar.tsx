@@ -86,9 +86,13 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
       <SidebarFooter className="p-3 space-y-2">
         {!collapsed && profile && (
           <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-bold">
-              {(profile.name || 'U')[0].toUpperCase()}
-            </div>
+            {profile.avatar_url ? (
+              <img src={profile.avatar_url} alt={profile.name || ''} className="w-8 h-8 rounded-full object-cover" />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-bold">
+                {(profile.name || 'U')[0].toUpperCase()}
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{profile.name || 'User'}</p>
               <p className="text-xs text-muted-foreground truncate">{profile.branch} - {profile.section}</p>

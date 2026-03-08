@@ -34,8 +34,7 @@ const Notifications = () => {
   useEffect(() => {
     const fetch = async () => {
       if (!user) return;
-      const { data } = await supabase
-        .from('notifications')
+      const { data } = await (supabase.from as any)('notifications')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
@@ -47,12 +46,11 @@ const Notifications = () => {
 
   const markAllRead = async () => {
     if (!user) return;
-    await supabase.from('notifications').update({ read: true }).eq('user_id', user.id);
+    await (supabase.from as any)('notifications').update({ read: true }).eq('user_id', user.id);
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
   const allNotifs = [...notifications, ...systemNotices];
-
   const typeIcon: Record<string, string> = { LIKE: '❤️', COMMENT: '💬', FOLLOW: '👤', SYSTEM: '📢' };
 
   return (
@@ -70,21 +68,14 @@ const Notifications = () => {
         <p className="text-center py-12 text-muted-foreground">No notifications yet.</p>
       ) : (
         allNotifs.map((n, i) => (
-          <motion.div
-            key={n.id}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.03 }}
-            className={`glass rounded-lg p-3 flex items-start gap-3 ${!n.read ? 'border-l-2 border-primary' : 'opacity-70'}`}
-          >
+          <motion.div key={n.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}
+            className={`glass rounded-lg p-3 flex items-start gap-3 ${!n.read ? 'border-l-2 border-primary' : 'opacity-70'}`}>
             <span className="text-lg">{typeIcon[n.type] || '🔔'}</span>
             <div className="flex-1 min-w-0">
               <p className="text-sm">{n.message}</p>
               <div className="flex items-center gap-2 mt-1">
                 <Badge variant="secondary" className="text-[10px]">{n.type}</Badge>
-                <span className="text-[10px] text-muted-foreground">
-                  {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
-                </span>
+                <span className="text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}</span>
               </div>
             </div>
             {!n.read && <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />}

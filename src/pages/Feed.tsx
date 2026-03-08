@@ -34,8 +34,7 @@ const Feed = () => {
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
 
   const fetchPosts = async () => {
-    const { data } = await supabase
-      .from('posts')
+    const { data } = await (supabase.from as any)('posts')
       .select('*, profiles(name, handle, avatar_url, branch)')
       .order('created_at', { ascending: false })
       .limit(50);
@@ -45,8 +44,8 @@ const Feed = () => {
 
   const fetchLikes = async () => {
     if (!user) return;
-    const { data } = await supabase.from('likes').select('post_id').eq('user_id', user.id);
-    if (data) setLikedPosts(new Set(data.map(l => l.post_id)));
+    const { data } = await (supabase.from as any)('likes').select('post_id').eq('user_id', user.id);
+    if (data) setLikedPosts(new Set(data.map((l: any) => l.post_id)));
   };
 
   useEffect(() => {
@@ -64,7 +63,7 @@ const Feed = () => {
     if (!newContent.trim() || !user) return;
     setPosting(true);
     const tags = newTags.split(',').map(t => t.trim()).filter(Boolean);
-    const { error } = await supabase.from('posts').insert({
+    const { error } = await (supabase.from as any)('posts').insert({
       user_id: user.id,
       content: newContent,
       tags,
@@ -83,11 +82,11 @@ const Feed = () => {
   const handleLike = async (postId: string) => {
     if (!user) return;
     if (likedPosts.has(postId)) {
-      await supabase.from('likes').delete().eq('post_id', postId).eq('user_id', user.id);
+      await (supabase.from as any)('likes').delete().eq('post_id', postId).eq('user_id', user.id);
       setLikedPosts(prev => { const n = new Set(prev); n.delete(postId); return n; });
       setPosts(prev => prev.map(p => p.id === postId ? { ...p, likes_count: Math.max(0, p.likes_count - 1) } : p));
     } else {
-      await supabase.from('likes').insert({ post_id: postId, user_id: user.id });
+      await (supabase.from as any)('likes').insert({ post_id: postId, user_id: user.id });
       setLikedPosts(prev => new Set(prev).add(postId));
       setPosts(prev => prev.map(p => p.id === postId ? { ...p, likes_count: p.likes_count + 1 } : p));
     }
