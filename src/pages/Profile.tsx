@@ -31,7 +31,10 @@ const Profile = () => {
   const [semester, setSemester] = useState('');
   const [batch, setBatch] = useState('');
   const [saving, setSaving] = useState(false);
-
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingBanner, setUploadingBanner] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (profile) {
       setName(profile.name || '');
