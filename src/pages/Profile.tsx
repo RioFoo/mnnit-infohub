@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import MediaRenderer from '@/components/feed/MediaRenderer';
+import FollowersDialog from '@/components/FollowersDialog';
 
 const BRANCHES = ['CSE', 'ECE', 'EE', 'ME', 'CE', 'GIS'];
 const SECTIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -35,6 +36,8 @@ const Profile = () => {
   const [saving, setSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingBanner, setUploadingBanner] = useState(false);
+  const [followDialogOpen, setFollowDialogOpen] = useState(false);
+  const [followDialogTab, setFollowDialogTab] = useState<'followers' | 'following'>('followers');
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
