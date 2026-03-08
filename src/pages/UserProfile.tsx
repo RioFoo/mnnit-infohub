@@ -3,11 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Loader2, UserPlus, UserMinus, Heart, MessageCircle, ArrowLeft } from 'lucide-react';
+import { Loader2, UserPlus, UserMinus, Heart, MessageCircle, ArrowLeft, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import MediaRenderer from '@/components/feed/MediaRenderer';
+import { cn } from '@/lib/utils';
 
 interface UserProfileData {
   id: string;
@@ -32,11 +33,12 @@ const UserProfile = () => {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isFavourite, setIsFavourite] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [favouriteLoading, setFavouriteLoading] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
-  // Redirect to own profile if viewing self
   useEffect(() => {
     if (user && userId === user.id) {
       navigate('/profile', { replace: true });
@@ -62,16 +64,17 @@ const UserProfile = () => {
     load();
   }, [userId]);
 
-  // Check follow status
+  // Check follow + favourite status
   useEffect(() => {
     if (!user || !userId) return;
     const check = async () => {
       const { data } = await (supabase.from as any)('followers')
-        .select('id')
+        .select('id, favourite')
         .eq('follower_id', user.id)
         .eq('following_id', userId)
         .maybeSingle();
       setIsFollowing(!!data);
+      setIsFavourite(data?.favourite || false);
     };
     check();
   }, [user, userId]);
@@ -90,6 +93,7 @@ const UserProfile = () => {
       if (error) toast.error('Failed to unfollow');
       else {
         setIsFollowing(false);
+        setIsFavourite(false);
         setFollowerCount(c => c - 1);
         toast.success('Unfollowed');
       }
@@ -104,6 +108,22 @@ const UserProfile = () => {
       }
     }
     setFollowLoading(false);
+  };
+
+  const handleFavourite = async () => {
+    if (!user || !userId || !isFollowing) return;
+    setFavouriteLoading(true);
+    const newVal = !isFavourite;
+    const { error } = await (supabase.from as any)('followers')
+      .update({ favourite: newVal })
+      .eq('follower_id', user.id)
+      .eq('following_id', userId);
+    if (error) toast.error('Failed to update');
+    else {
+      setIsFavourite(newVal);
+      toast.success(newVal ? 'Added to favourites — posts will appear on top in alerts' : 'Removed from favourites');
+    }
+    setFavouriteLoading(false);
   };
 
   if (loading) {
@@ -127,19 +147,16 @@ const UserProfile = () => {
 
   return (
     <div className="page-container max-w-2xl">
-      {/* Back button */}
       <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground/50 hover:text-foreground transition-colors mb-4">
         <ArrowLeft className="w-3.5 h-3.5" /> Back
       </button>
 
-      {/* Profile Card */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="card-bio p-0 mb-8 overflow-hidden"
       >
-        {/* Banner */}
         <div className="h-32 relative overflow-hidden">
           {profileData.banner_url ? (
             <img src={profileData.banner_url} alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
@@ -163,18 +180,44 @@ const UserProfile = () => {
               )}
             </div>
 
-            {/* Follow Button */}
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }}>
+            {/* Follow + Favourite Buttons */}
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="flex items-center gap-2">
+              {/* Favourite (only visible when following) */}
+              {isFollowing && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 400 }}
+                  onClick={handleFavourite}
+                  disabled={favouriteLoading}
+                  className={cn(
+                    'w-9 h-9 rounded-xl flex items-center justify-center border transition-all',
+                    isFavourite
+                      ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500 shadow-[0_0_12px_hsl(45,100%,50%,0.2)]'
+                      : 'bg-muted/10 border-border/[0.08] text-muted-foreground/40 hover:text-yellow-500 hover:border-yellow-500/20'
+                  )}
+                  title={isFavourite ? 'Remove from favourites' : 'Add to favourites — their posts appear on top in alerts'}
+                >
+                  {favouriteLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Star className={cn('w-4 h-4', isFavourite && 'fill-current')} />
+                  )}
+                </motion.button>
+              )}
+
+              {/* Follow/Unfollow */}
               <Button
                 onClick={handleFollow}
                 disabled={followLoading}
                 size="sm"
                 variant={isFollowing ? 'outline' : 'default'}
-                className={`rounded-xl gap-1.5 text-xs font-mono ${
+                className={cn(
+                  'rounded-xl gap-1.5 text-xs font-mono',
                   isFollowing
                     ? 'border-border/[0.08] hover:border-destructive/30 hover:text-destructive hover:bg-destructive/[0.04]'
                     : 'btn-bio'
-                }`}
+                )}
               >
                 {followLoading ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -207,23 +250,22 @@ const UserProfile = () => {
 
           <div className="flex gap-8 mt-6 pt-5 relative">
             <div className="divider-glow absolute left-0 right-0 top-0" />
-            <div>
-              <p className="text-3xl font-display font-bold gradient-text">{posts.length}</p>
+            <div className="text-center">
+              <p className="text-2xl font-display font-bold gradient-text">{posts.length}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Posts</p>
             </div>
-            <div>
-              <p className="text-3xl font-display font-bold gradient-text">{followerCount}</p>
+            <div className="text-center">
+              <p className="text-2xl font-display font-bold gradient-text">{followerCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Followers</p>
             </div>
-            <div>
-              <p className="text-3xl font-display font-bold gradient-text">{followingCount}</p>
+            <div className="text-center">
+              <p className="text-2xl font-display font-bold gradient-text">{followingCount}</p>
               <p className="text-[10px] font-mono text-muted-foreground">Following</p>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Posts */}
       <span className="section-title">Posts</span>
       {posts.length === 0 ? (
         <p className="text-sm font-mono text-muted-foreground text-center py-16">No posts yet</p>

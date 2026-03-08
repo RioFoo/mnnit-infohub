@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ACADEMIC_NOTIFICATIONS } from '@/data/infohub-data';
 
 import { Button } from '@/components/ui/button';
-import { CheckCheck, LogIn, Bell } from 'lucide-react';
+import { CheckCheck, LogIn, Bell, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { PageHeader } from '@/components/PageHeader';
 import { formatDistanceToNow } from 'date-fns';
@@ -18,10 +18,14 @@ const typeBorderColors: Record<string, string> = {
   LIKE: 'border-l-2 border-l-primary',
   COMMENT: 'border-l-2 border-l-secondary',
   FOLLOW: 'border-l-2 border-l-accent',
+  FOLLOW_POST: 'border-l-2 border-l-primary/50',
+  FAVOURITE_POST: 'border-l-2 border-l-yellow-500',
   SYSTEM: 'border-l-2 border-l-accent',
 };
 
-const typeIcon: Record<string, string> = { LIKE: '❤️', COMMENT: '💬', FOLLOW: '👤', SYSTEM: '📢' };
+const typeIcon: Record<string, string> = {
+  LIKE: '❤️', COMMENT: '💬', FOLLOW: '👤', FOLLOW_POST: '📝', FAVOURITE_POST: '⭐', SYSTEM: '📢',
+};
 
 const containerVariants = {
   hidden: {},
@@ -59,7 +63,14 @@ const Notifications = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
-  const allNotifs = [...notifications, ...systemNotices];
+  // Sort: FAVOURITE_POST on top, then by created_at
+  const sortedNotifications = [...notifications].sort((a, b) => {
+    if (a.type === 'FAVOURITE_POST' && b.type !== 'FAVOURITE_POST') return -1;
+    if (b.type === 'FAVOURITE_POST' && a.type !== 'FAVOURITE_POST') return 1;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+
+  const allNotifs = [...sortedNotifications, ...systemNotices];
 
   if (!user) {
     return (
@@ -103,13 +114,21 @@ const Notifications = () => {
             <motion.div
               key={n.id}
               variants={itemVariants}
-              className={`float-card p-4 flex items-start gap-3.5 ${typeBorderColors[n.type] || ''} ${!n.read ? 'bg-primary/[0.02]' : 'opacity-50'}`}
+              onClick={() => n.link && navigate(n.link)}
+              className={`float-card p-4 flex items-start gap-3.5 cursor-pointer hover:bg-muted/5 transition-colors ${typeBorderColors[n.type] || ''} ${!n.read ? 'bg-primary/[0.02]' : 'opacity-50'}`}
             >
               <span className="text-base mt-0.5">{typeIcon[n.type] || '🔔'}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm">{n.message}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm">{n.message}</p>
+                  {n.type === 'FAVOURITE_POST' && (
+                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-500 shrink-0" />
+                  )}
+                </div>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="tag-pill text-[9px]">{n.type}</span>
+                  <span className="tag-pill text-[9px]">
+                    {n.type === 'FAVOURITE_POST' ? 'FAVOURITE' : n.type === 'FOLLOW_POST' ? 'POST' : n.type}
+                  </span>
                   <span className="text-[10px] font-mono text-muted-foreground/40">{formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}</span>
                 </div>
               </div>
