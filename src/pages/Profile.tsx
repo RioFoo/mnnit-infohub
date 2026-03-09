@@ -226,61 +226,55 @@ const Profile = () => {
             {profile.gender && <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.gender}</span>}
           </div>
 
-          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mt-6 pt-5 relative">
+          <div className="flex flex-col gap-3 mt-6 pt-5 relative">
             <div className="divider-glow absolute left-0 right-0 top-0" />
             
-            {/* Stats row on mobile */}
-            <div className="flex items-center gap-4 w-full sm:w-auto">
-              <div className="text-center transform transition-all duration-300 hover:scale-110 cursor-pointer">
-                <p className="text-2xl sm:text-3xl font-display font-black gradient-text hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.6)]">{posts.length}</p>
-                <p className="text-[10px] sm:text-xs font-mono text-muted-foreground font-bold hover:text-primary transition-colors">Posts</p>
+            {/* Stats + actions row */}
+            <div className="grid grid-cols-[auto_1fr_auto] sm:flex sm:flex-row items-center gap-2 sm:gap-4 w-full overflow-hidden">
+              <div className="text-center min-w-[40px] shrink-0">
+                <p className="text-xl sm:text-3xl font-display font-black gradient-text">{posts.length}</p>
+                <p className="text-[9px] sm:text-xs font-mono text-muted-foreground font-bold">Posts</p>
               </div>
 
               {/* Follow button */}
               <motion.button
-                whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => { setFollowDialogTab('followers'); setFollowDialogOpen(true); }}
-                className="flex-1 sm:flex-initial flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl bg-primary/[0.06] border border-primary/15 hover:bg-primary/[0.1] hover:border-primary/25 transition-all group cursor-pointer"
+                className="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 rounded-xl bg-primary/[0.06] border border-primary/15 hover:bg-primary/[0.1] hover:border-primary/25 transition-all cursor-pointer min-w-0 overflow-hidden"
               >
-                <div className="relative">
-                  <Users className="w-4 sm:w-5 h-4 sm:h-5 text-primary" />
-                  <span className="absolute -top-1 -right-1.5 min-w-[14px] h-3.5 px-0.5 rounded-full bg-primary text-primary-foreground text-[7px] sm:text-[8px] font-mono font-bold flex items-center justify-center">
+                <div className="relative shrink-0">
+                  <Users className="w-4 h-4 text-primary" />
+                  <span className="absolute -top-1 -right-1.5 min-w-[14px] h-3.5 px-0.5 rounded-full bg-primary text-primary-foreground text-[7px] font-mono font-bold flex items-center justify-center">
                     {followerCount + followingCount}
                   </span>
                 </div>
-                <div className="text-left">
-                  <p className="text-[10px] sm:text-xs font-mono font-bold text-foreground leading-tight">Follow</p>
-                  <p className="text-[8px] sm:text-[9px] font-mono text-muted-foreground/70 hidden sm:block">{followerCount} · {followingCount}</p>
-                </div>
+                <span className="text-[10px] sm:text-xs font-mono font-bold text-foreground truncate">{followerCount} · {followingCount}</span>
               </motion.button>
 
               {/* Favorites button */}
               <motion.button
-                whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => { setFollowDialogTab('favourites'); setFollowDialogOpen(true); }}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-yellow-500/[0.06] border border-yellow-500/15 hover:bg-yellow-500/[0.1] hover:border-yellow-500/25 transition-all group cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-yellow-500/[0.06] border border-yellow-500/15 hover:bg-yellow-500/[0.1] hover:border-yellow-500/25 transition-all cursor-pointer shrink-0"
               >
                 <div className="relative">
-                  <Star className="w-4 sm:w-5 h-4 sm:h-5 text-yellow-500 fill-yellow-500" />
-                  <span className="absolute -top-1 -right-1.5 min-w-[14px] h-3.5 px-0.5 rounded-full bg-yellow-500 text-yellow-950 text-[7px] sm:text-[8px] font-mono font-bold flex items-center justify-center">
+                  <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                  <span className="absolute -top-1 -right-1.5 min-w-[14px] h-3.5 px-0.5 rounded-full bg-yellow-500 text-yellow-950 text-[7px] font-mono font-bold flex items-center justify-center">
                     {favouriteCount}
                   </span>
                 </div>
-                <p className="text-[10px] sm:text-xs font-mono font-bold text-foreground leading-tight hidden sm:block">Favorites</p>
+                <span className="text-[10px] sm:text-xs font-mono font-bold text-foreground hidden sm:inline">Favorites</span>
               </motion.button>
             </div>
 
-            {/* Find People button - full width on mobile */}
+            {/* Find People button */}
             <motion.button
-              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/explore?tab=people')}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-secondary/[0.06] border border-secondary/15 hover:bg-secondary/[0.1] hover:border-secondary/25 transition-all group cursor-pointer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-secondary/[0.06] border border-secondary/15 hover:bg-secondary/[0.1] hover:border-secondary/25 transition-all cursor-pointer"
             >
-              <UserPlus className="w-4 sm:w-5 h-4 sm:h-5 text-secondary" />
-              <p className="text-[10px] sm:text-xs font-mono font-bold text-foreground leading-tight">Find People</p>
+              <UserPlus className="w-4 h-4 text-secondary" />
+              <span className="text-[10px] sm:text-xs font-mono font-bold text-foreground">Find People</span>
             </motion.button>
           </div>
 
