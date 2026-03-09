@@ -7,6 +7,7 @@ import { Loader2, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface Comment {
   id: string;
@@ -22,37 +23,45 @@ interface CommentSectionProps {
   onCountChange: (delta: number) => void;
 }
 
+const MAX_COMMENT_LENGTH = 500;
+
 const CommentSection = ({ postId, commentsCount, onCountChange }: CommentSectionProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');
   const [posting, setPosting] = useState(false);
 
   useEffect(() => {
-    const fetch = async () => {
-      const { data } = await (supabase.from as any)('comments')
+    const fetchComments = async () => {
+      const { data, error } = await (supabase.from as any)('comments')
         .select('*, profiles(name, handle, avatar_url)')
         .eq('post_id', postId)
         .order('created_at', { ascending: true })
         .limit(50);
-      if (data) setComments(data as Comment[]);
+      if (!error && data) setComments(data as Comment[]);
       setLoading(false);
     };
-    fetch();
+    fetchComments();
   }, [postId]);
 
   const handlePost = async () => {
-    if (!text.trim() || !user) return;
+    const trimmed = text.trim();
+    if (!trimmed || !user || posting) return;
+    if (trimmed.length > MAX_COMMENT_LENGTH) {
+      toast.error(`Comment too long (max ${MAX_COMMENT_LENGTH} characters)`);
+      return;
+    }
     setPosting(true);
     const { error } = await (supabase.from as any)('comments').insert({
       post_id: postId,
       user_id: user.id,
-      content: text.trim(),
+      content: trimmed,
     });
-    if (error) { toast.error(error.message); }
-    else {
-      // Refetch comments
+    if (error) {
+      toast.error('Failed to post comment');
+    } else {
       const { data } = await (supabase.from as any)('comments')
         .select('*, profiles(name, handle, avatar_url)')
         .eq('post_id', postId)
@@ -61,7 +70,6 @@ const CommentSection = ({ postId, commentsCount, onCountChange }: CommentSection
       if (data) setComments(data as Comment[]);
       setText('');
       onCountChange(1);
-      // Update post comments_count
       await (supabase.from as any)('posts').update({ comments_count: commentsCount + 1 }).eq('id', postId);
     }
     setPosting(false);
@@ -85,21 +93,29 @@ const CommentSection = ({ postId, commentsCount, onCountChange }: CommentSection
                 animate={{ opacity: 1, y: 0 }}
                 className="flex gap-2.5"
               >
-                <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold shrink-0">
+                <button
+                  onClick={() => navigate(`/profile/${c.user_id}`)}
+                  className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold shrink-0 overflow-hidden"
+                >
                   {c.profiles?.avatar_url ? (
-                    <img src={c.profiles.avatar_url} className="w-7 h-7 rounded-full object-cover" alt="" />
+                    <img src={c.profiles.avatar_url} className="w-7 h-7 rounded-full object-cover" alt="" loading="lazy" />
                   ) : (
                     (c.profiles?.name || 'U')[0].toUpperCase()
                   )}
-                </div>
+                </button>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold">{c.profiles?.name || 'User'}</span>
+                    <button
+                      onClick={() => navigate(`/profile/${c.user_id}`)}
+                      className="text-xs font-semibold hover:text-primary transition-colors"
+                    >
+                      {c.profiles?.name || 'User'}
+                    </button>
                     <span className="text-[9px] font-mono text-muted-foreground">
                       {formatDistanceToNow(new Date(c.created_at), { addSuffix: true })}
                     </span>
                   </div>
-                  <p className="text-xs text-foreground/80 leading-relaxed">{c.content}</p>
+                  <p className="text-xs text-foreground/80 leading-relaxed break-words">{c.content}</p>
                 </div>
               </motion.div>
             ))}
@@ -111,10 +127,11 @@ const CommentSection = ({ postId, commentsCount, onCountChange }: CommentSection
         <div className="flex gap-2">
           <Input
             value={text}
-            onChange={e => setText(e.target.value)}
+            onChange={e => setText(e.target.value.slice(0, MAX_COMMENT_LENGTH))}
             placeholder="Write a comment..."
             className="h-9 text-xs bg-muted/10 border-border/[0.08] rounded-xl"
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handlePost()}
+            maxLength={MAX_COMMENT_LENGTH}
           />
           <Button
             size="icon"

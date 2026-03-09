@@ -1,4 +1,5 @@
-import { FileText, Download, Play } from 'lucide-react';
+import { useState } from 'react';
+import { FileText, Download, Play, ImageOff } from 'lucide-react';
 
 interface MediaRendererProps {
   url: string;
@@ -6,15 +7,33 @@ interface MediaRendererProps {
 }
 
 const MediaRenderer = ({ url, mediaType }: MediaRendererProps) => {
+  const [imgError, setImgError] = useState(false);
+
   if (!url) return null;
 
   const type = mediaType?.toLowerCase() || '';
 
   // Image
   if (type.startsWith('image') || (!type && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url))) {
+    if (imgError) {
+      return (
+        <div className="mt-3 rounded-xl overflow-hidden border border-border/[0.06] bg-muted/10 flex items-center justify-center h-40">
+          <div className="text-center text-muted-foreground/40">
+            <ImageOff className="w-8 h-8 mx-auto mb-2" />
+            <p className="text-xs font-mono">Image unavailable</p>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="mt-3 rounded-xl overflow-hidden border border-border/[0.06]">
-        <img src={url} alt="" className="max-h-80 object-cover w-full" loading="lazy" />
+        <img
+          src={url}
+          alt=""
+          className="max-h-80 object-cover w-full"
+          loading="lazy"
+          onError={() => setImgError(true)}
+        />
       </div>
     );
   }
