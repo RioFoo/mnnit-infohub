@@ -88,52 +88,62 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                   : location.pathname.startsWith(item.url);
 
                 return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <motion.div
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.03, type: 'spring', stiffness: 320, damping: 26 }}
-                      >
+                  <motion.div
+                    key={item.title}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.03, type: 'spring', stiffness: 320, damping: 26 }}
+                  >
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className="h-auto p-0">
                         <RouterNavLink
                           to={item.url}
                           end={item.url === '/'}
                           className={cn(
-                            'relative flex items-center gap-3 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all duration-200 group',
+                            'relative flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-[13px] font-medium transition-all duration-200 cursor-pointer group',
                             isActive
-                              ? 'text-primary bg-primary/[0.06]'
-                              : 'text-muted-foreground hover:text-foreground hover:bg-muted/10'
+                              ? 'text-primary bg-primary/[0.08] shadow-[inset_0_1px_0_hsl(var(--primary)/0.1),0_2px_8px_hsl(var(--primary)/0.15)] font-semibold'
+                              : 'text-foreground/70 hover:text-foreground hover:bg-muted/10 hover:shadow-[inset_0_1px_0_hsl(var(--foreground)/0.05)]'
                           )}
                         >
                           {isActive && (
                             <motion.div
                               layoutId="sidebar-indicator"
                               className="absolute left-0 top-1/2 -translate-y-1/2 w-[2.5px] h-5 rounded-r-full bg-primary"
-                              style={{ boxShadow: '0 0 10px hsl(var(--primary) / 0.5)' }}
+                              style={{ 
+                                boxShadow: '0 0 10px hsl(var(--primary) / 0.6), 0 0 20px hsl(var(--primary) / 0.3), 0 0 30px hsl(var(--primary) / 0.1)' 
+                              }}
                               transition={{ type: 'spring', stiffness: 400, damping: 28 }}
                             />
                           )}
 
                           <item.icon className={cn(
-                            'h-4 w-4 shrink-0 transition-colors',
+                            'h-4 w-4 shrink-0 transition-all duration-200',
                             isActive
-                              ? 'text-primary drop-shadow-[0_0_6px_hsl(var(--primary)/0.4)]'
-                              : 'text-muted-foreground group-hover:text-foreground'
+                              ? 'text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)] transform scale-105'
+                              : 'text-foreground/60 group-hover:text-foreground group-hover:drop-shadow-[0_0_4px_hsl(var(--foreground)/0.2)]'
                           )} />
 
                           {!collapsed && (
-                            <span className="truncate">{item.title}</span>
+                            <span className={cn(
+                              'truncate transition-all duration-200',
+                              isActive 
+                                ? 'text-primary drop-shadow-[0_0_4px_hsl(var(--primary)/0.3)] font-semibold' 
+                                : 'group-hover:text-foreground'
+                            )}>
+                              {item.title}
+                            </span>
                           )}
 
                           {item.title === 'Alerts' && !collapsed && (
-                            <Badge className="ml-auto text-[8px] h-4 min-w-[18px] px-1 bg-destructive/80 text-destructive-foreground border-none font-mono justify-center">
+                            <Badge className="ml-auto text-[8px] h-4 min-w-[18px] px-1 bg-destructive/80 text-destructive-foreground border-none font-mono justify-center shadow-[0_0_8px_hsl(var(--destructive)/0.3)]">
                               3
                             </Badge>
                           )}
                         </RouterNavLink>
-                      </motion.div>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </motion.div>
                 );
               })}
             </SidebarMenu>
