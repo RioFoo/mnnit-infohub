@@ -54,6 +54,7 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
     refetchInterval: 30000,
   });
 
+  return (
     <Sidebar collapsible="icon" className="border-r border-border/[0.06] bg-sidebar/80 backdrop-blur-2xl">
       {/* Brand */}
       <div className="p-3.5 flex items-center gap-3">
