@@ -42,6 +42,10 @@ const Profile = () => {
   const [followDialogOpen, setFollowDialogOpen] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
+  const bannerRef = useRef<HTMLDivElement>(null);
+  const { scrollY } = useScroll();
+  const bannerY = useTransform(scrollY, [0, 300], [0, 80]);
+  const bannerScale = useTransform(scrollY, [0, 300], [1, 1.15]);
   useEffect(() => {
     if (profile) {
       setName(profile.name || '');
@@ -163,14 +167,16 @@ const Profile = () => {
       >
         {/* Banner */}
         <div className="h-32 relative overflow-hidden group cursor-pointer" onClick={() => bannerInputRef.current?.click()}>
-          {profile.banner_url ? (
-            <img src={profile.banner_url} alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
-          ) : (
-            <>
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
-              <div className="absolute inset-0 surface-shimmer" />
-            </>
-          )}
+          <motion.div style={{ y: bannerY, scale: bannerScale }} className="absolute inset-0">
+            {profile.banner_url ? (
+              <img src={profile.banner_url} alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
+            ) : (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
+                <div className="absolute inset-0 surface-shimmer" />
+              </>
+            )}
+          </motion.div>
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
             {uploadingBanner ? (
               <Loader2 className="w-6 h-6 text-foreground animate-spin opacity-0 group-hover:opacity-100 transition-opacity" />
