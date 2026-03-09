@@ -128,8 +128,8 @@ const SwipeablePostCard = ({
         style={{ opacity: leftOpacity, scale: leftScale }}
         className="absolute inset-y-0 left-0 w-20 flex items-center justify-center z-0"
       >
-        <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-          <Heart className="w-6 h-6 text-red-400 fill-red-400" />
+        <div className="w-12 h-12 rounded-full bg-destructive/20 flex items-center justify-center">
+          <Heart className="w-6 h-6 text-destructive fill-destructive" />
         </div>
       </motion.div>
 
@@ -138,8 +138,8 @@ const SwipeablePostCard = ({
         style={{ opacity: rightOpacity, scale: rightScale }}
         className="absolute inset-y-0 right-0 w-20 flex items-center justify-center z-0"
       >
-        <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
-          <Share2 className="w-6 h-6 text-blue-400" />
+        <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center">
+          <Share2 className="w-6 h-6 text-secondary" />
         </div>
       </motion.div>
 

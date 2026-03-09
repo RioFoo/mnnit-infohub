@@ -23,14 +23,19 @@ const mobileNavItems = [
 ];
 
 const pageVariants = {
-  initial: { opacity: 0, y: 24, scale: 0.98, filter: 'blur(6px)' },
+  initial: { opacity: 0, x: 20, filter: 'blur(4px)' },
   enter: {
-    opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }
+    opacity: 1, x: 0, filter: 'blur(0px)',
+    transition: { 
+      duration: 0.35, 
+      ease: [0.32, 0.72, 0, 1],
+      opacity: { duration: 0.25 },
+      filter: { duration: 0.2 }
+    }
   },
   exit: {
-    opacity: 0, y: -16, scale: 1.01, filter: 'blur(4px)',
-    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as const }
+    opacity: 0, x: -10, filter: 'blur(2px)',
+    transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] }
   }
 };
 
