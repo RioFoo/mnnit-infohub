@@ -240,15 +240,20 @@ const Profile = () => {
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => { setFollowDialogTab('followers'); setFollowDialogOpen(true); }}
-                className="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 rounded-xl bg-primary/[0.06] border border-primary/15 hover:bg-primary/[0.1] hover:border-primary/25 transition-all cursor-pointer min-w-0 overflow-hidden"
+                className="flex items-center justify-center gap-3 sm:gap-4 px-3.5 sm:px-5 py-2.5 rounded-xl bg-primary/[0.06] border border-primary/15 hover:bg-primary/[0.1] hover:border-primary/25 transition-all cursor-pointer min-w-0 overflow-hidden"
               >
-                <div className="relative shrink-0">
-                  <Users className="w-4 h-4 text-primary" />
-                  <span className="absolute -top-1 -right-1.5 min-w-[14px] h-3.5 px-0.5 rounded-full bg-primary text-primary-foreground text-[7px] font-mono font-bold flex items-center justify-center">
-                    {followerCount + followingCount}
-                  </span>
+                <div className="flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-primary shrink-0" />
+                  <div className="flex flex-col items-start leading-none">
+                    <span className="text-sm sm:text-base font-display font-bold text-foreground">{followerCount}</span>
+                    <span className="text-[8px] sm:text-[9px] font-mono text-muted-foreground/60">Followers</span>
+                  </div>
                 </div>
-                <span className="text-[10px] sm:text-xs font-mono font-bold text-foreground truncate">{followerCount} · {followingCount}</span>
+                <div className="w-px h-5 bg-border/20" />
+                <div className="flex flex-col items-start leading-none">
+                  <span className="text-sm sm:text-base font-display font-bold text-foreground">{followingCount}</span>
+                  <span className="text-[8px] sm:text-[9px] font-mono text-muted-foreground/60">Following</span>
+                </div>
               </motion.button>
 
               {/* Favorites button */}
