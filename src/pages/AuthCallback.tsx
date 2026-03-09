@@ -8,20 +8,33 @@ const AuthCallback = () => {
 
   useEffect(() => {
     const handleCallback = async () => {
+      const url = new URL(window.location.href);
+      const providerError = url.searchParams.get('error_description') || url.searchParams.get('error');
+
+      if (providerError) {
+        navigate(`/auth?error=${encodeURIComponent(providerError)}`, { replace: true });
+        return;
+      }
+
+      const code = url.searchParams.get('code');
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) {
+          console.error('OAuth code exchange failed:', error);
+          navigate(`/auth?error=${encodeURIComponent(error.message)}`, { replace: true });
+          return;
+        }
+      }
+
       const { data: { session }, error } = await supabase.auth.getSession();
 
       if (error) {
         console.error('Auth callback error:', error);
-        navigate('/auth?error=auth_failed');
+        navigate('/auth?error=auth_failed', { replace: true });
         return;
       }
 
-      if (session?.user) {
-        // Profile auto-creation is handled by the DB trigger + AuthContext
-        navigate('/');
-      } else {
-        navigate('/auth');
-      }
+      navigate(session?.user ? '/' : '/auth', { replace: true });
     };
 
     handleCallback();
