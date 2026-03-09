@@ -13,6 +13,8 @@ import { motion } from 'framer-motion';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import InfoHubLogo from '@/components/InfoHubLogo';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const navItems = [
   { title: 'For You', url: '/', icon: Home },
