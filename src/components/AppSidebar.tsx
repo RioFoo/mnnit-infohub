@@ -152,9 +152,12 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                             </span>
                           )}
 
-                          {item.title === 'Alerts' && !collapsed && (
-                            <Badge className="ml-auto text-[8px] h-4 min-w-[18px] px-1 bg-destructive/80 text-destructive-foreground border-none font-mono justify-center shadow-[0_0_8px_hsl(var(--destructive)/0.3)]">
-                              3
+                          {item.title === 'Alerts' && unreadCount > 0 && (
+                            <Badge className={cn(
+                              "text-[8px] h-4 min-w-[18px] px-1 bg-destructive/80 text-destructive-foreground border-none font-mono justify-center shadow-[0_0_8px_hsl(var(--destructive)/0.3)]",
+                              collapsed ? "absolute -top-1 -right-1" : "ml-auto"
+                            )}>
+                              {unreadCount > 99 ? '99+' : unreadCount}
                             </Badge>
                           )}
                         </RouterNavLink>
