@@ -195,11 +195,16 @@ const Resources = () => {
                       <span className="text-[10px] font-mono text-muted-foreground/30">{formatFileSize(r.file_size)} · {getTimeAgo(r.created_at)}</span>
                     </div>
                   </div>
-                  <a href={r.file_url} target="_blank" rel="noopener noreferrer"
+                  <button
+                    onClick={async () => {
+                      const { data } = await supabase.storage.from('resources').createSignedUrl(r.file_url, 60);
+                      if (data?.signedUrl) window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+                      else toast.error('Could not generate download link');
+                    }}
                     className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-primary/[0.06] hover:bg-primary/10 flex items-center justify-center text-primary/50 hover:text-primary transition-all border border-primary/[0.08] hover:border-primary/20 hover:shadow-[0_0_12px_hsl(var(--primary)/0.15)] shrink-0"
                   >
                     <Download className="w-4 h-4" />
-                  </a>
+                  </button>
                 </div>
               </motion.div>
             ))}
