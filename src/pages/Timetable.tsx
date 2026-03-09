@@ -175,13 +175,13 @@ const Timetable = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3rem)] md:h-[calc(100vh-3rem)] overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-6rem)] md:h-[calc(100vh-3rem)] overflow-hidden">
       {/* Top bar with PageHeader typewriter */}
-      <div className="px-4 md:px-6 pt-4 pb-2 border-b border-border/[0.06] shrink-0">
-        <PageHeader title="TIMETABLE" className="mb-4">
-          <div className="flex items-center gap-3">
+      <div className="px-3 md:px-6 pt-3 md:pt-4 pb-2 border-b border-border/[0.06] shrink-0">
+        <PageHeader title="TIMETABLE" className="mb-3 md:mb-4">
+          <div className="flex items-center gap-2 md:gap-3 flex-wrap">
             <Select value={semester} onValueChange={setSemester}>
-              <SelectTrigger className="w-36 h-10 rounded-xl bg-muted/15 border-border/[0.08] text-xs font-mono">
+              <SelectTrigger className="w-28 md:w-36 h-9 md:h-10 rounded-xl bg-muted/15 border-border/[0.08] text-xs font-mono">
                 <SelectValue placeholder="Semester" />
               </SelectTrigger>
               <SelectContent>
@@ -207,9 +207,9 @@ const Timetable = () => {
           </div>
         </PageHeader>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 md:gap-3">
           <Select value={section} onValueChange={setSection}>
-            <SelectTrigger className="w-44 h-10 rounded-xl bg-muted/15 border-border/[0.08] text-sm font-mono">
+            <SelectTrigger className="w-32 md:w-44 h-9 md:h-10 rounded-xl bg-muted/15 border-border/[0.08] text-sm font-mono">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -242,7 +242,7 @@ const Timetable = () => {
       </div>
 
       {/* Day tabs */}
-      <div className="flex items-center gap-1.5 px-4 md:px-6 py-3 border-b border-border/[0.04] shrink-0 overflow-x-auto">
+      <div className="flex items-center gap-1 md:gap-1.5 px-3 md:px-6 py-2 md:py-3 border-b border-border/[0.04] shrink-0 overflow-x-auto scrollbar-hide">
         {DAYS.map((day, i) => {
           const isToday = day === currentDay;
           const isSelected = day === selectedDay;
