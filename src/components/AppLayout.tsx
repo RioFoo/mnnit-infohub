@@ -38,23 +38,27 @@ const MobileNavItem = ({ item }: { item: (typeof mobileNavItems)[number] }) => {
     <RouterNavLink
       to={item.url}
       end={item.url === '/'}
-      className="relative flex flex-col items-center gap-1 px-5 py-2.5 rounded-xl transition-all duration-300 min-w-[56px]"
+      className={cn(
+        'relative flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all duration-200 group',
+        isActive
+          ? 'text-primary'
+          : 'text-muted-foreground/60 hover:text-foreground hover:bg-muted/10 active:scale-95'
+      )}
     >
       {isActive && (
         <motion.div
           layoutId="mobile-pill"
-          className="absolute inset-0 rounded-xl"
-          style={{ background: 'hsl(var(--primary) / 0.08)' }}
+          className="absolute inset-0 rounded-xl bg-primary/[0.08] border border-primary/15"
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         />
       )}
       <item.icon className={cn(
-        'w-5 h-5 transition-all duration-200 relative z-10',
-        isActive ? 'text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]' : 'text-muted-foreground'
+        'w-[18px] h-[18px] shrink-0 relative z-10 transition-all duration-200',
+        isActive && 'drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]'
       )} />
       <span className={cn(
-        'text-[9px] font-mono relative z-10 transition-colors duration-200',
-        isActive ? 'text-primary' : 'text-muted-foreground/50'
+        'text-[10px] font-mono relative z-10 transition-colors duration-200 leading-none',
+        isActive ? 'font-semibold' : 'group-hover:text-foreground/70'
       )}>
         {item.title}
       </span>
