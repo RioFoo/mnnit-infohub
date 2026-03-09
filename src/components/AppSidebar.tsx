@@ -39,7 +39,21 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
   const navigate = useNavigate();
   const { signOut, profile, user } = useAuth();
 
-  return (
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ['unread-notifications-count', user?.id],
+    queryFn: async () => {
+      if (!user) return 0;
+      const { count } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('read', false);
+      return count || 0;
+    },
+    enabled: !!user,
+    refetchInterval: 30000,
+  });
+
     <Sidebar collapsible="icon" className="border-r border-border/[0.06] bg-sidebar/80 backdrop-blur-2xl">
       {/* Brand */}
       <div className="p-3.5 flex items-center gap-3">
