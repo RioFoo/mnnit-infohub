@@ -141,7 +141,7 @@ const Explore = () => {
       <PageHeader title="EXPLORE" />
 
       {/* Mode toggle */}
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-2 mb-5">
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide pb-1">
         {[
           { key: 'discover' as ViewMode, icon: Compass, label: 'Discover' },
           { key: 'people' as ViewMode, icon: Users, label: 'People' },
@@ -154,7 +154,7 @@ const Explore = () => {
               if (key === 'my-posts' && !user) requireAuth(() => setMode(key), 'Sign in to see your posts');
               else setMode(key);
             }}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-medium transition-all whitespace-nowrap shrink-0 ${
               mode === key
                 ? 'bg-primary text-primary-foreground shadow-[0_0_16px_hsl(var(--primary)/0.3)]'
                 : 'bg-muted/15 text-muted-foreground hover:text-foreground border border-border/[0.08]'
