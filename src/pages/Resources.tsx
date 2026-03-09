@@ -109,9 +109,8 @@ const Resources = () => {
       const filePath = `${user.id}/${Date.now()}.${fileExt}`;
       const { error: storageError } = await supabase.storage.from('resources').upload(filePath, selectedFile);
       if (storageError) throw storageError;
-      const { data: { publicUrl } } = supabase.storage.from('resources').getPublicUrl(filePath);
       const { error: dbError } = await supabase.from('resources' as any).insert({
-        title: uploadTitle.trim(), file_url: publicUrl, file_type: getFileExtension(selectedFile.name),
+        title: uploadTitle.trim(), file_url: filePath, file_type: getFileExtension(selectedFile.name),
         file_size: selectedFile.size, branch: uploadBranch, semester: uploadSemester,
         user_id: user.id, uploader_name: profile?.name || user.email?.split('@')[0] || 'Anonymous',
         visibility: uploadVisibility,
