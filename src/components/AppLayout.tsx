@@ -197,16 +197,6 @@ const AppLayout = () => {
             </AnimatePresence>
           </main>
 
-          {/* Mobile FAB - Create Post */}
-          {user && (
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setCreateOpen(true)}
-              className="md:hidden fixed bottom-[calc(env(safe-area-inset-bottom,0px)+4.5rem)] right-4 z-50 w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-[0_4px_16px_hsl(var(--primary)/0.4),0_0_24px_hsl(var(--primary)/0.2)] active:scale-90 transition-transform"
-            >
-              <Plus className="w-5 h-5" />
-            </motion.button>
-          )}
 
           {/* Mobile Bottom Nav */}
           <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50">
