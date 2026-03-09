@@ -520,10 +520,17 @@
    ✦ LAYOUT
    ═══════════════════════════════════════════════ */
 .page-container {
-  @apply max-w-5xl mx-auto px-4 py-6 md:px-8 md:py-8;
+  @apply max-w-5xl mx-auto px-3 py-4 md:px-8 md:py-8;
   position: relative;
   z-index: 10;
 }
+
+/* Hide scrollbar for horizontal scroll areas */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Safe area padding */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
 
 .section-title {
   @apply text-xs font-semibold uppercase tracking-widest mb-4;
