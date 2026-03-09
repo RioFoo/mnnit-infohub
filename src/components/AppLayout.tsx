@@ -2,7 +2,7 @@ import { Outlet, useLocation, useNavigate, NavLink as RouterNavLink } from 'reac
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import BioBackground from '@/components/BioBackground';
-import { Home, Compass, CalendarDays, Bell, User, LogIn, MoreHorizontal, GraduationCap, Plus } from 'lucide-react';
+import { Home, Compass, CalendarDays, Bell, LogIn, MoreHorizontal, GraduationCap } from 'lucide-react';
 import InfoHubLogo from '@/components/InfoHubLogo';
 import { useState, useEffect } from 'react';
 import { CommandPalette } from '@/components/CommandPalette';
@@ -28,14 +28,12 @@ const pageVariants = {
     opacity: 1, x: 0, filter: 'blur(0px)',
     transition: { 
       duration: 0.35, 
-      ease: [0.32, 0.72, 0, 1],
-      opacity: { duration: 0.25 },
-      filter: { duration: 0.2 }
+      ease: [0.32, 0.72, 0, 1] as const,
     }
   },
   exit: {
     opacity: 0, x: -10, filter: 'blur(2px)',
-    transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] }
+    transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] as const }
   }
 };
 
