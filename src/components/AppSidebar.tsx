@@ -13,6 +13,8 @@ import { motion } from 'framer-motion';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import InfoHubLogo from '@/components/InfoHubLogo';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const navItems = [
   { title: 'For You', url: '/', icon: Home },
@@ -36,6 +38,21 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut, profile, user } = useAuth();
+
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ['unread-notifications-count', user?.id],
+    queryFn: async () => {
+      if (!user) return 0;
+      const { count } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('read', false);
+      return count || 0;
+    },
+    enabled: !!user,
+    refetchInterval: 30000,
+  });
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border/[0.06] bg-sidebar/80 backdrop-blur-2xl">
@@ -135,9 +152,12 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                             </span>
                           )}
 
-                          {item.title === 'Alerts' && !collapsed && (
-                            <Badge className="ml-auto text-[8px] h-4 min-w-[18px] px-1 bg-destructive/80 text-destructive-foreground border-none font-mono justify-center shadow-[0_0_8px_hsl(var(--destructive)/0.3)]">
-                              3
+                          {item.title === 'Alerts' && unreadCount > 0 && (
+                            <Badge className={cn(
+                              "text-[8px] h-4 min-w-[18px] px-1 bg-destructive/80 text-destructive-foreground border-none font-mono justify-center shadow-[0_0_8px_hsl(var(--destructive)/0.3)]",
+                              collapsed ? "absolute -top-1 -right-1" : "ml-auto"
+                            )}>
+                              {unreadCount > 99 ? '99+' : unreadCount}
                             </Badge>
                           )}
                         </RouterNavLink>
