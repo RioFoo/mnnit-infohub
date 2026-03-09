@@ -8,7 +8,9 @@ import { PageHeader } from '@/components/PageHeader';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useFollowState } from '@/hooks/useFollowState';
 import { AuthPromptDialog } from '@/components/AuthPromptDialog';
-import PostCard, { type Post } from '@/components/feed/PostCard';
+import { type Post } from '@/components/feed/PostCard';
+import SwipeablePostCard from '@/components/feed/SwipeablePostCard';
+import PullToRefresh from '@/components/feed/PullToRefresh';
 import CreatePostDialog from '@/components/feed/CreatePostDialog';
 
 interface ReactionRow {
@@ -120,24 +122,26 @@ const Feed = () => {
           <p className="text-sm font-display text-muted-foreground">No posts yet</p>
         </motion.div>
       ) : (
-        <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-4 max-w-2xl mx-auto">
-          {sortedPosts.map(post => (
-            <PostCard
-              key={post.id}
-              post={post}
-              reactions={getReactionsForPost(post.id)}
-              onReact={handleReact}
-              onRequireAuth={requireAuth}
-              isAuthenticated={!!user}
-              currentUserId={user?.id}
-              isFollowingAuthor={isFollowing(post.user_id)}
-              isFavouriteAuthor={isFavourite(post.user_id)}
-              isFavouritePost={isFavourite(post.user_id)}
-              onToggleFollow={toggleFollow}
-              onToggleFavourite={toggleFavourite}
-            />
-          ))}
-        </motion.div>
+        <PullToRefresh onRefresh={async () => { await fetchPosts(); await fetchReactions(); }}>
+          <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-4 max-w-2xl mx-auto">
+            {sortedPosts.map(post => (
+              <SwipeablePostCard
+                key={post.id}
+                post={post}
+                reactions={getReactionsForPost(post.id)}
+                onReact={handleReact}
+                onRequireAuth={requireAuth}
+                isAuthenticated={!!user}
+                currentUserId={user?.id}
+                isFollowingAuthor={isFollowing(post.user_id)}
+                isFavouriteAuthor={isFavourite(post.user_id)}
+                isFavouritePost={isFavourite(post.user_id)}
+                onToggleFollow={toggleFollow}
+                onToggleFavourite={toggleFavourite}
+              />
+            ))}
+          </motion.div>
+        </PullToRefresh>
       )}
 
       <AuthPromptDialog open={showAuthPrompt} onOpenChange={setShowAuthPrompt} message={authMessage} />
