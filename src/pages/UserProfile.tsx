@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Loader2, UserPlus, UserMinus, Heart, MessageCircle, ArrowLeft, Star, Users } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import MediaRenderer from '@/components/feed/MediaRenderer';
@@ -43,6 +43,9 @@ const UserProfile = () => {
   const [followsMe, setFollowsMe] = useState(false);
   const [followDialogOpen, setFollowDialogOpen] = useState(false);
   const [followDialogTab, setFollowDialogTab] = useState<'followers' | 'following' | 'favourites'>('followers');
+  const { scrollY } = useScroll();
+  const bannerY = useTransform(scrollY, [0, 300], [0, 80]);
+  const bannerScale = useTransform(scrollY, [0, 300], [1, 1.15]);
 
   useEffect(() => {
     if (user && userId === user.id) {
@@ -172,14 +175,16 @@ const UserProfile = () => {
         className="card-bio p-0 mb-8 overflow-hidden"
       >
         <div className="h-32 relative overflow-hidden">
-          {profileData.banner_url ? (
-            <img src={profileData.banner_url} alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
-          ) : (
-            <>
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
-              <div className="absolute inset-0 surface-shimmer" />
-            </>
-          )}
+          <motion.div style={{ y: bannerY, scale: bannerScale }} className="absolute inset-0">
+            {profileData.banner_url ? (
+              <img src={profileData.banner_url} alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
+            ) : (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
+                <div className="absolute inset-0 surface-shimmer" />
+              </>
+            )}
+          </motion.div>
         </div>
 
         <div className="px-6 sm:px-8 pb-8 -mt-14 relative">
