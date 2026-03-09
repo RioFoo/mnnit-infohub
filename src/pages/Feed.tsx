@@ -8,7 +8,9 @@ import { PageHeader } from '@/components/PageHeader';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useFollowState } from '@/hooks/useFollowState';
 import { AuthPromptDialog } from '@/components/AuthPromptDialog';
-import PostCard, { type Post } from '@/components/feed/PostCard';
+import { type Post } from '@/components/feed/PostCard';
+import SwipeablePostCard from '@/components/feed/SwipeablePostCard';
+import PullToRefresh from '@/components/feed/PullToRefresh';
 import CreatePostDialog from '@/components/feed/CreatePostDialog';
 
 interface ReactionRow {
