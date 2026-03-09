@@ -156,7 +156,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="page-container max-w-2xl">
+    <div className="page-container max-w-2xl min-w-0">
       {/* Profile Card */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
@@ -186,7 +186,7 @@ const Profile = () => {
           <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerUpload} />
         </div>
 
-        <div className="px-4 sm:px-8 pb-6 sm:pb-8 -mt-12 sm:-mt-14 relative">
+        <div className="px-3 sm:px-8 pb-6 sm:pb-8 -mt-12 sm:-mt-14 relative min-w-0 overflow-hidden">
           <div className="avatar-orbital avatar-orbital-lg inline-block relative group cursor-pointer" onClick={() => avatarInputRef.current?.click()}>
             {profile.avatar_url ? (
               <img src={profile.avatar_url} alt={profile.name || ''} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-[3px] sm:border-4 border-background" />
@@ -205,35 +205,35 @@ const Profile = () => {
             <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
           </div>
 
-          <div className="mt-4">
+          <div className="mt-4 min-w-0">
             <TypewriterText
               text={profile.name || 'User'}
               as="h2"
               speed={50}
               delay={400}
-              className="text-4xl font-display font-black transform transition-all duration-300 hover:scale-105 hover:rotate-1 hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.4)] cursor-pointer gradient-text"
+              className="text-2xl sm:text-4xl font-display font-black transform transition-all duration-300 hover:scale-105 hover:rotate-1 hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.4)] cursor-pointer gradient-text break-words"
             />
-            <p className="text-base font-mono text-muted-foreground mt-1 font-bold transform transition-all duration-300 hover:scale-102 hover:text-primary">@{profile.handle}</p>
-            {profile.bio && <p className="text-base mt-3 text-foreground/80 max-w-md leading-relaxed font-semibold transform transition-all duration-300 hover:scale-102 hover:text-foreground cursor-pointer">{profile.bio}</p>}
+            <p className="text-sm sm:text-base font-mono text-muted-foreground mt-1 font-bold transform transition-all duration-300 hover:scale-102 hover:text-primary truncate">@{profile.handle}</p>
+            {profile.bio && <p className="text-sm sm:text-base mt-3 text-foreground/80 max-w-md leading-relaxed font-semibold transform transition-all duration-300 hover:scale-102 hover:text-foreground cursor-pointer break-words">{profile.bio}</p>}
           </div>
 
-          <div className="flex items-center gap-2 mt-4 flex-wrap">
-            <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.branch || 'Branch'}</span>
-            <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.section ? `Section ${profile.section}` : 'Section'}</span>
-            {profile.semester && <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">Sem {profile.semester}</span>}
-            {profile.batch && <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.batch}</span>}
-            <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.role || 'Student'}</span>
-            {profile.gender && <span className="tag-pill text-sm font-bold transform transition-all duration-300 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_2px_8px_hsl(var(--primary)/0.5)] cursor-pointer">{profile.gender}</span>}
+          <div className="flex items-center gap-1.5 sm:gap-2 mt-4 flex-wrap">
+            <span className="tag-pill text-[10px] sm:text-sm font-bold cursor-pointer">{profile.branch || 'Branch'}</span>
+            <span className="tag-pill text-[10px] sm:text-sm font-bold cursor-pointer">{profile.section ? `Section ${profile.section}` : 'Section'}</span>
+            {profile.semester && <span className="tag-pill text-[10px] sm:text-sm font-bold cursor-pointer">Sem {profile.semester}</span>}
+            {profile.batch && <span className="tag-pill text-[10px] sm:text-sm font-bold cursor-pointer">{profile.batch}</span>}
+            <span className="tag-pill text-[10px] sm:text-sm font-bold cursor-pointer">{profile.role || 'Student'}</span>
+            {profile.gender && <span className="tag-pill text-[10px] sm:text-sm font-bold cursor-pointer">{profile.gender}</span>}
           </div>
 
           <div className="flex flex-col gap-3 mt-6 pt-5 relative">
             <div className="divider-glow absolute left-0 right-0 top-0" />
             
             {/* Stats + actions row */}
-            <div className="grid grid-cols-[auto_1fr_auto] sm:flex sm:flex-row items-center gap-2 sm:gap-4 w-full overflow-hidden">
-              <div className="text-center min-w-[40px] shrink-0">
-                <p className="text-xl sm:text-3xl font-display font-black gradient-text">{posts.length}</p>
-                <p className="text-[9px] sm:text-xs font-mono text-muted-foreground font-bold">Posts</p>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 w-full">
+              <div className="text-center min-w-[36px] shrink-0">
+                <p className="text-lg sm:text-3xl font-display font-black gradient-text">{posts.length}</p>
+                <p className="text-[8px] sm:text-xs font-mono text-muted-foreground font-bold">Posts</p>
               </div>
 
               {/* Follow button */}

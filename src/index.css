@@ -523,6 +523,8 @@
   @apply max-w-5xl mx-auto px-3 py-4 md:px-8 md:py-8;
   position: relative;
   z-index: 10;
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 /* Hide scrollbar for horizontal scroll areas */
