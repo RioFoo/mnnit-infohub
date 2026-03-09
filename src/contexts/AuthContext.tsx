@@ -108,16 +108,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithGoogle = async () => {
+    const callbackUrl = new URL('/auth/callback', window.location.origin);
+    const lovableToken = new URLSearchParams(window.location.search).get('__lovable_token');
+
+    if (lovableToken) {
+      callbackUrl.searchParams.set('__lovable_token', lovableToken);
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
+        redirectTo: callbackUrl.toString(),
       },
     });
+
     return { error };
   };
 
