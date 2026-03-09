@@ -174,7 +174,7 @@ const UserProfile = () => {
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="card-bio p-0 mb-8 overflow-hidden"
       >
-        <div className="h-32 relative overflow-hidden">
+        <div className="h-36 sm:h-44 relative overflow-hidden">
           <motion.div style={{ y: bannerY, scale: bannerScale }} className="absolute inset-0">
             {profileData.banner_url ? (
               <img src={profileData.banner_url} alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
@@ -187,13 +187,13 @@ const UserProfile = () => {
           </motion.div>
         </div>
 
-        <div className="px-6 sm:px-8 pb-8 -mt-14 relative">
+        <div className="px-4 sm:px-8 pb-6 sm:pb-8 -mt-12 sm:-mt-14 relative">
           <div className="flex items-end justify-between">
             <div className="avatar-orbital avatar-orbital-lg inline-block">
               {profileData.avatar_url ? (
-                <img src={profileData.avatar_url} alt={profileData.name || ''} className="w-24 h-24 rounded-full object-cover border-4 border-background" />
+                <img src={profileData.avatar_url} alt={profileData.name || ''} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-[3px] sm:border-4 border-background" />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center text-primary font-display font-bold text-3xl border-4 border-background">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center text-primary font-display font-bold text-2xl sm:text-3xl border-[3px] sm:border-4 border-background">
                   {(profileData.name || 'U')[0].toUpperCase()}
                 </div>
               )}
@@ -280,47 +280,45 @@ const UserProfile = () => {
             <span className="tag-pill text-xs">{profileData.role || 'Student'}</span>
           </div>
 
-          <div className="flex gap-6 mt-6 pt-5 relative items-center">
+          <div className="flex flex-col gap-3 mt-6 pt-5 relative">
             <div className="divider-glow absolute left-0 right-0 top-0" />
-            <div className="text-center">
-              <p className="text-2xl font-display font-bold gradient-text">{posts.length}</p>
-              <p className="text-[10px] font-mono text-muted-foreground">Posts</p>
+            
+            <div className="grid grid-cols-[auto_1fr_auto] sm:flex sm:flex-row items-center gap-2 sm:gap-4 w-full overflow-hidden">
+              <div className="text-center min-w-[40px] shrink-0">
+                <p className="text-xl sm:text-2xl font-display font-bold gradient-text">{posts.length}</p>
+                <p className="text-[9px] sm:text-[10px] font-mono text-muted-foreground">Posts</p>
+              </div>
+
+              {/* Follow button */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => { setFollowDialogTab('followers'); setFollowDialogOpen(true); }}
+                className="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 rounded-xl bg-primary/[0.06] border border-primary/15 hover:bg-primary/[0.1] hover:border-primary/25 transition-all cursor-pointer min-w-0 overflow-hidden"
+              >
+                <div className="relative shrink-0">
+                  <Users className="w-4 h-4 text-primary" />
+                  <span className="absolute -top-1 -right-1.5 min-w-[14px] h-3.5 px-0.5 rounded-full bg-primary text-primary-foreground text-[7px] font-mono font-bold flex items-center justify-center">
+                    {followerCount + followingCount}
+                  </span>
+                </div>
+                <span className="text-[10px] sm:text-xs font-mono font-bold text-foreground truncate">{followerCount} · {followingCount}</span>
+              </motion.button>
+
+              {/* Favorites button */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => { setFollowDialogTab('favourites'); setFollowDialogOpen(true); }}
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-yellow-500/[0.06] border border-yellow-500/15 hover:bg-yellow-500/[0.1] hover:border-yellow-500/25 transition-all cursor-pointer shrink-0"
+              >
+                <div className="relative">
+                  <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                  <span className="absolute -top-1 -right-1.5 min-w-[14px] h-3.5 px-0.5 rounded-full bg-yellow-500 text-yellow-950 text-[7px] font-mono font-bold flex items-center justify-center">
+                    {favouriteCount}
+                  </span>
+                </div>
+                <span className="text-[10px] sm:text-xs font-mono font-bold text-foreground hidden sm:inline">Favorites</span>
+              </motion.button>
             </div>
-
-            {/* Single Follow button with count */}
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => { setFollowDialogTab('followers'); setFollowDialogOpen(true); }}
-              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-primary/[0.06] border border-primary/15 hover:bg-primary/[0.1] hover:border-primary/25 transition-all group cursor-pointer"
-            >
-              <div className="relative">
-                <Users className="w-5 h-5 text-primary group-hover:drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)] transition-all" />
-                <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-primary text-primary-foreground text-[8px] font-mono font-bold flex items-center justify-center shadow-[0_0_8px_hsl(var(--primary)/0.4)]">
-                  {followerCount + followingCount}
-                </span>
-              </div>
-              <div className="text-left">
-                <p className="text-xs font-mono font-semibold text-foreground leading-tight">Follow</p>
-                <p className="text-[9px] font-mono text-muted-foreground/60">{followerCount} followers · {followingCount} following</p>
-              </div>
-            </motion.button>
-
-            {/* Favorites */}
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => { setFollowDialogTab('favourites'); setFollowDialogOpen(true); }}
-              className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-yellow-500/[0.06] border border-yellow-500/15 hover:bg-yellow-500/[0.1] hover:border-yellow-500/25 transition-all group cursor-pointer"
-            >
-              <div className="relative">
-                <Star className="w-5 h-5 text-yellow-500 fill-yellow-500 group-hover:drop-shadow-[0_0_6px_hsl(45,100%,50%,0.5)] transition-all" />
-                <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-yellow-500 text-yellow-950 text-[8px] font-mono font-bold flex items-center justify-center shadow-[0_0_8px_hsl(45,100%,50%,0.4)]">
-                  {favouriteCount}
-                </span>
-              </div>
-              <p className="text-xs font-mono font-semibold text-foreground leading-tight">Favorites</p>
-            </motion.button>
           </div>
 
           {userId && <FollowersDialog open={followDialogOpen} onOpenChange={setFollowDialogOpen} userId={userId} tab={followDialogTab} />}
