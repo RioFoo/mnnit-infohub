@@ -106,9 +106,9 @@ const Calendar = () => {
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-7 gap-1.5">
+            <div className="grid grid-cols-7 gap-0.5 sm:gap-1.5">
               {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d, i) => (
-                <div key={i} className="text-center text-[10px] text-muted-foreground/40 font-mono font-medium py-2">{d}</div>
+                <div key={i} className="text-center text-[9px] sm:text-[10px] text-muted-foreground/40 font-mono font-medium py-1 sm:py-2">{d}</div>
               ))}
               {Array.from({ length: startDay }).map((_, i) => <div key={`e-${i}`} />)}
               {days.map(day => {
@@ -125,7 +125,7 @@ const Calendar = () => {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedDay(day)}
                     className={cn(
-                      'relative p-2 min-h-[56px] rounded-xl text-sm transition-all duration-200 border',
+                      'relative p-1 sm:p-2 min-h-[40px] sm:min-h-[56px] rounded-lg sm:rounded-xl text-sm transition-all duration-200 border',
                       selected
                         ? 'bg-primary/10 border-primary/30 shadow-[0_0_12px_hsl(var(--primary)/0.15)]'
                         : hasEvents
@@ -135,7 +135,7 @@ const Calendar = () => {
                     )}
                   >
                     <span className={cn(
-                      'text-xs font-mono block',
+                      'text-[10px] sm:text-xs font-mono block',
                       isToday_ ? 'text-primary font-bold' : hasEvents ? 'text-foreground/80 font-medium' : 'text-foreground/40'
                     )}>
                       {format(day, 'd')}
