@@ -165,7 +165,7 @@ const Profile = () => {
         className="card-bio p-0 mb-8 overflow-hidden"
       >
         {/* Banner */}
-        <div className="h-32 relative overflow-hidden group cursor-pointer" onClick={() => bannerInputRef.current?.click()}>
+        <div className="h-36 sm:h-44 relative overflow-hidden group cursor-pointer" onClick={() => bannerInputRef.current?.click()}>
           <motion.div style={{ y: bannerY, scale: bannerScale }} className="absolute inset-0">
             {profile.banner_url ? (
               <img src={profile.banner_url} alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
@@ -186,12 +186,12 @@ const Profile = () => {
           <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerUpload} />
         </div>
 
-        <div className="px-6 sm:px-8 pb-8 -mt-14 relative">
+        <div className="px-4 sm:px-8 pb-6 sm:pb-8 -mt-12 sm:-mt-14 relative">
           <div className="avatar-orbital avatar-orbital-lg inline-block relative group cursor-pointer" onClick={() => avatarInputRef.current?.click()}>
             {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt={profile.name || ''} className="w-24 h-24 rounded-full object-cover border-4 border-background" />
+              <img src={profile.avatar_url} alt={profile.name || ''} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-[3px] sm:border-4 border-background" />
             ) : (
-              <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center text-primary font-display font-bold text-3xl border-4 border-background">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center text-primary font-display font-bold text-2xl sm:text-3xl border-[3px] sm:border-4 border-background">
                 {(profile.name || 'U')[0].toUpperCase()}
               </div>
             )}
