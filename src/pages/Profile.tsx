@@ -42,7 +42,6 @@ const Profile = () => {
   const [followDialogOpen, setFollowDialogOpen] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
-  const bannerRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const bannerY = useTransform(scrollY, [0, 300], [0, 80]);
   const bannerScale = useTransform(scrollY, [0, 300], [1, 1.15]);
