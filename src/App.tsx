@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import OfflineBanner from "@/components/OfflineBanner";
 import AppLayout from "@/components/AppLayout";
 import Auth from "@/pages/Auth";
 import AuthCallback from "@/pages/AuthCallback";
@@ -22,40 +24,51 @@ import Settings from "@/pages/Settings";
 import UserProfile from "@/pages/UserProfile";
 import NotFound from "@/pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <ThemeProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/" element={<AppLayout />}>
-                <Route index element={<Feed />} />
-                <Route path="explore" element={<Explore />} />
-                <Route path="campus" element={<CampusInfo />} />
-                <Route path="calendar" element={<Calendar />} />
-                <Route path="timetable" element={<Timetable />} />
-                <Route path="grades" element={<Grades />} />
-                <Route path="resources" element={<Resources />} />
-                <Route path="notifications" element={<Notifications />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="profile/:userId" element={<UserProfile />} />
-                <Route path="settings" element={<Settings />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ThemeProvider>
+          <TooltipProvider>
+            <OfflineBanner />
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/" element={<AppLayout />}>
+                  <Route index element={<Feed />} />
+                  <Route path="explore" element={<Explore />} />
+                  <Route path="campus" element={<CampusInfo />} />
+                  <Route path="calendar" element={<Calendar />} />
+                  <Route path="timetable" element={<Timetable />} />
+                  <Route path="grades" element={<Grades />} />
+                  <Route path="resources" element={<Resources />} />
+                  <Route path="notifications" element={<Notifications />} />
+                  <Route path="profile" element={<Profile />} />
+                  <Route path="profile/:userId" element={<UserProfile />} />
+                  <Route path="settings" element={<Settings />} />
+                </Route>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;
