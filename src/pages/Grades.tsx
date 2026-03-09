@@ -142,13 +142,13 @@ const Grades = () => {
               )}
             </div>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 overflow-x-auto scrollbar-hide">
             {sem.subjects.map((sub, i) => (
-              <div key={i} className="flex gap-1.5 md:gap-2 items-center flex-wrap sm:flex-nowrap">
-                <Input placeholder="Subject" value={sub.name} onChange={e => updateSubject(sem.id, i, 'name', e.target.value)} className="flex-1 min-w-[100px] rounded-xl bg-muted/10 border-border/[0.06] text-sm" />
-                <Input type="number" placeholder="Cr" value={sub.credits} onChange={e => updateSubject(sem.id, i, 'credits', parseInt(e.target.value) || 0)} className="w-14 md:w-16 rounded-xl bg-muted/10 border-border/[0.06] text-sm font-mono" />
+              <div key={i} className="flex gap-1.5 md:gap-2 items-center min-w-[300px]">
+                <Input placeholder="Subject" value={sub.name} onChange={e => updateSubject(sem.id, i, 'name', e.target.value)} className="flex-1 min-w-[80px] rounded-xl bg-muted/10 border-border/[0.06] text-sm" />
+                <Input type="number" placeholder="Cr" value={sub.credits} onChange={e => updateSubject(sem.id, i, 'credits', parseInt(e.target.value) || 0)} className="w-14 rounded-xl bg-muted/10 border-border/[0.06] text-sm font-mono" />
                 <Select value={sub.grade} onValueChange={v => updateSubject(sem.id, i, 'grade', v)}>
-                  <SelectTrigger className="w-[68px] md:w-20 rounded-xl bg-muted/10 border-border/[0.06] text-sm font-mono"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="w-[64px] md:w-20 rounded-xl bg-muted/10 border-border/[0.06] text-sm font-mono"><SelectValue /></SelectTrigger>
                   <SelectContent>{GRADE_OPTIONS.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent>
                 </Select>
                 {sem.subjects.length > 1 && (

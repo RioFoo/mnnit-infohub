@@ -156,9 +156,9 @@ const PostCard = ({
 
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-3">
+              <div className="flex gap-1.5 mt-3 overflow-x-auto scrollbar-hide pb-1">
                 {post.tags.map(tag => (
-                  <span key={tag} className="tag-pill text-[10px]">#{tag}</span>
+                  <span key={tag} className="tag-pill text-[10px] whitespace-nowrap shrink-0">#{tag}</span>
                 ))}
               </div>
             )}
