@@ -602,6 +602,19 @@
   100% { background-position: 200% 0; }
 }
 
+/* GPU acceleration for smooth animations */
+.card-bio,
+.float-card,
+.glass-panel,
+.btn-bio,
+.nav-item-3d,
+.avatar-orbital {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
 @keyframes breathe {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.02); }
