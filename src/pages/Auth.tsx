@@ -360,7 +360,7 @@ const Auth = () => {
       </div>
 
       {/* Right form — Glass card with 3D effect */}
-      <div className="w-full lg:w-1/2 flex items-start md:items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-y-auto">
+      <div className="w-full lg:w-1/2 flex items-start justify-center p-3 sm:p-6 md:p-8 relative overflow-y-auto min-h-screen">
         <motion.div
           initial={{ opacity: 0, x: 40, rotateY: -5 }}
           animate={{ opacity: 1, x: 0, rotateY: 0 }}
@@ -369,7 +369,7 @@ const Auth = () => {
           style={{ perspective: 1000 }}
         >
           <motion.div
-            className="glass-strong rounded-2xl p-5 sm:p-8 shadow-2xl relative overflow-hidden my-6 w-full group"
+            className="glass-strong rounded-2xl p-4 sm:p-8 shadow-2xl relative overflow-hidden my-4 sm:my-6 w-full group"
             style={{ transformStyle: 'preserve-3d' }}
             whileHover={{ scale: 1.01, boxShadow: '0 0 40px hsl(var(--primary) / 0.15)' }}
             transition={{ type: 'spring', stiffness: 300 }}

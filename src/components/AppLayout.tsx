@@ -23,17 +23,17 @@ const mobileNavItems = [
 ];
 
 const pageVariants = {
-  initial: { opacity: 0, x: 20, filter: 'blur(4px)' },
+  initial: { opacity: 0, y: 8 },
   enter: {
-    opacity: 1, x: 0, filter: 'blur(0px)',
+    opacity: 1, y: 0,
     transition: { 
-      duration: 0.35, 
-      ease: [0.32, 0.72, 0, 1] as const,
+      duration: 0.25, 
+      ease: [0.25, 0.1, 0.25, 1] as const,
     }
   },
   exit: {
-    opacity: 0, x: -10, filter: 'blur(2px)',
-    transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] as const }
+    opacity: 0, y: -4,
+    transition: { duration: 0.15, ease: [0.25, 0.1, 0.25, 1] as const }
   }
 };
 
@@ -186,7 +186,7 @@ const AppLayout = () => {
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 pb-20 md:pb-0 relative z-10">
+          <main className="flex-1 pb-24 md:pb-0 relative z-10">
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}
@@ -200,6 +200,19 @@ const AppLayout = () => {
             </AnimatePresence>
           </main>
 
+          {/* Mobile FAB - Create Post */}
+          {user && (
+            <motion.button
+              onClick={() => setCreateOpen(true)}
+              className="md:hidden fixed right-4 bottom-20 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-[0_0_20px_hsl(var(--primary)/0.4),0_4px_16px_rgba(0,0,0,0.3)] active:scale-95 transition-transform"
+              whileTap={{ scale: 0.9 }}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </motion.button>
+          )}
 
           {/* Mobile Bottom Nav */}
           <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50">
