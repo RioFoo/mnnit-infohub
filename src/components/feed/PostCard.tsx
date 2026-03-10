@@ -61,6 +61,7 @@ const PostCard = ({
   isFavouritePost = false, onToggleFollow, onToggleFavourite
 }: PostCardProps) => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const cardRef = useRef<HTMLDivElement>(null);
   const [showComments, setShowComments] = useState(false);
   const [localCommentsCount, setLocalCommentsCount] = useState(post.comments_count);
