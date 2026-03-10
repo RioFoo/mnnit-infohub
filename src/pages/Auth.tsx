@@ -369,7 +369,7 @@ const Auth = () => {
           style={{ perspective: 1000 }}
         >
           <motion.div
-            className="glass-strong rounded-2xl p-5 sm:p-8 shadow-2xl relative overflow-hidden my-6 w-full group"
+            className="glass-strong rounded-2xl p-4 sm:p-8 shadow-2xl relative overflow-hidden my-4 sm:my-6 w-full group"
             style={{ transformStyle: 'preserve-3d' }}
             whileHover={{ scale: 1.01, boxShadow: '0 0 40px hsl(var(--primary) / 0.15)' }}
             transition={{ type: 'spring', stiffness: 300 }}

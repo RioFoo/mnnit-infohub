@@ -12,6 +12,7 @@ import { type Post } from '@/components/feed/PostCard';
 import SwipeablePostCard from '@/components/feed/SwipeablePostCard';
 import PullToRefresh from '@/components/feed/PullToRefresh';
 import CreatePostDialog from '@/components/feed/CreatePostDialog';
+import { toast } from 'sonner';
 
 interface ReactionRow {
   post_id: string;
