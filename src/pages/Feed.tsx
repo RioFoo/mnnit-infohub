@@ -35,16 +35,21 @@ const Feed = () => {
 
   const fetchPosts = async () => {
     try {
+      setLoading(true);
       const { data, error } = await (supabase.from as any)('posts')
         .select('*, profiles(name, handle, avatar_url, branch)')
         .order('created_at', { ascending: false })
         .limit(50);
-      if (error) console.error('Error fetching posts:', error);
+      if (error) {
+        console.error('Error fetching posts:', error);
+        toast.error('Failed to load posts');
+      }
       if (data) setPosts(data as unknown as Post[]);
     } catch (err) {
       console.error('Failed to fetch posts:', err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const fetchReactions = async () => {
