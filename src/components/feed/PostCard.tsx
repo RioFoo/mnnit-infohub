@@ -67,16 +67,16 @@ const PostCard = ({
   const [localCommentsCount, setLocalCommentsCount] = useState(post.comments_count);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!cardRef.current) return;
+    if (!cardRef.current || isMobile) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
     requestAnimationFrame(() => {
       if (cardRef.current) {
-        cardRef.current.style.transform = `perspective(1000px) rotateX(${y * -3}deg) rotateY(${x * 3}deg) translateY(-2px) scale(1.003)`;
+        cardRef.current.style.transform = `perspective(1000px) rotateX(${y * -2}deg) rotateY(${x * 2}deg) translateY(-1px)`;
       }
     });
-  }, []);
+  }, [isMobile]);
 
   const handleMouseLeave = useCallback(() => {
     if (!cardRef.current) return;
