@@ -74,7 +74,7 @@ const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
     >
       {/* Pull indicator */}
       <motion.div
-        style={{ opacity: indicatorOpacity, scale: indicatorScale, y: useTransform(pullY, v => v * 0.5 - 40) }}
+        style={{ opacity: indicatorOpacity, scale: indicatorScale, y: indicatorY }}
         className="absolute left-1/2 -translate-x-1/2 z-20 flex items-center justify-center"
       >
         <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center backdrop-blur-sm">
