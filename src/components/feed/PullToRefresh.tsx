@@ -91,7 +91,7 @@ const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
       </motion.div>
 
       {/* Content with pull offset */}
-      <motion.div style={{ y: useTransform(pullY, v => v * 0.4) }}>
+      <motion.div style={{ y: contentY }}>
         {children}
       </motion.div>
     </div>
