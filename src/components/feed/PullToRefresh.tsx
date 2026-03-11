@@ -22,6 +22,8 @@ const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
   const indicatorOpacity = useTransform(pullY, [0, 40, PULL_THRESHOLD], [0, 0.5, 1]);
   const indicatorScale = useTransform(pullY, [0, PULL_THRESHOLD], [0.5, 1]);
   const indicatorRotation = useTransform(pullY, [0, PULL_THRESHOLD, MAX_PULL], [0, 180, 360]);
+  const indicatorY = useTransform(pullY, v => v * 0.5 - 40);
+  const contentY = useTransform(pullY, v => v * 0.4);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (refreshing) return;
@@ -72,7 +74,7 @@ const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
     >
       {/* Pull indicator */}
       <motion.div
-        style={{ opacity: indicatorOpacity, scale: indicatorScale, y: useTransform(pullY, v => v * 0.5 - 40) }}
+        style={{ opacity: indicatorOpacity, scale: indicatorScale, y: indicatorY }}
         className="absolute left-1/2 -translate-x-1/2 z-20 flex items-center justify-center"
       >
         <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center backdrop-blur-sm">
@@ -89,7 +91,7 @@ const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
       </motion.div>
 
       {/* Content with pull offset */}
-      <motion.div style={{ y: useTransform(pullY, v => v * 0.4) }}>
+      <motion.div style={{ y: contentY }}>
         {children}
       </motion.div>
     </div>
