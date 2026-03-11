@@ -22,6 +22,8 @@ const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
   const indicatorOpacity = useTransform(pullY, [0, 40, PULL_THRESHOLD], [0, 0.5, 1]);
   const indicatorScale = useTransform(pullY, [0, PULL_THRESHOLD], [0.5, 1]);
   const indicatorRotation = useTransform(pullY, [0, PULL_THRESHOLD, MAX_PULL], [0, 180, 360]);
+  const indicatorY = useTransform(pullY, v => v * 0.5 - 40);
+  const contentY = useTransform(pullY, v => v * 0.4);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (refreshing) return;
