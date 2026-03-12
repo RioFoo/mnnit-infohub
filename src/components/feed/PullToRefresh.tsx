@@ -100,7 +100,7 @@ const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeDasharray="113"
-              style={{ strokeDashoffset: useTransform(progressStroke, v => 113 - (v / 100) * 113) }}
+              style={{ strokeDashoffset: strokeOffset }}
               className={refreshing ? 'animate-spin origin-center' : ''}
             />
           </svg>
