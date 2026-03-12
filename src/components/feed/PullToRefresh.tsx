@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, type ReactNode } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PullToRefreshProps {
@@ -14,16 +14,18 @@ const MAX_PULL = 120;
 const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
   const isMobile = useIsMobile();
   const [refreshing, setRefreshing] = useState(false);
+  const [pullProgress, setPullProgress] = useState(0);
   const pullY = useMotionValue(0);
   const touchStartY = useRef(0);
   const pulling = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const indicatorOpacity = useTransform(pullY, [0, 40, PULL_THRESHOLD], [0, 0.5, 1]);
-  const indicatorScale = useTransform(pullY, [0, PULL_THRESHOLD], [0.5, 1]);
+  const indicatorOpacity = useTransform(pullY, [0, 30, PULL_THRESHOLD], [0, 0.6, 1]);
+  const indicatorScale = useTransform(pullY, [0, PULL_THRESHOLD], [0.4, 1]);
   const indicatorRotation = useTransform(pullY, [0, PULL_THRESHOLD, MAX_PULL], [0, 180, 360]);
-  const indicatorY = useTransform(pullY, v => v * 0.5 - 40);
+  const indicatorY = useTransform(pullY, v => v * 0.5 - 44);
   const contentY = useTransform(pullY, v => v * 0.4);
+  const progressStroke = useTransform(pullY, [0, PULL_THRESHOLD], [0, 100]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (refreshing) return;
