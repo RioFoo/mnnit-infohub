@@ -26,6 +26,7 @@ const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
   const indicatorY = useTransform(pullY, v => v * 0.5 - 44);
   const contentY = useTransform(pullY, v => v * 0.4);
   const progressStroke = useTransform(pullY, [0, PULL_THRESHOLD], [0, 100]);
+  const strokeOffset = useTransform(progressStroke, v => 113 - (v / 100) * 113);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (refreshing) return;
