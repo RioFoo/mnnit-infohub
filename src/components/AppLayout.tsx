@@ -23,17 +23,17 @@ const mobileNavItems = [
 ];
 
 const pageVariants = {
-  initial: { opacity: 0, y: 8 },
+  initial: { opacity: 0 },
   enter: {
-    opacity: 1, y: 0,
+    opacity: 1,
     transition: { 
-      duration: 0.25, 
-      ease: [0.25, 0.1, 0.25, 1] as const,
+      duration: 0.15, 
+      ease: 'easeOut' as const,
     }
   },
   exit: {
-    opacity: 0, y: -4,
-    transition: { duration: 0.15, ease: [0.25, 0.1, 0.25, 1] as const }
+    opacity: 0,
+    transition: { duration: 0.08, ease: 'easeIn' as const }
   }
 };
 
@@ -187,7 +187,7 @@ const AppLayout = () => {
 
           {/* Main Content */}
           <main className="flex-1 pb-24 md:pb-0 relative z-10">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
                 key={location.pathname}
                 variants={pageVariants}
