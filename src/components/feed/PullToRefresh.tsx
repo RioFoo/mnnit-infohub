@@ -81,19 +81,46 @@ const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
       {/* Pull indicator */}
       <motion.div
         style={{ opacity: indicatorOpacity, scale: indicatorScale, y: indicatorY }}
-        className="absolute left-1/2 -translate-x-1/2 z-20 flex items-center justify-center"
+        className="absolute left-1/2 -translate-x-1/2 z-20 flex flex-col items-center justify-center gap-1.5"
       >
-        <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center backdrop-blur-sm">
+        <div className="relative w-11 h-11 rounded-full bg-background/80 border border-border/30 flex items-center justify-center backdrop-blur-md shadow-[0_0_16px_hsl(var(--primary)/0.15)]">
+          {/* Progress ring */}
+          <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 44 44">
+            <circle
+              cx="22" cy="22" r="18"
+              fill="none"
+              stroke="hsl(var(--primary) / 0.15)"
+              strokeWidth="2.5"
+            />
+            <motion.circle
+              cx="22" cy="22" r="18"
+              fill="none"
+              stroke="hsl(var(--primary))"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeDasharray="113"
+              style={{ strokeDashoffset: useTransform(progressStroke, v => 113 - (v / 100) * 113) }}
+              className={refreshing ? 'animate-spin origin-center' : ''}
+            />
+          </svg>
+          
           {refreshing ? (
-            <Loader2 className="w-5 h-5 text-primary animate-spin" />
+            <RefreshCw className="w-4.5 h-4.5 text-primary animate-spin" />
           ) : (
             <motion.div style={{ rotate: indicatorRotation }}>
-              <svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 5v14M19 12l-7 7-7-7" />
-              </svg>
+              <RefreshCw className="w-4.5 h-4.5 text-primary" />
             </motion.div>
           )}
         </div>
+        
+        {/* Status text */}
+        <motion.span
+          className="text-[10px] font-mono text-muted-foreground/80 whitespace-nowrap"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          {refreshing ? 'Refreshing…' : pullProgress >= 1 ? 'Release to refresh' : 'Pull to refresh'}
+        </motion.span>
       </motion.div>
 
       {/* Content with pull offset */}
