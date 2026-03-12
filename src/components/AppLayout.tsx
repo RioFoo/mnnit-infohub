@@ -187,7 +187,7 @@ const AppLayout = () => {
 
           {/* Main Content */}
           <main className="flex-1 pb-24 md:pb-0 relative z-10">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
                 key={location.pathname}
                 variants={pageVariants}
