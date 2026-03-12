@@ -53,14 +53,17 @@ const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
     
     if (pullY.get() >= PULL_THRESHOLD && !refreshing) {
       setRefreshing(true);
+      setPullProgress(1);
       animate(pullY, 60, { type: 'spring', stiffness: 300, damping: 30 });
       try {
         await onRefresh();
       } finally {
         setRefreshing(false);
+        setPullProgress(0);
         animate(pullY, 0, { type: 'spring', stiffness: 400, damping: 30 });
       }
     } else {
+      setPullProgress(0);
       animate(pullY, 0, { type: 'spring', stiffness: 400, damping: 25 });
     }
   }, [pullY, refreshing, onRefresh]);
