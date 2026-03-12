@@ -39,11 +39,12 @@ const PullToRefresh = ({ onRefresh, children }: PullToRefreshProps) => {
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!pulling.current || refreshing) return;
     const deltaY = Math.max(0, e.touches[0].clientY - touchStartY.current);
-    // Rubber-band effect: diminishing returns past threshold
     const dampened = deltaY > PULL_THRESHOLD
       ? PULL_THRESHOLD + (deltaY - PULL_THRESHOLD) * 0.3
       : deltaY;
-    pullY.set(Math.min(dampened, MAX_PULL));
+    const clamped = Math.min(dampened, MAX_PULL);
+    pullY.set(clamped);
+    setPullProgress(Math.min(clamped / PULL_THRESHOLD, 1));
   }, [refreshing, pullY]);
 
   const handleTouchEnd = useCallback(async () => {
