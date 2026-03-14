@@ -27,6 +27,14 @@ const AuthCallback = () => {
         }
 
         const { data: { session } } = await supabase.auth.getSession();
+        
+        // Block non-MNNIT emails from OAuth sign-in
+        if (session?.user?.email && !session.user.email.endsWith('@mnnit.ac.in')) {
+          await supabase.auth.signOut();
+          navigate('/auth?error=Only%20%40mnnit.ac.in%20email%20addresses%20are%20allowed', { replace: true });
+          return;
+        }
+
         navigate(session?.user ? '/' : '/auth', { replace: true });
       } catch {
         navigate('/auth?error=auth_callback_failed', { replace: true });
