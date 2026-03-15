@@ -37,6 +37,8 @@ const InfoHubLogo = ({ size = 40, className = '', animate = true }: InfoHubLogoP
       <motion.img
         src={infohubSymbol}
         alt="InfoHub"
+        width={size}
+        height={size}
         className="w-full h-full object-contain relative z-10"
         style={{
           filter: 'drop-shadow(0 0 12px hsl(var(--primary) / 0.5)) drop-shadow(0 4px 8px hsl(var(--primary) / 0.2))',
