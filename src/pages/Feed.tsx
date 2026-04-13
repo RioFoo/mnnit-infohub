@@ -41,11 +41,44 @@ const Feed = () => {
         .select('*, profiles(name, handle, avatar_url, branch)')
         .order('created_at', { ascending: false })
         .limit(50);
+
       if (error) {
         console.error('Error fetching posts:', error);
         toast.error('Failed to load posts');
+        return;
       }
-      if (data) setPosts(data as unknown as Post[]);
+
+      const postRows = (data as unknown as Post[]) ?? [];
+      const postIds = postRows.map((post) => post.id);
+
+      if (!postIds.length) {
+        setPosts([]);
+        return;
+      }
+
+      const { data: commentsData, error: commentsError } = await supabase
+        .from('comments')
+        .select('post_id')
+        .in('post_id', postIds)
+        .limit(1000);
+
+      if (commentsError) {
+        console.error('Error fetching comment counts:', commentsError);
+        setPosts(postRows);
+        return;
+      }
+
+      const commentCountMap = new Map<string, number>();
+      (commentsData ?? []).forEach(({ post_id }) => {
+        commentCountMap.set(post_id, (commentCountMap.get(post_id) ?? 0) + 1);
+      });
+
+      setPosts(
+        postRows.map((post) => ({
+          ...post,
+          comments_count: commentCountMap.get(post.id) ?? 0,
+        }))
+      );
     } catch (err) {
       console.error('Failed to fetch posts:', err);
     } finally {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -9,18 +9,32 @@ import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
+interface CommentProfile {
+  id: string;
+  name: string | null;
+  handle: string | null;
+  avatar_url: string | null;
+}
+
+interface CommentRow {
+  id: string;
+  content: string;
+  created_at: string;
+  user_id: string;
+}
+
 interface Comment {
   id: string;
   content: string;
   created_at: string;
   user_id: string;
-  profiles: { name: string; handle: string; avatar_url: string | null } | null;
+  profiles: { name: string | null; handle: string | null; avatar_url: string | null } | null;
 }
 
 interface CommentSectionProps {
   postId: string;
   commentsCount: number;
-  onCountChange: (delta: number) => void;
+  onCountChange: (count: number) => void;
 }
 
 const MAX_COMMENT_LENGTH = 500;
@@ -33,18 +47,67 @@ const CommentSection = ({ postId, commentsCount, onCountChange }: CommentSection
   const [text, setText] = useState('');
   const [posting, setPosting] = useState(false);
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      const { data, error } = await (supabase.from as any)('comments')
-        .select('*, profiles(name, handle, avatar_url)')
-        .eq('post_id', postId)
-        .order('created_at', { ascending: true })
-        .limit(50);
-      if (!error && data) setComments(data as Comment[]);
+  const fetchComments = useCallback(async () => {
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from('comments')
+      .select('id, content, created_at, user_id')
+      .eq('post_id', postId)
+      .order('created_at', { ascending: true })
+      .limit(50);
+
+    if (error) {
+      console.error('Failed to load comments:', error);
+      setComments([]);
+      onCountChange(0);
       setLoading(false);
-    };
+      return;
+    }
+
+    const commentRows = (data ?? []) as CommentRow[];
+
+    if (commentRows.length === 0) {
+      setComments([]);
+      onCountChange(0);
+      setLoading(false);
+      return;
+    }
+
+    const uniqueUserIds = [...new Set(commentRows.map((comment) => comment.user_id))];
+    const { data: profilesData, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, name, handle, avatar_url')
+      .in('id', uniqueUserIds);
+
+    if (profilesError) {
+      console.error('Failed to load comment profiles:', profilesError);
+    }
+
+    const profilesMap = new Map(
+      ((profilesData ?? []) as CommentProfile[]).map((profile) => [
+        profile.id,
+        {
+          name: profile.name,
+          handle: profile.handle,
+          avatar_url: profile.avatar_url,
+        },
+      ])
+    );
+
+    const mergedComments: Comment[] = commentRows.map((comment) => ({
+      ...comment,
+      profiles: profilesMap.get(comment.user_id) ?? null,
+    }));
+
+    setComments(mergedComments);
+    onCountChange(mergedComments.length);
+    setLoading(false);
+  }, [postId, onCountChange]);
+
+  useEffect(() => {
     fetchComments();
-  }, [postId]);
+  }, [fetchComments]);
 
   const handlePost = async () => {
     const trimmed = text.trim();
@@ -53,25 +116,24 @@ const CommentSection = ({ postId, commentsCount, onCountChange }: CommentSection
       toast.error(`Comment too long (max ${MAX_COMMENT_LENGTH} characters)`);
       return;
     }
+
     setPosting(true);
-    const { error } = await (supabase.from as any)('comments').insert({
+
+    const { error } = await supabase.from('comments').insert({
       post_id: postId,
       user_id: user.id,
       content: trimmed,
     });
+
     if (error) {
+      console.error('Failed to post comment:', error);
       toast.error('Failed to post comment');
-    } else {
-      const { data } = await (supabase.from as any)('comments')
-        .select('*, profiles(name, handle, avatar_url)')
-        .eq('post_id', postId)
-        .order('created_at', { ascending: true })
-        .limit(50);
-      if (data) setComments(data as Comment[]);
-      setText('');
-      onCountChange(1);
-      await (supabase.from as any)('posts').update({ comments_count: commentsCount + 1 }).eq('id', postId);
+      setPosting(false);
+      return;
     }
+
+    setText('');
+    await fetchComments();
     setPosting(false);
   };
 
@@ -86,7 +148,7 @@ const CommentSection = ({ postId, commentsCount, onCountChange }: CommentSection
       ) : (
         <AnimatePresence>
           <div className="space-y-2.5 max-h-60 overflow-y-auto scrollbar-hide">
-            {comments.map(c => (
+            {comments.map((c) => (
               <motion.div
                 key={c.id}
                 initial={{ opacity: 0, y: 6 }}
@@ -119,18 +181,28 @@ const CommentSection = ({ postId, commentsCount, onCountChange }: CommentSection
                 </div>
               </motion.div>
             ))}
+
+            {!comments.length && (
+              <p className="text-xs text-muted-foreground py-2">No comments yet.</p>
+            )}
           </div>
         </AnimatePresence>
+      )}
+
+      {!!commentsCount && comments.length !== commentsCount && (
+        <p className="text-[10px] font-mono text-muted-foreground/70">
+          Syncing comments…
+        </p>
       )}
 
       {user && (
         <div className="flex gap-2">
           <Input
             value={text}
-            onChange={e => setText(e.target.value.slice(0, MAX_COMMENT_LENGTH))}
+            onChange={(e) => setText(e.target.value.slice(0, MAX_COMMENT_LENGTH))}
             placeholder="Write a comment..."
             className="h-9 text-xs bg-muted/10 border-border/[0.08] rounded-xl"
-            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handlePost()}
+            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handlePost()}
             maxLength={MAX_COMMENT_LENGTH}
           />
           <Button

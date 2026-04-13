@@ -95,6 +95,11 @@ const PostCard = ({
 
   const isOwnPost = currentUserId === post.user_id;
 
+  useState(() => {
+    setLocalCommentsCount(post.comments_count);
+    return post.comments_count;
+  });
+
   return (
     <motion.div variants={itemVariants}>
       <div
@@ -182,7 +187,7 @@ const PostCard = ({
               <div className="flex items-center gap-4 ml-auto">
                 <motion.button
                   whileTap={{ scale: 0.85 }}
-                  onClick={() => onRequireAuth(() => setShowComments(!showComments), 'Sign in to comment!')}
+                  onClick={() => setShowComments(!showComments)}
                   className="flex items-center gap-2 text-xs text-muted-foreground hover:text-secondary transition-all"
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -203,7 +208,7 @@ const PostCard = ({
               <CommentSection
                 postId={post.id}
                 commentsCount={localCommentsCount}
-                onCountChange={(d) => setLocalCommentsCount(prev => prev + d)}
+                onCountChange={setLocalCommentsCount}
               />
             )}
           </div>
