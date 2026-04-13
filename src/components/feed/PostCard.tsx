@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MessageCircle, Share2, Star } from 'lucide-react';
@@ -95,10 +95,9 @@ const PostCard = ({
 
   const isOwnPost = currentUserId === post.user_id;
 
-  useState(() => {
+  useEffect(() => {
     setLocalCommentsCount(post.comments_count);
-    return post.comments_count;
-  });
+  }, [post.comments_count]);
 
   return (
     <motion.div variants={itemVariants}>
