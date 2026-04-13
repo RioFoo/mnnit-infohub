@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MessageCircle, Share2, Star } from 'lucide-react';
@@ -95,6 +95,10 @@ const PostCard = ({
 
   const isOwnPost = currentUserId === post.user_id;
 
+  useEffect(() => {
+    setLocalCommentsCount(post.comments_count);
+  }, [post.comments_count]);
+
   return (
     <motion.div variants={itemVariants}>
       <div
@@ -182,7 +186,7 @@ const PostCard = ({
               <div className="flex items-center gap-4 ml-auto">
                 <motion.button
                   whileTap={{ scale: 0.85 }}
-                  onClick={() => onRequireAuth(() => setShowComments(!showComments), 'Sign in to comment!')}
+                  onClick={() => setShowComments(!showComments)}
                   className="flex items-center gap-2 text-xs text-muted-foreground hover:text-secondary transition-all"
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -203,7 +207,7 @@ const PostCard = ({
               <CommentSection
                 postId={post.id}
                 commentsCount={localCommentsCount}
-                onCountChange={(d) => setLocalCommentsCount(prev => prev + d)}
+                onCountChange={setLocalCommentsCount}
               />
             )}
           </div>
