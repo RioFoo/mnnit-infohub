@@ -107,7 +107,58 @@ const CommentSection = ({ postId, commentsCount, onCountChange }: CommentSection
 
   useEffect(() => {
     fetchComments();
-  }, [fetchComments]);
+
+    // Realtime subscription for live comment updates
+    const channel = supabase
+      .channel(`comments:${postId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'comments', filter: `post_id=eq.${postId}` },
+        async (payload) => {
+          const newRow = payload.new as CommentRow;
+          // Don't duplicate if we already have it (e.g. from our own insert)
+          setComments((prev) => {
+            if (prev.some((c) => c.id === newRow.id)) return prev;
+            // Fetch profile for the new comment asynchronously
+            supabase
+              .from('profiles')
+              .select('id, name, handle, avatar_url')
+              .eq('id', newRow.user_id)
+              .single()
+              .then(({ data: profile }) => {
+                const newComment: Comment = {
+                  ...newRow,
+                  profiles: profile
+                    ? { name: profile.name, handle: profile.handle, avatar_url: profile.avatar_url }
+                    : null,
+                };
+                setComments((cur) =>
+                  cur.some((c) => c.id === newRow.id) ? cur : [...cur, newComment]
+                );
+                onCountChange(0); // trigger re-count below
+              });
+            return prev;
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'comments', filter: `post_id=eq.${postId}` },
+        (payload) => {
+          const deletedId = (payload.old as { id: string }).id;
+          setComments((prev) => {
+            const next = prev.filter((c) => c.id !== deletedId);
+            onCountChange(next.length);
+            return next;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [postId, fetchComments, onCountChange]);
 
   const handlePost = async () => {
     const trimmed = text.trim();
