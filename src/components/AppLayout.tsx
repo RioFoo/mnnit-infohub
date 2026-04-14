@@ -14,6 +14,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { MobileMoreDrawer } from '@/components/MobileMoreDrawer';
 import CreatePostDialog from '@/components/feed/CreatePostDialog';
+import Footer from '@/components/Footer';
 
 const mobileNavItems = [
   { title: 'Feed', url: '/', icon: Home },
@@ -199,6 +200,10 @@ const AppLayout = () => {
               </motion.div>
             </AnimatePresence>
           </main>
+
+          <div className="hidden md:block">
+            <Footer />
+          </div>
 
           {/* Mobile FAB - Create Post */}
           {user && (
