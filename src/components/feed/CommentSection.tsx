@@ -132,10 +132,12 @@ const CommentSection = ({ postId, commentsCount, onCountChange }: CommentSection
                     ? { name: profile.name, handle: profile.handle, avatar_url: profile.avatar_url }
                     : null,
                 };
-                setComments((cur) =>
-                  cur.some((c) => c.id === newRow.id) ? cur : [...cur, newComment]
-                );
-                onCountChange(0); // trigger re-count below
+                setComments((cur) => {
+                  if (cur.some((c) => c.id === newRow.id)) return cur;
+                  const updated = [...cur, newComment];
+                  onCountChange(updated.length);
+                  return updated;
+                });
               });
             return prev;
           });
