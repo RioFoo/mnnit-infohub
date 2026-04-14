@@ -201,6 +201,10 @@ const AppLayout = () => {
             </AnimatePresence>
           </main>
 
+          <div className="hidden md:block">
+            <Footer />
+          </div>
+
           {/* Mobile FAB - Create Post */}
           {user && (
             <motion.button
