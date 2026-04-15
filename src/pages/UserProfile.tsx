@@ -3,13 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Loader2, UserPlus, UserMinus, Heart, MessageCircle, ArrowLeft, Star, Users } from 'lucide-react';
+import { Loader2, UserPlus, UserMinus, Heart, MessageCircle, ArrowLeft, Star, Users, Github } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import MediaRenderer from '@/components/feed/MediaRenderer';
 import { cn } from '@/lib/utils';
 import FollowersDialog from '@/components/FollowersDialog';
+import SkillBadge from '@/components/SkillBadge';
 
 interface UserProfileData {
   id: string;
@@ -24,6 +25,8 @@ interface UserProfileData {
   semester: string | null;
   batch: string | null;
   gender: string | null;
+  github_url: string | null;
+  skills: string[] | null;
 }
 
 const UserProfile = () => {
@@ -270,7 +273,24 @@ const UserProfile = () => {
             </div>
             <p className="text-sm font-mono text-muted-foreground mt-0.5">@{profileData.handle}</p>
             {profileData.bio && <p className="text-sm mt-3 text-foreground/70 max-w-md leading-relaxed">{profileData.bio}</p>}
+
+            {/* GitHub Link */}
+            {profileData.github_url && (
+              <a href={profileData.github_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-2 text-xs font-mono text-muted-foreground hover:text-primary transition-colors">
+                <Github className="w-3.5 h-3.5" />
+                {profileData.github_url.replace('https://github.com/', '')}
+              </a>
+            )}
           </div>
+
+          {/* Skills */}
+          {profileData.skills && profileData.skills.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              {profileData.skills.map(skill => (
+                <SkillBadge key={skill} skill={skill} />
+              ))}
+            </div>
+          )}
 
           <div className="flex items-center gap-2 mt-4 flex-wrap">
             <span className="tag-pill text-xs">{profileData.branch || 'Branch'}</span>
