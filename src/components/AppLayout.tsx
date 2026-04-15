@@ -6,7 +6,7 @@ import { Home, Compass, CalendarDays, Bell, LogIn, MoreHorizontal, GraduationCap
 import InfoHubLogo from '@/components/InfoHubLogo';
 import { useState, useEffect } from 'react';
 import { CommandPalette } from '@/components/CommandPalette';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
