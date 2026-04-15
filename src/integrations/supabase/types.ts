@@ -186,12 +186,14 @@ export type Database = {
           created_at: string
           default_resource_visibility: string | null
           gender: string | null
+          github_url: string | null
           handle: string | null
           id: string
           name: string | null
           role: string | null
           section: string | null
           semester: string | null
+          skills: string[] | null
           updated_at: string
         }
         Insert: {
@@ -203,12 +205,14 @@ export type Database = {
           created_at?: string
           default_resource_visibility?: string | null
           gender?: string | null
+          github_url?: string | null
           handle?: string | null
           id: string
           name?: string | null
           role?: string | null
           section?: string | null
           semester?: string | null
+          skills?: string[] | null
           updated_at?: string
         }
         Update: {
@@ -220,12 +224,14 @@ export type Database = {
           created_at?: string
           default_resource_visibility?: string | null
           gender?: string | null
+          github_url?: string | null
           handle?: string | null
           id?: string
           name?: string | null
           role?: string | null
           section?: string | null
           semester?: string | null
+          skills?: string[] | null
           updated_at?: string
         }
         Relationships: []
