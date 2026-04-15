@@ -6,7 +6,7 @@ import { Home, Compass, CalendarDays, Bell, LogIn, MoreHorizontal, GraduationCap
 import InfoHubLogo from '@/components/InfoHubLogo';
 import { useState, useEffect } from 'react';
 import { CommandPalette } from '@/components/CommandPalette';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -23,17 +23,7 @@ const mobileNavItems = [
   { title: 'Campus', url: '/campus', icon: GraduationCap },
 ];
 
-const pageVariants = {
-  initial: { opacity: 0.6 },
-  enter: {
-    opacity: 1,
-    transition: { duration: 0.08, ease: 'easeOut' as const }
-  },
-  exit: {
-    opacity: 0.6,
-    transition: { duration: 0.04, ease: 'easeIn' as const }
-  }
-};
+// No page transition animation — instant navigation
 
 const MobileNavItem = ({ item }: { item: (typeof mobileNavItems)[number] }) => {
   const location = useLocation();
@@ -185,17 +175,7 @@ const AppLayout = () => {
 
           {/* Main Content */}
           <main className="flex-1 pb-24 md:pb-0 relative z-10">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={location.pathname}
-                variants={pageVariants}
-                initial="initial"
-                animate="enter"
-                exit="exit"
-              >
-                <Outlet />
-              </motion.div>
-            </AnimatePresence>
+            <Outlet />
           </main>
 
           <div className="hidden md:block">
