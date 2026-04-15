@@ -24,17 +24,14 @@ const mobileNavItems = [
 ];
 
 const pageVariants = {
-  initial: { opacity: 0 },
+  initial: { opacity: 0.6 },
   enter: {
     opacity: 1,
-    transition: { 
-      duration: 0.15, 
-      ease: 'easeOut' as const,
-    }
+    transition: { duration: 0.08, ease: 'easeOut' as const }
   },
   exit: {
-    opacity: 0,
-    transition: { duration: 0.08, ease: 'easeIn' as const }
+    opacity: 0.6,
+    transition: { duration: 0.04, ease: 'easeIn' as const }
   }
 };
 

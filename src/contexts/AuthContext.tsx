@@ -16,6 +16,8 @@ interface Profile {
   semester: string | null;
   batch: string | null;
   gender: string | null;
+  github_url: string | null;
+  skills: string[] | null;
 }
 
 interface AuthContextType {
@@ -46,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, name, handle, avatar_url, banner_url, bio, role, branch, section, semester, batch, gender')
+        .select('id, name, handle, avatar_url, banner_url, bio, role, branch, section, semester, batch, gender, github_url, skills')
         .eq('id', userId)
         .maybeSingle();
       if (!error && data) setProfile(data as Profile);
@@ -59,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const { data: existing } = await supabase
         .from('profiles')
-        .select('id, name, handle, avatar_url, banner_url, bio, role, branch, section, semester, batch, gender')
+        .select('id, name, handle, avatar_url, banner_url, bio, role, branch, section, semester, batch, gender, github_url, skills')
         .eq('id', currentUser.id)
         .maybeSingle();
 
