@@ -15,11 +15,6 @@ import { useNavigate } from 'react-router-dom';
 import MediaRenderer from '@/components/feed/MediaRenderer';
 import FollowersDialog from '@/components/FollowersDialog';
 import SkillBadge from '@/components/SkillBadge';
-import { toast } from 'sonner';
-import { formatDistanceToNow } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
-import MediaRenderer from '@/components/feed/MediaRenderer';
-import FollowersDialog from '@/components/FollowersDialog';
 
 const BRANCHES = ['CSE', 'ECE', 'EE', 'ME', 'CE', 'GIS'];
 const SECTIONS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
