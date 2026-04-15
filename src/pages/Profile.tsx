@@ -7,8 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Edit, Loader2, LogIn, Heart, MessageCircle, Camera, ImagePlus, Trash2, Star, Users, UserPlus } from 'lucide-react';
+import { Edit, Loader2, LogIn, Heart, MessageCircle, Camera, ImagePlus, Trash2, Star, Users, UserPlus, Github, Plus } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { toast } from 'sonner';
+import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import MediaRenderer from '@/components/feed/MediaRenderer';
+import FollowersDialog from '@/components/FollowersDialog';
+import SkillBadge from '@/components/SkillBadge';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
@@ -36,6 +42,9 @@ const Profile = () => {
   const [section, setSection] = useState('');
   const [semester, setSemester] = useState('');
   const [batch, setBatch] = useState('');
+  const [githubUrl, setGithubUrl] = useState('');
+  const [skills, setSkills] = useState<string[]>([]);
+  const [newSkill, setNewSkill] = useState('');
   const [saving, setSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingBanner, setUploadingBanner] = useState(false);
@@ -54,6 +63,8 @@ const Profile = () => {
       setSection(profile.section || '');
       setSemester(profile.semester || '');
       setBatch(profile.batch || '');
+      setGithubUrl(profile.github_url || '');
+      setSkills(profile.skills || []);
     }
   }, [profile]);
 
@@ -80,7 +91,7 @@ const Profile = () => {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
-    const updates: Record<string, string> = { name, bio, gender, branch, section, semester, batch };
+    const updates: Record<string, any> = { name, bio, gender, branch, section, semester, batch, github_url: githubUrl || null, skills };
     const { error } = await (supabase.from as any)('profiles').update(updates).eq('id', user.id);
     if (error) toast.error(error.message);
     else { toast.success('Profile updated!'); await refreshProfile(); setEditOpen(false); }
