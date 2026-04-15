@@ -220,8 +220,25 @@ const Profile = () => {
               className="text-2xl sm:text-4xl font-display font-black transform transition-all duration-300 hover:scale-105 hover:rotate-1 hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.4)] cursor-pointer gradient-text break-words"
             />
             <p className="text-sm sm:text-base font-mono text-muted-foreground mt-1 font-bold transform transition-all duration-300 hover:scale-102 hover:text-primary truncate">@{profile.handle}</p>
-            {profile.bio && <p className="text-sm sm:text-base mt-3 text-foreground/80 max-w-md leading-relaxed font-semibold transform transition-all duration-300 hover:scale-102 hover:text-foreground cursor-pointer break-words">{profile.bio}</p>}
+            {profile.bio && <p className="text-sm sm:text-base mt-3 text-foreground/80 max-w-md leading-relaxed font-semibold break-words">{profile.bio}</p>}
+
+            {/* GitHub Link */}
+            {profile.github_url && (
+              <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-2 text-xs font-mono text-muted-foreground hover:text-primary transition-colors">
+                <Github className="w-3.5 h-3.5" />
+                {profile.github_url.replace('https://github.com/', '')}
+              </a>
+            )}
           </div>
+
+          {/* Skills */}
+          {skills.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              {skills.map(skill => (
+                <SkillBadge key={skill} skill={skill} />
+              ))}
+            </div>
+          )}
 
           <div className="flex items-center gap-1.5 sm:gap-2 mt-4 flex-wrap">
             <span className="tag-pill text-[10px] sm:text-sm font-bold cursor-pointer">{profile.branch || 'Branch'}</span>
@@ -369,7 +386,52 @@ const Profile = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={handleSave} disabled={saving} className="w-full rounded-xl btn-bio font-black text-base transform transition-all duration-300 hover:scale-102 hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.4)]">
+                <div>
+                  <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">GitHub Profile URL</label>
+                  <Input value={githubUrl} onChange={e => setGithubUrl(e.target.value)} placeholder="https://github.com/username" className="rounded-xl bg-muted/10 border-border/[0.06] mt-1" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Skills</label>
+                  <div className="flex flex-wrap gap-1.5 mt-1 mb-2">
+                    {skills.map(skill => (
+                      <SkillBadge key={skill} skill={skill} onRemove={() => setSkills(s => s.filter(x => x !== skill))} />
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      value={newSkill}
+                      onChange={e => setNewSkill(e.target.value)}
+                      placeholder="Add a skill (e.g. React, Python)"
+                      className="rounded-xl bg-muted/10 border-border/[0.06] flex-1"
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' && newSkill.trim() && skills.length < 15) {
+                          e.preventDefault();
+                          if (!skills.includes(newSkill.trim())) {
+                            setSkills(s => [...s, newSkill.trim()]);
+                          }
+                          setNewSkill('');
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="rounded-xl shrink-0"
+                      disabled={!newSkill.trim() || skills.length >= 15}
+                      onClick={() => {
+                        if (newSkill.trim() && !skills.includes(newSkill.trim())) {
+                          setSkills(s => [...s, newSkill.trim()]);
+                        }
+                        setNewSkill('');
+                      }}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <p className="text-[9px] font-mono text-muted-foreground/50 mt-1">{skills.length}/15 skills</p>
+                </div>
+                <Button onClick={handleSave} disabled={saving} className="w-full rounded-xl btn-bio font-black text-base">
                   {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Save Changes'}
                 </Button>
               </div>
