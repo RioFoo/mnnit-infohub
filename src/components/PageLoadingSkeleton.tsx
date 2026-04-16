@@ -75,7 +75,14 @@ const PageLoadingSkeleton = () => (
         transition={{ delay: 0.15, duration: 0.4 }}
         className="mt-8 text-center"
       >
-        <h2 className="font-display text-2xl font-black tracking-tight bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent bg-[length:200%_100%] animate-gradient">
+        <h2
+          className="font-display text-2xl font-black tracking-tight bg-clip-text text-transparent bg-[length:200%_100%]"
+          style={{
+            backgroundImage:
+              'linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)), hsl(var(--accent)), hsl(var(--primary)))',
+            animation: 'brand-gradient-shift 4s ease-in-out infinite',
+          }}
+        >
           MNNIT InfoHub
         </h2>
         <motion.p
