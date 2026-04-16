@@ -34,6 +34,35 @@ const Feed = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [allReactions, setAllReactions] = useState<ReactionRow[]>([]);
 
+  const hydrateCommentCounts = async (postRows: Post[]) => {
+    const postIds = postRows.map((post) => post.id);
+
+    if (!postIds.length) return;
+
+    const { data: commentsData, error: commentsError } = await supabase
+      .from('comments')
+      .select('post_id')
+      .in('post_id', postIds)
+      .limit(1000);
+
+    if (commentsError) {
+      console.error('Error fetching comment counts:', commentsError);
+      return;
+    }
+
+    const commentCountMap = new Map<string, number>();
+    (commentsData ?? []).forEach(({ post_id }) => {
+      commentCountMap.set(post_id, (commentCountMap.get(post_id) ?? 0) + 1);
+    });
+
+    setPosts((currentPosts) =>
+      currentPosts.map((post) => ({
+        ...post,
+        comments_count: commentCountMap.get(post.id) ?? post.comments_count,
+      }))
+    );
+  };
+
   const fetchPosts = async () => {
     try {
       setLoading(true);
@@ -45,43 +74,17 @@ const Feed = () => {
       if (error) {
         console.error('Error fetching posts:', error);
         toast.error('Failed to load posts');
+        setLoading(false);
         return;
       }
 
       const postRows = (data as unknown as Post[]) ?? [];
-      const postIds = postRows.map((post) => post.id);
+      setPosts(postRows);
+      setLoading(false);
 
-      if (!postIds.length) {
-        setPosts([]);
-        return;
-      }
-
-      const { data: commentsData, error: commentsError } = await supabase
-        .from('comments')
-        .select('post_id')
-        .in('post_id', postIds)
-        .limit(1000);
-
-      if (commentsError) {
-        console.error('Error fetching comment counts:', commentsError);
-        setPosts(postRows);
-        return;
-      }
-
-      const commentCountMap = new Map<string, number>();
-      (commentsData ?? []).forEach(({ post_id }) => {
-        commentCountMap.set(post_id, (commentCountMap.get(post_id) ?? 0) + 1);
-      });
-
-      setPosts(
-        postRows.map((post) => ({
-          ...post,
-          comments_count: commentCountMap.get(post.id) ?? 0,
-        }))
-      );
+      void hydrateCommentCounts(postRows);
     } catch (err) {
       console.error('Failed to fetch posts:', err);
-    } finally {
       setLoading(false);
     }
   };
