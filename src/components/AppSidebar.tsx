@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import InfoHubLogo from '@/components/InfoHubLogo';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { prefetchRoute } from '@/lib/routePrefetch';
 
 const navItems = [
   { title: 'For You', url: '/', icon: Home },
@@ -116,6 +117,9 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
                         <RouterNavLink
                           to={item.url}
                           end={item.url === '/'}
+                          onMouseEnter={() => prefetchRoute(item.url)}
+                          onFocus={() => prefetchRoute(item.url)}
+                          onTouchStart={() => prefetchRoute(item.url)}
                           className={cn(
                             'relative flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-[13px] font-medium transition-all duration-200 cursor-pointer group',
                             isActive
@@ -180,6 +184,9 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
               <SidebarMenuButton asChild>
                 <RouterNavLink
                   to="/settings"
+                  onMouseEnter={() => prefetchRoute('/settings')}
+                  onFocus={() => prefetchRoute('/settings')}
+                  onTouchStart={() => prefetchRoute('/settings')}
                   className={({ isActive }) => cn(
                     'flex items-center gap-3 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all duration-200',
                     isActive
@@ -205,6 +212,8 @@ export function AppSidebar({ onOpenCommand }: AppSidebarProps) {
             ) : (
               <SidebarMenuButton
                 onClick={() => navigate('/auth')}
+                onMouseEnter={() => prefetchRoute('/auth')}
+                onFocus={() => prefetchRoute('/auth')}
                 className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-[13px] font-medium text-primary hover:bg-primary/[0.06] transition-all cursor-pointer"
               >
                 <LogIn className="h-4 w-4" />

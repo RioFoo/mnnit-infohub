@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { MobileMoreDrawer } from '@/components/MobileMoreDrawer';
 import CreatePostDialog from '@/components/feed/CreatePostDialog';
 import Footer from '@/components/Footer';
+import { prefetchRoute } from '@/lib/routePrefetch';
 
 const mobileNavItems = [
   { title: 'Feed', url: '/', icon: Home },
@@ -33,6 +34,8 @@ const MobileNavItem = ({ item }: { item: (typeof mobileNavItems)[number] }) => {
     <RouterNavLink
       to={item.url}
       end={item.url === '/'}
+      onTouchStart={() => prefetchRoute(item.url)}
+      onMouseEnter={() => prefetchRoute(item.url)}
       className={cn(
         'relative flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-all duration-200 group min-w-[48px] min-h-[44px] justify-center',
         isActive
@@ -127,6 +130,8 @@ const AppLayout = () => {
                 <>
                   <button
                     onClick={() => navigate('/notifications')}
+                    onTouchStart={() => prefetchRoute('/notifications')}
+                    onMouseEnter={() => prefetchRoute('/notifications')}
                     className="relative p-2 rounded-lg hover:bg-muted/10 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"
                   >
                     <Bell className="w-5 h-5 text-muted-foreground" />
@@ -138,6 +143,8 @@ const AppLayout = () => {
                   </button>
                   <button
                     onClick={() => navigate('/profile')}
+                    onTouchStart={() => prefetchRoute('/profile')}
+                    onMouseEnter={() => prefetchRoute('/profile')}
                     className="p-1 rounded-full hover:ring-2 hover:ring-primary/20 transition-all min-w-[36px] min-h-[36px] flex items-center justify-center"
                   >
                     {profile?.avatar_url ? (

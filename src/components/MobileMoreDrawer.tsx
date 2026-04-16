@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { cn } from '@/lib/utils';
+import { prefetchRoute } from '@/lib/routePrefetch';
 
 const drawerItems = [
   { title: 'Calendar', url: '/calendar', icon: CalendarDays },
@@ -39,6 +40,8 @@ export function MobileMoreDrawer({ open, onOpenChange }: MobileMoreDrawerProps) 
               <button
                 key={item.url}
                 onClick={() => handleNav(item.url)}
+                onTouchStart={() => prefetchRoute(item.url)}
+                onMouseEnter={() => prefetchRoute(item.url)}
                 className={cn(
                   'flex flex-col items-center gap-2 p-4 rounded-xl transition-all',
                   'bg-muted/10 hover:bg-primary/[0.08] active:scale-95',
