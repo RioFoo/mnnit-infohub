@@ -56,9 +56,14 @@ const RouteWarmup = () => {
       });
     };
 
-    if ("requestIdleCallback" in window) {
-      const idleId = window.requestIdleCallback(preloadRoutes, { timeout: 1200 });
-      return () => window.cancelIdleCallback?.(idleId);
+    const windowWithIdleCallback = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+
+    if (windowWithIdleCallback.requestIdleCallback) {
+      const idleId = windowWithIdleCallback.requestIdleCallback(preloadRoutes, { timeout: 1200 });
+      return () => windowWithIdleCallback.cancelIdleCallback?.(idleId);
     }
 
     const timeoutId = window.setTimeout(preloadRoutes, 300);
