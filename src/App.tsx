@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,12 +10,11 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import OfflineBanner from "@/components/OfflineBanner";
 import AppLayout from "@/components/AppLayout";
 import PageLoadingSkeleton from "@/components/PageLoadingSkeleton";
+import Feed from "@/pages/Feed";
 
-// Lazy-loaded route components for code splitting
 const Auth = lazy(() => import("@/pages/Auth"));
 const AuthCallback = lazy(() => import("@/pages/AuthCallback"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
-const Feed = lazy(() => import("@/pages/Feed"));
 const Explore = lazy(() => import("@/pages/Explore"));
 const CampusInfo = lazy(() => import("@/pages/CampusInfo"));
 const Calendar = lazy(() => import("@/pages/Calendar"));
@@ -38,6 +37,42 @@ const queryClient = new QueryClient({
   },
 });
 
+const warmRouteModules = [
+  () => import("@/pages/Explore"),
+  () => import("@/pages/CampusInfo"),
+  () => import("@/pages/Calendar"),
+  () => import("@/pages/Timetable"),
+  () => import("@/pages/Grades"),
+  () => import("@/pages/Resources"),
+  () => import("@/pages/Notifications"),
+  () => import("@/pages/Profile"),
+];
+
+const RouteWarmup = () => {
+  useEffect(() => {
+    const preloadRoutes = () => {
+      warmRouteModules.forEach((loadModule) => {
+        void loadModule();
+      });
+    };
+
+    const windowWithIdleCallback = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+
+    if (windowWithIdleCallback.requestIdleCallback) {
+      const idleId = windowWithIdleCallback.requestIdleCallback(preloadRoutes, { timeout: 1200 });
+      return () => windowWithIdleCallback.cancelIdleCallback?.(idleId);
+    }
+
+    const timeoutId = window.setTimeout(preloadRoutes, 300);
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
+  return null;
+};
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -48,6 +83,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <RouteWarmup />
               <Suspense fallback={<PageLoadingSkeleton />}>
                 <Routes>
                   <Route path="/auth" element={<Auth />} />
