@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { MobileMoreDrawer } from '@/components/MobileMoreDrawer';
 import CreatePostDialog from '@/components/feed/CreatePostDialog';
 import Footer from '@/components/Footer';
+import RouteProgressBar from '@/components/RouteProgressBar';
 import { prefetchRoute } from '@/lib/routePrefetch';
 
 const mobileNavItems = [
@@ -101,6 +102,7 @@ const AppLayout = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full relative">
+        <RouteProgressBar />
         <BioBackground />
 
         {/* Desktop/Tablet sidebar - hidden on mobile */}
