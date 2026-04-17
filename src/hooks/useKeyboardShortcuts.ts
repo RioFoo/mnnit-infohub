@@ -43,10 +43,6 @@ export const useKeyboardShortcuts = (onOpenHelp: () => void) => {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
-        console.log('[shortcuts] key=', e.key, 'shift=', e.shiftKey, 'meta=', e.metaKey, 'target=', (e.target as HTMLElement)?.tagName);
-      }
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (isTypingTarget(e.target)) return;
 
