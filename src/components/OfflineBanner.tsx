@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import { WifiOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const OfflineBanner = () => {
+const OfflineBanner = forwardRef<HTMLDivElement>((_props, ref) => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
   useEffect(() => {
@@ -22,6 +22,7 @@ const OfflineBanner = () => {
     <AnimatePresence>
       {isOffline && (
         <motion.div
+          ref={ref}
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -50, opacity: 0 }}
@@ -35,6 +36,8 @@ const OfflineBanner = () => {
       )}
     </AnimatePresence>
   );
-};
+});
+
+OfflineBanner.displayName = 'OfflineBanner';
 
 export default OfflineBanner;
