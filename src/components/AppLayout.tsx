@@ -16,6 +16,8 @@ import { MobileMoreDrawer } from '@/components/MobileMoreDrawer';
 import CreatePostDialog from '@/components/feed/CreatePostDialog';
 import Footer from '@/components/Footer';
 import RouteProgressBar from '@/components/RouteProgressBar';
+import { KeyboardShortcutsDialog } from '@/components/KeyboardShortcutsDialog';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { prefetchRoute } from '@/lib/routePrefetch';
 
 const mobileNavItems = [
@@ -69,9 +71,12 @@ const AppLayout = () => {
   const [commandOpen, setCommandOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
+
+  useKeyboardShortcuts(() => setShortcutsOpen(true));
 
   const { data: unreadCount = 0 } = useQuery({
     queryKey: ['unread-notifications-count-mobile', user?.id],
@@ -232,6 +237,7 @@ const AppLayout = () => {
       <MobileMoreDrawer open={moreOpen} onOpenChange={setMoreOpen} />
       <CreatePostDialog open={createOpen} onOpenChange={setCreateOpen} onCreated={() => {}} />
       <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
+      <KeyboardShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
     </SidebarProvider>
   );
 };
