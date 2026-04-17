@@ -25,6 +25,22 @@ export default defineConfig(({ mode }) => ({
         manualChunks(id) {
           if (!id.includes("node_modules")) return undefined;
 
+          // React core MUST be in its own chunk and resolved first.
+          // Match react, react-dom, react/jsx-runtime, scheduler, use-sync-external-store
+          if (
+            id.includes("/react/") ||
+            id.includes("/react-dom/") ||
+            id.includes("/scheduler/") ||
+            id.includes("/use-sync-external-store/") ||
+            id.includes("react/jsx-runtime") ||
+            id.includes("react/jsx-dev-runtime")
+          ) {
+            return "react-vendor";
+          }
+
+          // React Router depends on react — separate chunk, loaded after react-vendor
+          if (id.includes("react-router")) return "react-vendor";
+
           // Heavy data-viz library — only Grades uses it
           if (id.includes("recharts") || id.includes("d3-")) return "charts";
 
@@ -42,9 +58,6 @@ export default defineConfig(({ mode }) => ({
 
           // Form libs
           if (id.includes("react-hook-form") || id.includes("@hookform") || id.includes("zod")) return "forms";
-
-          // React core
-          if (id.includes("react-dom") || id.includes("react-router") || id.match(/[\\/]react[\\/]/)) return "react-vendor";
 
           // Icons
           if (id.includes("lucide-react")) return "icons";
