@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { motion } from 'framer-motion';
 import type { Easing } from 'framer-motion';
 
@@ -9,7 +10,7 @@ interface PageHeaderProps {
 
 const ease: Easing = [0.22, 1, 0.36, 1];
 
-export const PageHeader = ({ title, children, className = '' }: PageHeaderProps) => {
+export const PageHeader = forwardRef<HTMLDivElement, PageHeaderProps>(({ title, children, className = '' }, ref) => {
   const letters = title.split('');
   const totalLetters = letters.length;
   const typeDuration = 0.06; // per letter
@@ -17,6 +18,7 @@ export const PageHeader = ({ title, children, className = '' }: PageHeaderProps)
 
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease }}
@@ -116,4 +118,6 @@ export const PageHeader = ({ title, children, className = '' }: PageHeaderProps)
       {children}
     </motion.div>
   );
-};
+});
+
+PageHeader.displayName = 'PageHeader';
