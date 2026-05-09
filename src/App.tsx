@@ -26,6 +26,7 @@ const Profile = lazy(() => import("@/pages/Profile"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const UserProfile = lazy(() => import("@/pages/UserProfile"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
+const LogViewer = lazy(() => import("@/pages/LogViewer"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -90,17 +91,18 @@ const App = () => (
                   <Route path="/auth/callback" element={<AuthCallback />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/" element={<AppLayout />}>
-                    <Route index element={<Feed />} />
+                    <Route index element={<ErrorBoundary><Feed /></ErrorBoundary>} />
                     <Route path="explore" element={<Explore />} />
                     <Route path="campus" element={<CampusInfo />} />
-                    <Route path="calendar" element={<Calendar />} />
+                    <Route path="calendar" element={<ErrorBoundary><Calendar /></ErrorBoundary>} />
                     <Route path="timetable" element={<Timetable />} />
-                    <Route path="grades" element={<Grades />} />
+                    <Route path="grades" element={<ErrorBoundary><Grades /></ErrorBoundary>} />
                     <Route path="resources" element={<Resources />} />
                     <Route path="notifications" element={<Notifications />} />
-                    <Route path="profile" element={<Profile />} />
-                    <Route path="profile/:userId" element={<UserProfile />} />
+                    <Route path="profile" element={<ErrorBoundary><Profile /></ErrorBoundary>} />
+                    <Route path="profile/:userId" element={<ErrorBoundary><UserProfile /></ErrorBoundary>} />
                     <Route path="settings" element={<Settings />} />
+                    <Route path="logs" element={<LogViewer />} />
                   </Route>
                   <Route path="*" element={<NotFound />} />
                 </Routes>
