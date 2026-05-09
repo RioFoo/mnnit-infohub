@@ -1,5 +1,6 @@
 import React, { Component, type ErrorInfo, type ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Copy } from 'lucide-react';
+import { toast } from 'sonner';
 import { logEvent, getSessionId } from '@/lib/productionLogger';
 
 interface Props {
@@ -31,6 +32,28 @@ class ErrorBoundary extends Component<Props, State> {
       `${error.stack || ''}\n--- componentStack ---${errorInfo.componentStack || ''}`,
     );
     this.setState({ correlationId: entry.id });
+
+    // Production overlay toast with correlation id + one-click copy
+    try {
+      toast.error('App error captured', {
+        description: `id=${entry.id}`,
+        duration: 10000,
+        action: {
+          label: 'Copy',
+          onClick: async () => {
+            const payload = `id=${entry.id}\nsession=${getSessionId()}\nurl=${location.href}\nmessage=${error.message}\nstack=${error.stack || ''}`;
+            try {
+              await navigator.clipboard.writeText(payload);
+              toast.success('Error details copied');
+            } catch {
+              toast.error('Copy failed');
+            }
+          },
+        },
+      });
+    } catch {
+      /* toast unavailable — ignore */
+    }
   }
 
   handleReset = () => {
