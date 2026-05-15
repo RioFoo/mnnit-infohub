@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import OfflineBanner from "@/components/OfflineBanner";
 import AppLayout from "@/components/AppLayout";
+import RouteSEO from "@/components/RouteSEO";
 import PageLoadingSkeleton from "@/components/PageLoadingSkeleton";
 import Feed from "@/pages/Feed";
 
@@ -85,6 +86,7 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <RouteWarmup />
+              <RouteSEO />
               <Suspense fallback={<PageLoadingSkeleton />}>
                 <Routes>
                   <Route path="/auth" element={<Auth />} />
