@@ -18,6 +18,7 @@ export interface LogEntry {
   message: string;
   stack?: string;
   url: string;
+  route: string;
   ua: string;
   release: string;
 }
@@ -74,6 +75,7 @@ export const logEvent = (
     message: String(message).slice(0, 2000),
     stack: stack ? String(stack).slice(0, 4000) : undefined,
     url: typeof location !== 'undefined' ? location.href : '',
+    route: typeof location !== 'undefined' ? location.pathname + location.search : '',
     ua: typeof navigator !== 'undefined' ? navigator.userAgent : '',
     release: RELEASE,
   };
