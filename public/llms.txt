@@ -1,0 +1,21 @@
+# MNNIT InfoHub
+
+> Social platform for students of Motilal Nehru National Institute of Technology, Allahabad — feed, campus info, timetables, grades, and shared resources.
+
+MNNIT InfoHub connects MNNIT students through a real-time social feed and academic utilities. Access to interactions and admin features is restricted to verified @mnnit.ac.in accounts; core content pages are publicly viewable.
+
+## Pages
+
+- [Home / Feed](/): Real-time student feed with posts, likes, and comments.
+- [Explore](/explore): Discover students, trending posts, and communities.
+- [Campus Info](/campus): Hostels, departments, faculty contacts, and campus information.
+- [Academic Calendar](/calendar): Exams, holidays, and key institute events.
+- [Timetable](/timetable): Branch- and semester-wise class timetables.
+- [Grades](/grades): CPI / SPI calculator using the official MNNIT grading scheme.
+- [Resources](/resources): Shared notes and previous year papers by branch and semester.
+
+## Optional
+
+- [Sign in](/auth): Sign in with an @mnnit.ac.in account.
+- [Notifications](/notifications): Personal activity feed (auth required).
+- [Profile](/profile): User profile, followers, skills, GitHub link.
