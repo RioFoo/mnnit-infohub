@@ -35,13 +35,24 @@ class ErrorBoundary extends Component<Props, State> {
 
     // Production overlay toast with correlation id + one-click copy
     try {
+      const route = location.pathname + location.search;
       toast.error('App error captured', {
-        description: `id=${entry.id}`,
-        duration: 10000,
+        description: `id=${entry.id} · route=${route}`,
+        duration: 12000,
         action: {
+          label: 'View in Logs',
+          onClick: () => {
+            try {
+              window.location.assign(`/logs?focus=${encodeURIComponent(entry.id)}`);
+            } catch {
+              /* ignore */
+            }
+          },
+        },
+        cancel: {
           label: 'Copy',
           onClick: async () => {
-            const payload = `id=${entry.id}\nsession=${getSessionId()}\nurl=${location.href}\nmessage=${error.message}\nstack=${error.stack || ''}`;
+            const payload = `id=${entry.id}\nsession=${getSessionId()}\nroute=${route}\nurl=${location.href}\nmessage=${error.message}\nstack=${error.stack || ''}`;
             try {
               await navigator.clipboard.writeText(payload);
               toast.success('Error details copied');
@@ -62,7 +73,8 @@ class ErrorBoundary extends Component<Props, State> {
 
   handleCopy = async () => {
     const { correlationId, error } = this.state;
-    const payload = `id=${correlationId}\nsession=${getSessionId()}\nurl=${location.href}\nmessage=${error?.message}\nstack=${error?.stack || ''}`;
+    const route = location.pathname + location.search;
+    const payload = `id=${correlationId}\nsession=${getSessionId()}\nroute=${route}\nurl=${location.href}\nmessage=${error?.message}\nstack=${error?.stack || ''}`;
     try {
       await navigator.clipboard.writeText(payload);
     } catch {
