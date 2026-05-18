@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -52,6 +52,8 @@ const warmRouteModules = [
 
 const RouteWarmup = () => {
   useEffect(() => {
+    if (!import.meta.env.PROD) return;
+
     const preloadRoutes = () => {
       warmRouteModules.forEach((loadModule) => {
         void loadModule();
@@ -75,6 +77,23 @@ const RouteWarmup = () => {
   return null;
 };
 
+const LogFocusNavigationBridge = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleViewLogEntry = (event: Event) => {
+      const focusId = (event as CustomEvent<{ id?: string }>).detail?.id;
+      if (!focusId) return;
+      navigate(`/logs?focus=${encodeURIComponent(focusId)}`);
+    };
+
+    window.addEventListener('infohub:view-log-entry', handleViewLogEntry);
+    return () => window.removeEventListener('infohub:view-log-entry', handleViewLogEntry);
+  }, [navigate]);
+
+  return null;
+};
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -85,6 +104,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <LogFocusNavigationBridge />
               <RouteWarmup />
               <RouteSEO />
               <Suspense fallback={<PageLoadingSkeleton />}>

@@ -43,7 +43,7 @@ class ErrorBoundary extends Component<Props, State> {
           label: 'View in Logs',
           onClick: () => {
             try {
-              window.location.assign(`/logs?focus=${encodeURIComponent(entry.id)}`);
+              window.dispatchEvent(new CustomEvent('infohub:view-log-entry', { detail: { id: entry.id } }));
             } catch {
               /* ignore */
             }
