@@ -89,8 +89,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   useEffect(() => {
-    // Set up auth listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    let cancelled = false;
+
+    // Set up auth listener FIRST. Keep the callback synchronous to avoid Supabase auth deadlocks.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (cancelled) return;
+
       setSession(session);
       setUser(session?.user ?? null);
 
@@ -117,13 +121,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // THEN check existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (cancelled) return;
+
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) ensureProfile(session.user);
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, [ensureProfile]);
 
   const signUp = async (email: string, password: string, metadata: Record<string, string>) => {
