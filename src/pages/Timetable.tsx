@@ -416,7 +416,9 @@ const Timetable = () => {
             )}
           </motion.div>
         </AnimatePresence>
+        )}
       </div>
+
     </div>
   );
 };
