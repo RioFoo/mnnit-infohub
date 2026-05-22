@@ -56,12 +56,30 @@ const formatTo12Hour = (time: string) => {
   return `${hour12.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${period}`;
 };
 
-const Timetable = () => {
-  const [semester, setSemester] = useState(defaultSemester);
-  const [section, setSection] = useState(() => {
-    const firstSection = Object.keys(TIMETABLE_DATA_BY_SEMESTER[defaultSemester] ?? {})[0];
-    return firstSection ?? '';
-  });
+const semesterKeyFromProfile = (sem: string | null | undefined) => {
+  if (!sem) return null;
+  const digits = sem.replace(/\D/g, '');
+  return semesterIds.includes(digits) ? digits : null;
+};
+
+const sectionKeyFromProfile = (branch: string | null | undefined, section: string | null | undefined, semKey: string) => {
+  if (!branch || !section) return null;
+  const candidate = `${branch}-${section}`.toUpperCase();
+  const available = Object.keys(TIMETABLE_DATA_BY_SEMESTER[semKey] ?? {});
+  return available.includes(candidate) ? candidate : null;
+};
+
+const TimetableInner = () => {
+  const { profile } = useAuth();
+
+  const initialSemester = semesterKeyFromProfile(profile?.semester) ?? defaultSemester;
+  const initialSection =
+    sectionKeyFromProfile(profile?.branch, profile?.section, initialSemester) ??
+    Object.keys(TIMETABLE_DATA_BY_SEMESTER[initialSemester] ?? {})[0] ??
+    '';
+
+  const [semester, setSemester] = useState(initialSemester);
+  const [section, setSection] = useState(initialSection);
   const [batch, setBatch] = useState<'ALL' | '1' | '2'>('ALL');
   const [selectedDay, setSelectedDay] = useState(() => {
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
@@ -72,6 +90,13 @@ const Timetable = () => {
   });
   const [now, setNow] = useState(new Date());
   const [view, setView] = useState<'section' | 'personal'>('section');
+  const [personalEntries, setPersonalEntries] = useState<PersonalEntry[]>([]);
+
+  const profileHasSection = !!(profile?.branch && profile?.section);
+  const matchedSectionFromProfile = useMemo(
+    () => sectionKeyFromProfile(profile?.branch, profile?.section, semester),
+    [profile?.branch, profile?.section, semester]
+  );
 
   const semesterData = TIMETABLE_DATA_BY_SEMESTER[semester] ?? {};
   const sectionIds = useMemo(() => Object.keys(semesterData), [semesterData]);
