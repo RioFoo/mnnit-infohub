@@ -93,10 +93,7 @@ const TimetableInner = () => {
   const [personalEntries, setPersonalEntries] = useState<PersonalEntry[]>([]);
 
   const profileHasSection = !!(profile?.branch && profile?.section);
-  const matchedSectionFromProfile = useMemo(
-    () => sectionKeyFromProfile(profile?.branch, profile?.section, semester),
-    [profile?.branch, profile?.section, semester]
-  );
+
 
   const semesterData = TIMETABLE_DATA_BY_SEMESTER[semester] ?? {};
   const sectionIds = useMemo(() => Object.keys(semesterData), [semesterData]);
