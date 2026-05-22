@@ -2,10 +2,26 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
-import { Plus, Pencil, Trash2, Clock, MapPin, Bell } from 'lucide-react';
+import { Plus, Pencil, Trash2, Clock, MapPin, Bell, MoreVertical } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -20,7 +36,7 @@ const COLORS = [
   { name: 'pink', cls: 'bg-accent/[0.08] text-accent border-l-accent' },
 ];
 
-type Entry = {
+export type PersonalEntry = {
   id: string;
   user_id: string;
   day: string;
@@ -48,18 +64,25 @@ const emptyForm = {
 const colorClass = (c?: string | null) =>
   COLORS.find(x => x.name === c)?.cls ?? COLORS[0].cls;
 
-export const MyTimetable = ({ selectedDay }: { selectedDay: string }) => {
+interface Props {
+  selectedDay: string;
+  onEntriesChange?: (entries: PersonalEntry[]) => void;
+}
+
+export const MyTimetable = ({ selectedDay, onEntriesChange }: Props) => {
   const { user } = useAuth();
-  const [entries, setEntries] = useState<Entry[]>([]);
+  const [entries, setEntries] = useState<PersonalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<Entry | null>(null);
+  const [editing, setEditing] = useState<PersonalEntry | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
 
   const fetchEntries = useCallback(async () => {
     if (!user) {
       setEntries([]);
       setLoading(false);
+      onEntriesChange?.([]);
       return;
     }
     setLoading(true);
@@ -71,10 +94,12 @@ export const MyTimetable = ({ selectedDay }: { selectedDay: string }) => {
     if (error) {
       toast.error('Failed to load your schedule');
     } else {
-      setEntries((data ?? []) as Entry[]);
+      const list = (data ?? []) as PersonalEntry[];
+      setEntries(list);
+      onEntriesChange?.(list);
     }
     setLoading(false);
-  }, [user]);
+  }, [user, onEntriesChange]);
 
   useEffect(() => {
     fetchEntries();
@@ -94,7 +119,7 @@ export const MyTimetable = ({ selectedDay }: { selectedDay: string }) => {
     setOpen(true);
   };
 
-  const openEdit = (e: Entry) => {
+  const openEdit = (e: PersonalEntry) => {
     setEditing(e);
     setForm({
       day: e.day,
@@ -129,20 +154,22 @@ export const MyTimetable = ({ selectedDay }: { selectedDay: string }) => {
         .update(form)
         .eq('id', editing.id);
       if (error) return toast.error(error.message);
-      toast.success('Class updated');
+      toast.success('Class updated!');
     } else {
       const { error } = await supabase
         .from('timetable_entries')
         .insert({ ...form, user_id: user.id });
       if (error) return toast.error(error.message);
-      toast.success('Class added');
+      toast.success('Class added!');
     }
     setOpen(false);
     fetchEntries();
   };
 
-  const remove = async (id: string) => {
-    const { error } = await supabase.from('timetable_entries').delete().eq('id', id);
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+    const { error } = await supabase.from('timetable_entries').delete().eq('id', deleteId);
+    setDeleteId(null);
     if (error) return toast.error(error.message);
     toast.success('Class removed');
     fetchEntries();
@@ -157,82 +184,102 @@ export const MyTimetable = ({ selectedDay }: { selectedDay: string }) => {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 relative pb-20">
       <div className="flex items-center justify-between mb-2">
         <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/50">
           {dayEntries.length} personal class{dayEntries.length !== 1 ? 'es' : ''} · {selectedDay}
         </span>
-        <Button
-          size="sm"
-          onClick={openCreate}
-          className="h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20 font-mono text-xs"
-        >
-          <Plus className="w-3.5 h-3.5 mr-1" /> Add Class
-        </Button>
       </div>
 
       {loading ? (
         <div className="text-center text-xs font-mono text-muted-foreground/40 py-8">Loading…</div>
       ) : dayEntries.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-40 text-muted-foreground/30">
-          <Clock className="w-8 h-8 mb-2" />
-          <p className="text-sm font-mono">No personal classes yet</p>
+        <div className="flex flex-col items-center justify-center h-56 text-muted-foreground/40 gap-3">
+          <Clock className="w-10 h-10 opacity-40" />
+          <p className="text-sm font-mono">No classes added yet</p>
+          <Button
+            onClick={openCreate}
+            className="h-9 rounded-xl bg-primary/15 text-primary hover:bg-primary/25 border border-primary/30 font-mono text-xs"
+          >
+            <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Class
+          </Button>
         </div>
       ) : (
-        dayEntries.map((e, i) => (
-          <motion.div
-            key={e.id}
-            initial={{ opacity: 0, x: -12 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.04 }}
-            className={cn(
-              'flex items-stretch rounded-xl border-l-[3px] bg-card/30',
-              colorClass(e.color).split(' ').filter(c => c.startsWith('border-l-')).join(' ')
-            )}
-          >
-            <div className={cn('flex flex-col items-center justify-center w-16 md:w-20 shrink-0 py-3 px-2 rounded-l-lg', colorClass(e.color))}>
-              <span className="text-xs font-mono font-medium">{e.start_time}</span>
-              <span className="text-[8px] font-mono opacity-50 my-0.5">→</span>
-              <span className="text-[10px] font-mono opacity-60">{e.end_time}</span>
-            </div>
-            <div className="flex-1 flex items-center justify-between px-3 md:px-4 py-3 rounded-r-xl min-w-0">
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium truncate text-foreground">{e.subject_name}</p>
-                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <span className={cn('text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded', colorClass(e.color))}>
-                    {e.class_type}
-                  </span>
-                  {e.venue && (
-                    <span className="text-[10px] font-mono text-muted-foreground/60 flex items-center gap-1">
-                      <MapPin className="w-2.5 h-2.5" /> {e.venue}
+        dayEntries.map((e, i) => {
+          const borderCls = colorClass(e.color)
+            .split(' ')
+            .filter(c => c.startsWith('border-l-'))
+            .join(' ');
+          return (
+            <motion.div
+              key={e.id}
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.04 }}
+              className={cn('flex items-stretch rounded-xl border-l-[3px] bg-card/30', borderCls)}
+            >
+              <div className={cn('flex flex-col items-center justify-center w-16 md:w-20 shrink-0 py-3 px-2 rounded-l-lg', colorClass(e.color))}>
+                <span className="text-xs font-mono font-medium">{e.start_time}</span>
+                <span className="text-[8px] font-mono opacity-50 my-0.5">→</span>
+                <span className="text-[10px] font-mono opacity-60">{e.end_time}</span>
+              </div>
+              <div className="flex-1 flex items-center justify-between px-3 md:px-4 py-3 rounded-r-xl min-w-0">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate text-foreground">{e.subject_name}</p>
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
+                    <span className={cn('text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded', colorClass(e.color))}>
+                      {e.class_type}
                     </span>
-                  )}
-                  {e.notify_minutes ? (
-                    <span className="text-[10px] font-mono text-muted-foreground/40 flex items-center gap-1">
-                      <Bell className="w-2.5 h-2.5" /> {e.notify_minutes}m
-                    </span>
-                  ) : null}
+                    {e.venue && (
+                      <span className="text-[10px] font-mono text-muted-foreground/60 flex items-center gap-1">
+                        <MapPin className="w-2.5 h-2.5" /> {e.venue}
+                      </span>
+                    )}
+                    {e.notify_minutes ? (
+                      <span className="text-[10px] font-mono text-muted-foreground/40 flex items-center gap-1">
+                        <Bell className="w-2.5 h-2.5" /> {e.notify_minutes}m
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="p-1.5 rounded-md hover:bg-muted/30 text-muted-foreground hover:text-foreground transition shrink-0 ml-2"
+                      aria-label="More"
+                    >
+                      <MoreVertical className="w-4 h-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="font-mono text-xs">
+                    <DropdownMenuItem onClick={() => openEdit(e)}>
+                      <Pencil className="w-3.5 h-3.5 mr-2" /> Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setDeleteId(e.id)}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
-              <div className="flex items-center gap-1 ml-2 shrink-0">
-                <button
-                  onClick={() => openEdit(e)}
-                  className="p-1.5 rounded-md hover:bg-muted/30 text-muted-foreground hover:text-foreground transition"
-                  aria-label="Edit"
-                >
-                  <Pencil className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={() => remove(e.id)}
-                  className="p-1.5 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition"
-                  aria-label="Delete"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        ))
+            </motion.div>
+          );
+        })
+      )}
+
+      {/* Floating Add button (only when list has items, else inline CTA above) */}
+      {dayEntries.length > 0 && (
+        <motion.button
+          whileTap={{ scale: 0.92 }}
+          whileHover={{ scale: 1.05 }}
+          onClick={openCreate}
+          className="fixed bottom-20 md:bottom-8 right-5 md:right-8 z-30 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-[0_0_24px_hsl(var(--primary)/0.5)] flex items-center justify-center"
+          aria-label="Add class"
+        >
+          <Plus className="w-6 h-6" />
+        </motion.button>
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -249,6 +296,7 @@ export const MyTimetable = ({ selectedDay }: { selectedDay: string }) => {
                 value={form.subject_name}
                 onChange={(ev) => setForm({ ...form, subject_name: ev.target.value })}
                 placeholder="e.g. Data Structures"
+                maxLength={100}
               />
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -283,7 +331,12 @@ export const MyTimetable = ({ selectedDay }: { selectedDay: string }) => {
             </div>
             <div>
               <Label className="text-xs font-mono">Venue</Label>
-              <Input value={form.venue} onChange={(ev) => setForm({ ...form, venue: ev.target.value })} placeholder="e.g. CS-201" />
+              <Input
+                value={form.venue}
+                onChange={(ev) => setForm({ ...form, venue: ev.target.value })}
+                placeholder="e.g. CS-201"
+                maxLength={50}
+              />
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
@@ -324,6 +377,28 @@ export const MyTimetable = ({ selectedDay }: { selectedDay: string }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-mono uppercase tracking-wider text-sm">
+              Remove this class?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the class from your personal schedule.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
