@@ -1,13 +1,15 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, Component, ReactNode } from 'react';
 import { TIMETABLE_DATA_BY_SEMESTER, type ClassSession } from '@/data/infohub-data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Bell, BellOff, Clock } from 'lucide-react';
+import { Activity, Bell, BellOff, Clock, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/PageHeader';
-import { MyTimetable } from '@/components/timetable/MyTimetable';
+import { MyTimetable, type PersonalEntry } from '@/components/timetable/MyTimetable';
+import { useAuth } from '@/contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 const semesterIds = Object.keys(TIMETABLE_DATA_BY_SEMESTER);
 const defaultSemester = semesterIds[0] ?? '2';
