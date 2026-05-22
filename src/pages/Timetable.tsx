@@ -7,6 +7,7 @@ import { Activity, Bell, BellOff, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/PageHeader';
+import { MyTimetable } from '@/components/timetable/MyTimetable';
 
 const semesterIds = Object.keys(TIMETABLE_DATA_BY_SEMESTER);
 const defaultSemester = semesterIds[0] ?? '2';
