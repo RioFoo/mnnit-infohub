@@ -69,6 +69,7 @@ const Timetable = () => {
     return localStorage.getItem('timetable-reminders') === 'true';
   });
   const [now, setNow] = useState(new Date());
+  const [view, setView] = useState<'section' | 'personal'>('section');
 
   const semesterData = TIMETABLE_DATA_BY_SEMESTER[semester] ?? {};
   const sectionIds = useMemo(() => Object.keys(semesterData), [semesterData]);
