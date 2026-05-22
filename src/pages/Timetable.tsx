@@ -300,6 +300,9 @@ const Timetable = () => {
 
       {/* Sessions list - line by line */}
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-3">
+        {view === 'personal' ? (
+          <MyTimetable selectedDay={selectedDay} />
+        ) : (
         <AnimatePresence mode="wait">
           <motion.div
             key={selectedDay}
