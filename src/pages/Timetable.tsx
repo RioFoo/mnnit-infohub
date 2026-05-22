@@ -347,8 +347,31 @@ const TimetableInner = () => {
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-3">
         {view === 'personal' ? (
           <MyTimetable selectedDay={selectedDay} onEntriesChange={setPersonalEntries} />
+        ) : !profileHasSection ? (
+          <div className="flex flex-col items-center justify-center h-56 gap-3 text-center px-6">
+            <Clock className="w-10 h-10 text-muted-foreground/30" />
+            <p className="text-sm font-mono text-muted-foreground">Select your branch and section</p>
+            <p className="text-xs font-mono text-muted-foreground/50 max-w-sm">
+              Set your branch and section in your profile to see your official class schedule here.
+            </p>
+            <Link
+              to="/settings"
+              className="mt-1 px-3 py-1.5 rounded-md border border-primary/30 bg-primary/10 text-primary text-xs font-mono hover:bg-primary/20"
+            >
+              Open Settings
+            </Link>
+          </div>
+        ) : !sectionData ? (
+          <div className="flex flex-col items-center justify-center h-56 gap-3 text-center px-6">
+            <Clock className="w-10 h-10 text-muted-foreground/30" />
+            <p className="text-sm font-mono text-muted-foreground">
+              No timetable available for {profile?.branch}-{profile?.section} (sem {semester})
+            </p>
+            <p className="text-xs font-mono text-muted-foreground/50">Pick another section from the dropdown above.</p>
+          </div>
         ) : (
         <AnimatePresence mode="wait">
+
           <motion.div
             key={selectedDay}
             initial={{ opacity: 0, y: 8 }}
