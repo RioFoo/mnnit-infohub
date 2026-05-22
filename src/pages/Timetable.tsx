@@ -450,4 +450,42 @@ const TimetableInner = () => {
   );
 };
 
+// Local ErrorBoundary so a render error inside Timetable never leaves a blank screen
+class TimetableErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  componentDidCatch(error: Error, info: unknown) {
+    // eslint-disable-next-line no-console
+    console.error('[Timetable] render error', error, info);
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="flex flex-col items-center justify-center h-[60vh] gap-3 px-6 text-center">
+          <AlertTriangle className="w-10 h-10 text-destructive" />
+          <p className="font-mono text-sm text-destructive">Timetable failed to render</p>
+          <p className="font-mono text-xs text-destructive/70 max-w-md break-words">
+            {this.state.error.message}
+          </p>
+          <button
+            onClick={() => this.setState({ error: null })}
+            className="mt-2 px-3 py-1.5 rounded-md border border-destructive/30 text-destructive text-xs font-mono hover:bg-destructive/10"
+          >
+            Try again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const Timetable = () => (
+  <TimetableErrorBoundary>
+    <TimetableInner />
+  </TimetableErrorBoundary>
+);
+
 export default Timetable;
