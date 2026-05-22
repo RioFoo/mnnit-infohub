@@ -310,6 +310,59 @@ export type Database = {
         }
         Relationships: []
       }
+      timetable_entries: {
+        Row: {
+          class_type: string | null
+          color: string | null
+          created_at: string | null
+          day: string
+          end_time: string
+          id: string
+          is_active: boolean | null
+          notify_minutes: number | null
+          start_time: string
+          subject_name: string
+          user_id: string
+          venue: string | null
+        }
+        Insert: {
+          class_type?: string | null
+          color?: string | null
+          created_at?: string | null
+          day: string
+          end_time: string
+          id?: string
+          is_active?: boolean | null
+          notify_minutes?: number | null
+          start_time: string
+          subject_name: string
+          user_id: string
+          venue?: string | null
+        }
+        Update: {
+          class_type?: string | null
+          color?: string | null
+          created_at?: string | null
+          day?: string
+          end_time?: string
+          id?: string
+          is_active?: boolean | null
+          notify_minutes?: number | null
+          start_time?: string
+          subject_name?: string
+          user_id?: string
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timetable_entries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

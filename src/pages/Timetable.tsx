@@ -7,6 +7,7 @@ import { Activity, Bell, BellOff, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/PageHeader';
+import { MyTimetable } from '@/components/timetable/MyTimetable';
 
 const semesterIds = Object.keys(TIMETABLE_DATA_BY_SEMESTER);
 const defaultSemester = semesterIds[0] ?? '2';
@@ -68,6 +69,7 @@ const Timetable = () => {
     return localStorage.getItem('timetable-reminders') === 'true';
   });
   const [now, setNow] = useState(new Date());
+  const [view, setView] = useState<'section' | 'personal'>('section');
 
   const semesterData = TIMETABLE_DATA_BY_SEMESTER[semester] ?? {};
   const sectionIds = useMemo(() => Object.keys(semesterData), [semesterData]);
@@ -208,38 +210,53 @@ const Timetable = () => {
         </PageHeader>
 
         <div className="flex flex-wrap items-center gap-2 md:gap-3">
-          <Select value={section} onValueChange={setSection}>
-            <SelectTrigger className="w-32 md:w-44 h-9 md:h-10 rounded-xl bg-muted/15 border-border/[0.08] text-sm font-mono">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {sectionIds.map(id => (
-                <SelectItem key={id} value={id}>{semesterData[id]?.name ?? id}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Tabs value={batch} onValueChange={(v) => setBatch(v as 'ALL' | '1' | '2')}>
+          <Tabs value={view} onValueChange={(v) => setView(v as 'section' | 'personal')}>
             <TabsList className="h-10 rounded-xl bg-muted/15 border border-border/[0.08]">
-              {['ALL', '1', '2'].map(v => (
-                <TabsTrigger key={v} value={v} className="h-8 rounded-lg text-xs font-mono px-4 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
-                  {v === 'ALL' ? 'All Batches' : `Batch ${v}`}
-                </TabsTrigger>
-              ))}
+              <TabsTrigger value="section" className="h-8 rounded-lg text-xs font-mono px-4 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                Section
+              </TabsTrigger>
+              <TabsTrigger value="personal" className="h-8 rounded-lg text-xs font-mono px-4 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                My Schedule
+              </TabsTrigger>
             </TabsList>
           </Tabs>
 
-          {/* Legend */}
-          <div className="hidden md:flex items-center gap-4 ml-auto">
-            {Object.entries(typeStyles).map(([type, style]) => (
-              <div key={type} className="flex items-center gap-2">
-                <div className={cn('w-2 h-2 rounded-full', style.dot)} />
-                <span className="text-[10px] text-muted-foreground/50 font-mono capitalize">{type.toLowerCase()}</span>
+          {view === 'section' && (
+            <>
+              <Select value={section} onValueChange={setSection}>
+                <SelectTrigger className="w-32 md:w-44 h-9 md:h-10 rounded-xl bg-muted/15 border-border/[0.08] text-sm font-mono">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {sectionIds.map(id => (
+                    <SelectItem key={id} value={id}>{semesterData[id]?.name ?? id}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Tabs value={batch} onValueChange={(v) => setBatch(v as 'ALL' | '1' | '2')}>
+                <TabsList className="h-10 rounded-xl bg-muted/15 border border-border/[0.08]">
+                  {['ALL', '1', '2'].map(v => (
+                    <TabsTrigger key={v} value={v} className="h-8 rounded-lg text-xs font-mono px-4 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                      {v === 'ALL' ? 'All Batches' : `Batch ${v}`}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+
+              <div className="hidden md:flex items-center gap-4 ml-auto">
+                {Object.entries(typeStyles).map(([type, style]) => (
+                  <div key={type} className="flex items-center gap-2">
+                    <div className={cn('w-2 h-2 rounded-full', style.dot)} />
+                    <span className="text-[10px] text-muted-foreground/50 font-mono capitalize">{type.toLowerCase()}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
       </div>
+
 
       {/* Day tabs */}
       <div className="flex items-center gap-1 md:gap-1.5 px-3 md:px-6 py-2 md:py-3 border-b border-border/[0.04] shrink-0 overflow-x-auto scrollbar-hide">
@@ -283,6 +300,9 @@ const Timetable = () => {
 
       {/* Sessions list - line by line */}
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-3">
+        {view === 'personal' ? (
+          <MyTimetable selectedDay={selectedDay} />
+        ) : (
         <AnimatePresence mode="wait">
           <motion.div
             key={selectedDay}
@@ -396,7 +416,9 @@ const Timetable = () => {
             )}
           </motion.div>
         </AnimatePresence>
+        )}
       </div>
+
     </div>
   );
 };
