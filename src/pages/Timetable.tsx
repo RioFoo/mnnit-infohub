@@ -103,11 +103,16 @@ const TimetableInner = () => {
       setSection('');
       return;
     }
-
+    const fromProfile = sectionKeyFromProfile(profile?.branch, profile?.section, semester);
+    if (fromProfile && fromProfile !== section) {
+      setSection(fromProfile);
+      return;
+    }
     if (!sectionIds.includes(section)) {
       setSection(sectionIds[0]);
     }
-  }, [section, sectionIds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sectionIds, profile?.branch, profile?.section, semester]);
 
   // Update current time every 30s
   useEffect(() => {
