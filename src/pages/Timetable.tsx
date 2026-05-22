@@ -151,56 +151,74 @@ const TimetableInner = () => {
     return filteredSchedule.find(d => d.day === selectedDay)?.sessions || [];
   }, [filteredSchedule, selectedDay]);
 
-  // Reminder notification system
+  // Reminder notification system — covers both section + personal entries
   const checkReminders = useCallback(() => {
     if (!remindersEnabled) return;
     if (!('Notification' in window)) return;
 
     const nowMin = now.getHours() * 60 + now.getMinutes();
-    const todayData = filteredSchedule.find(d => d.day === currentDay);
-    if (!todayData) return;
 
-    todayData.sessions.forEach(session => {
-      const sessionMin = parseTimeToMinutes(session.startTime);
-      const diff = sessionMin - nowMin;
-
-      if (diff === 5) {
-        const key = `reminder-${currentDay}-${session.startTime}-${session.subject}`;
-        if (!sessionStorage.getItem(key)) {
-          sessionStorage.setItem(key, 'true');
-          toast(`📚 ${session.subject} starts in 5 min`, {
-            description: `${formatTo12Hour(session.startTime)} – ${formatTo12Hour(session.endTime)} · ${session.room || 'TBA'}`,
-            duration: 10000,
-          });
-
-          if (Notification.permission === 'granted') {
-            new Notification(`📚 ${session.subject} in 5 minutes`, {
-              body: `${formatTo12Hour(session.startTime)} – ${formatTo12Hour(session.endTime)} · ${session.room || 'TBA'}`,
-              icon: '/favicon.ico',
-            });
-          }
-        }
+    const fire = (subject: string, startTime: string, endTime: string, venue: string | null, leadMin: number) => {
+      const key = `reminder-${currentDay}-${startTime}-${subject}`;
+      if (sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key, 'true');
+      const venueLabel = venue || 'TBA';
+      const body = `${formatTo12Hour(startTime)} – ${formatTo12Hour(endTime)} · ${venueLabel}`;
+      toast(`📚 ${subject} in ${leadMin} mins — ${venueLabel}`, {
+        description: body,
+        duration: 10000,
+      });
+      if (Notification.permission === 'granted') {
+        new Notification(`📚 ${subject} in ${leadMin} mins — ${venueLabel}`, {
+          body,
+          icon: '/favicon.ico',
+        });
       }
+    };
+
+    // Section sessions (5-min lead)
+    const todaySection = filteredSchedule.find(d => d.day === currentDay);
+    todaySection?.sessions.forEach(s => {
+      const diff = parseTimeToMinutes(s.startTime) - nowMin;
+      if (diff === 5) fire(s.subject, s.startTime, s.endTime, s.room ?? null, 5);
     });
-  }, [remindersEnabled, now, filteredSchedule, currentDay]);
+
+    // Personal entries (per-entry notify_minutes, default 10)
+    personalEntries
+      .filter(e => e.is_active && e.day === currentDay)
+      .forEach(e => {
+        const diff = parseTimeToMinutes(e.start_time) - nowMin;
+        const lead = e.notify_minutes ?? 10;
+        if (diff === lead) fire(e.subject_name, e.start_time, e.end_time, e.venue, lead);
+      });
+  }, [remindersEnabled, now, filteredSchedule, currentDay, personalEntries]);
 
   useEffect(() => {
     checkReminders();
   }, [checkReminders]);
 
   const toggleReminders = async () => {
-    if (!remindersEnabled) {
-      if ('Notification' in window && Notification.permission === 'default') {
-        await Notification.requestPermission();
-      }
-      localStorage.setItem('timetable-reminders', 'true');
-      setRemindersEnabled(true);
-      toast.success('Class reminders enabled — you\'ll get notified 5 min before each class');
-    } else {
+    if (remindersEnabled) {
       localStorage.setItem('timetable-reminders', 'false');
       setRemindersEnabled(false);
       toast('Reminders disabled');
+      return;
     }
+    if (!('Notification' in window)) {
+      toast.error('This browser does not support notifications');
+      return;
+    }
+    let permission = Notification.permission;
+    if (permission === 'default') {
+      permission = await Notification.requestPermission();
+    }
+    if (permission === 'denied') {
+      toast.error('Please allow notifications in browser settings');
+      return;
+    }
+    localStorage.setItem('timetable-reminders', 'true');
+    setRemindersEnabled(true);
+    toast.success("Class reminders enabled — you'll get notified before each class");
   };
 
   return (
