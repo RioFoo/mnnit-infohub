@@ -1,13 +1,15 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, Component, ReactNode } from 'react';
 import { TIMETABLE_DATA_BY_SEMESTER, type ClassSession } from '@/data/infohub-data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Bell, BellOff, Clock } from 'lucide-react';
+import { Activity, Bell, BellOff, Clock, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/PageHeader';
-import { MyTimetable } from '@/components/timetable/MyTimetable';
+import { MyTimetable, type PersonalEntry } from '@/components/timetable/MyTimetable';
+import { useAuth } from '@/contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 const semesterIds = Object.keys(TIMETABLE_DATA_BY_SEMESTER);
 const defaultSemester = semesterIds[0] ?? '2';
@@ -54,12 +56,30 @@ const formatTo12Hour = (time: string) => {
   return `${hour12.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${period}`;
 };
 
-const Timetable = () => {
-  const [semester, setSemester] = useState(defaultSemester);
-  const [section, setSection] = useState(() => {
-    const firstSection = Object.keys(TIMETABLE_DATA_BY_SEMESTER[defaultSemester] ?? {})[0];
-    return firstSection ?? '';
-  });
+const semesterKeyFromProfile = (sem: string | null | undefined) => {
+  if (!sem) return null;
+  const digits = sem.replace(/\D/g, '');
+  return semesterIds.includes(digits) ? digits : null;
+};
+
+const sectionKeyFromProfile = (branch: string | null | undefined, section: string | null | undefined, semKey: string) => {
+  if (!branch || !section) return null;
+  const candidate = `${branch}-${section}`.toUpperCase();
+  const available = Object.keys(TIMETABLE_DATA_BY_SEMESTER[semKey] ?? {});
+  return available.includes(candidate) ? candidate : null;
+};
+
+const TimetableInner = () => {
+  const { profile } = useAuth();
+
+  const initialSemester = semesterKeyFromProfile(profile?.semester) ?? defaultSemester;
+  const initialSection =
+    sectionKeyFromProfile(profile?.branch, profile?.section, initialSemester) ??
+    Object.keys(TIMETABLE_DATA_BY_SEMESTER[initialSemester] ?? {})[0] ??
+    '';
+
+  const [semester, setSemester] = useState(initialSemester);
+  const [section, setSection] = useState(initialSection);
   const [batch, setBatch] = useState<'ALL' | '1' | '2'>('ALL');
   const [selectedDay, setSelectedDay] = useState(() => {
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
@@ -70,6 +90,10 @@ const Timetable = () => {
   });
   const [now, setNow] = useState(new Date());
   const [view, setView] = useState<'section' | 'personal'>('section');
+  const [personalEntries, setPersonalEntries] = useState<PersonalEntry[]>([]);
+
+  const profileHasSection = !!(profile?.branch && profile?.section);
+
 
   const semesterData = TIMETABLE_DATA_BY_SEMESTER[semester] ?? {};
   const sectionIds = useMemo(() => Object.keys(semesterData), [semesterData]);
@@ -79,11 +103,16 @@ const Timetable = () => {
       setSection('');
       return;
     }
-
+    const fromProfile = sectionKeyFromProfile(profile?.branch, profile?.section, semester);
+    if (fromProfile && fromProfile !== section) {
+      setSection(fromProfile);
+      return;
+    }
     if (!sectionIds.includes(section)) {
       setSection(sectionIds[0]);
     }
-  }, [section, sectionIds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sectionIds, profile?.branch, profile?.section, semester]);
 
   // Update current time every 30s
   useEffect(() => {
@@ -124,56 +153,74 @@ const Timetable = () => {
     return filteredSchedule.find(d => d.day === selectedDay)?.sessions || [];
   }, [filteredSchedule, selectedDay]);
 
-  // Reminder notification system
+  // Reminder notification system — covers both section + personal entries
   const checkReminders = useCallback(() => {
     if (!remindersEnabled) return;
     if (!('Notification' in window)) return;
 
     const nowMin = now.getHours() * 60 + now.getMinutes();
-    const todayData = filteredSchedule.find(d => d.day === currentDay);
-    if (!todayData) return;
 
-    todayData.sessions.forEach(session => {
-      const sessionMin = parseTimeToMinutes(session.startTime);
-      const diff = sessionMin - nowMin;
-
-      if (diff === 5) {
-        const key = `reminder-${currentDay}-${session.startTime}-${session.subject}`;
-        if (!sessionStorage.getItem(key)) {
-          sessionStorage.setItem(key, 'true');
-          toast(`📚 ${session.subject} starts in 5 min`, {
-            description: `${formatTo12Hour(session.startTime)} – ${formatTo12Hour(session.endTime)} · ${session.room || 'TBA'}`,
-            duration: 10000,
-          });
-
-          if (Notification.permission === 'granted') {
-            new Notification(`📚 ${session.subject} in 5 minutes`, {
-              body: `${formatTo12Hour(session.startTime)} – ${formatTo12Hour(session.endTime)} · ${session.room || 'TBA'}`,
-              icon: '/favicon.ico',
-            });
-          }
-        }
+    const fire = (subject: string, startTime: string, endTime: string, venue: string | null, leadMin: number) => {
+      const key = `reminder-${currentDay}-${startTime}-${subject}`;
+      if (sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key, 'true');
+      const venueLabel = venue || 'TBA';
+      const body = `${formatTo12Hour(startTime)} – ${formatTo12Hour(endTime)} · ${venueLabel}`;
+      toast(`📚 ${subject} in ${leadMin} mins — ${venueLabel}`, {
+        description: body,
+        duration: 10000,
+      });
+      if (Notification.permission === 'granted') {
+        new Notification(`📚 ${subject} in ${leadMin} mins — ${venueLabel}`, {
+          body,
+          icon: '/favicon.ico',
+        });
       }
+    };
+
+    // Section sessions (5-min lead)
+    const todaySection = filteredSchedule.find(d => d.day === currentDay);
+    todaySection?.sessions.forEach(s => {
+      const diff = parseTimeToMinutes(s.startTime) - nowMin;
+      if (diff === 5) fire(s.subject, s.startTime, s.endTime, s.room ?? null, 5);
     });
-  }, [remindersEnabled, now, filteredSchedule, currentDay]);
+
+    // Personal entries (per-entry notify_minutes, default 10)
+    personalEntries
+      .filter(e => e.is_active && e.day === currentDay)
+      .forEach(e => {
+        const diff = parseTimeToMinutes(e.start_time) - nowMin;
+        const lead = e.notify_minutes ?? 10;
+        if (diff === lead) fire(e.subject_name, e.start_time, e.end_time, e.venue, lead);
+      });
+  }, [remindersEnabled, now, filteredSchedule, currentDay, personalEntries]);
 
   useEffect(() => {
     checkReminders();
   }, [checkReminders]);
 
   const toggleReminders = async () => {
-    if (!remindersEnabled) {
-      if ('Notification' in window && Notification.permission === 'default') {
-        await Notification.requestPermission();
-      }
-      localStorage.setItem('timetable-reminders', 'true');
-      setRemindersEnabled(true);
-      toast.success('Class reminders enabled — you\'ll get notified 5 min before each class');
-    } else {
+    if (remindersEnabled) {
       localStorage.setItem('timetable-reminders', 'false');
       setRemindersEnabled(false);
       toast('Reminders disabled');
+      return;
     }
+    if (!('Notification' in window)) {
+      toast.error('This browser does not support notifications');
+      return;
+    }
+    let permission = Notification.permission;
+    if (permission === 'default') {
+      permission = await Notification.requestPermission();
+    }
+    if (permission === 'denied') {
+      toast.error('Please allow notifications in browser settings');
+      return;
+    }
+    localStorage.setItem('timetable-reminders', 'true');
+    setRemindersEnabled(true);
+    toast.success("Class reminders enabled — you'll get notified before each class");
   };
 
   return (
@@ -301,9 +348,32 @@ const Timetable = () => {
       {/* Sessions list - line by line */}
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-3">
         {view === 'personal' ? (
-          <MyTimetable selectedDay={selectedDay} />
+          <MyTimetable selectedDay={selectedDay} onEntriesChange={setPersonalEntries} />
+        ) : !profileHasSection ? (
+          <div className="flex flex-col items-center justify-center h-56 gap-3 text-center px-6">
+            <Clock className="w-10 h-10 text-muted-foreground/30" />
+            <p className="text-sm font-mono text-muted-foreground">Select your branch and section</p>
+            <p className="text-xs font-mono text-muted-foreground/50 max-w-sm">
+              Set your branch and section in your profile to see your official class schedule here.
+            </p>
+            <Link
+              to="/settings"
+              className="mt-1 px-3 py-1.5 rounded-md border border-primary/30 bg-primary/10 text-primary text-xs font-mono hover:bg-primary/20"
+            >
+              Open Settings
+            </Link>
+          </div>
+        ) : !sectionData ? (
+          <div className="flex flex-col items-center justify-center h-56 gap-3 text-center px-6">
+            <Clock className="w-10 h-10 text-muted-foreground/30" />
+            <p className="text-sm font-mono text-muted-foreground">
+              No timetable available for {profile?.branch}-{profile?.section} (sem {semester})
+            </p>
+            <p className="text-xs font-mono text-muted-foreground/50">Pick another section from the dropdown above.</p>
+          </div>
         ) : (
         <AnimatePresence mode="wait">
+
           <motion.div
             key={selectedDay}
             initial={{ opacity: 0, y: 8 }}
@@ -422,5 +492,43 @@ const Timetable = () => {
     </div>
   );
 };
+
+// Local ErrorBoundary so a render error inside Timetable never leaves a blank screen
+class TimetableErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  componentDidCatch(error: Error, info: unknown) {
+    // eslint-disable-next-line no-console
+    console.error('[Timetable] render error', error, info);
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="flex flex-col items-center justify-center h-[60vh] gap-3 px-6 text-center">
+          <AlertTriangle className="w-10 h-10 text-destructive" />
+          <p className="font-mono text-sm text-destructive">Timetable failed to render</p>
+          <p className="font-mono text-xs text-destructive/70 max-w-md break-words">
+            {this.state.error.message}
+          </p>
+          <button
+            onClick={() => this.setState({ error: null })}
+            className="mt-2 px-3 py-1.5 rounded-md border border-destructive/30 text-destructive text-xs font-mono hover:bg-destructive/10"
+          >
+            Try again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const Timetable = () => (
+  <TimetableErrorBoundary>
+    <TimetableInner />
+  </TimetableErrorBoundary>
+);
 
 export default Timetable;
