@@ -90,6 +90,7 @@ const TimetableInner = () => {
   });
   const [now, setNow] = useState(new Date());
   const [view, setView] = useState<'section' | 'personal'>('section');
+  const [viewMode, setViewMode] = useState<'day' | 'week'>('day');
   const [personalEntries, setPersonalEntries] = useState<PersonalEntry[]>([]);
 
   const profileHasSection = !!(profile?.branch && profile?.section);
