@@ -370,9 +370,51 @@ const TimetableInner = () => {
         </div>
       </div>
 
+      {/* Next Class Countdown pill */}
+      {(liveNow || nextUp) && (() => {
+        const urgent = !liveNow && nextDiff != null && nextDiff <= 5;
+        const palette = liveNow
+          ? { wrap: 'bg-primary/10 border-primary/40', dot: 'bg-primary', prefix: 'text-primary/70', accent: 'text-primary' }
+          : urgent
+            ? { wrap: 'bg-amber-400/[0.08] border-amber-400/30', dot: 'bg-amber-400', prefix: 'text-amber-400/70', accent: 'text-amber-400' }
+            : { wrap: 'bg-primary/[0.06] border-primary/20', dot: 'bg-primary', prefix: 'text-primary/70', accent: 'text-primary' };
+        const target = liveNow ?? nextUp!;
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 rounded-xl border text-xs font-mono mx-3 md:mx-6 mt-2 mb-1 shrink-0',
+              palette.wrap
+            )}
+          >
+            <motion.div
+              animate={{ scale: liveNow ? [1, 1.6, 1] : [1, 1.4, 1], opacity: [1, 0.5, 1] }}
+              transition={{ duration: liveNow ? 0.9 : 1.5, repeat: Infinity }}
+              className={cn('w-2 h-2 rounded-full shrink-0', palette.dot)}
+            />
+            {liveNow ? (
+              <>
+                <span className={cn('shrink-0', palette.accent)}>🔴 LIVE NOW:</span>
+                <span className="text-foreground font-medium truncate flex-1">{liveNow.subject}</span>
+                {liveNow.room && <span className="text-muted-foreground/40 shrink-0">· {liveNow.room}</span>}
+              </>
+            ) : (
+              <>
+                <Zap className={cn('w-3 h-3 shrink-0', palette.accent)} />
+                <span className={cn('shrink-0', palette.prefix)}>{urgent ? 'Starting soon:' : 'Next:'}</span>
+                <span className="text-foreground font-medium truncate flex-1">{nextUp!.subject}</span>
+                <span className={cn('shrink-0', palette.accent)}>in {countdownLabel}</span>
+                {nextUp!.room && <span className="text-muted-foreground/40 shrink-0 hidden sm:inline">· {nextUp!.room}</span>}
+              </>
+            )}
+          </motion.div>
+        );
+      })()}
 
       {/* Day tabs */}
       <div className="flex items-center gap-1 md:gap-1.5 px-3 md:px-6 py-2 md:py-3 border-b border-border/[0.04] shrink-0 overflow-x-auto scrollbar-hide">
+
         {DAYS.map((day, i) => {
           const isToday = day === currentDay;
           const isSelected = day === selectedDay;
