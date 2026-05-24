@@ -322,6 +322,18 @@ const TimetableInner = () => {
             </TabsList>
           </Tabs>
 
+          {/* Day | Week toggle */}
+          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'day' | 'week')}>
+            <TabsList className="h-10 rounded-xl bg-muted/15 border border-border/[0.08]">
+              <TabsTrigger value="day" className="h-8 rounded-lg text-xs font-mono px-3 gap-1.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                <Rows3 className="w-3 h-3" /> Day
+              </TabsTrigger>
+              <TabsTrigger value="week" className="h-8 rounded-lg text-xs font-mono px-3 gap-1.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                <LayoutGrid className="w-3 h-3" /> Week
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+
           {view === 'section' && (
             <>
               <Select value={section} onValueChange={setSection}>
