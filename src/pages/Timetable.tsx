@@ -455,8 +455,114 @@ const TimetableInner = () => {
 
       {/* Sessions list - line by line */}
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-3">
-        {view === 'personal' ? (
-          <MyTimetable selectedDay={selectedDay} onEntriesChange={setPersonalEntries} />
+        {viewMode === 'week' ? (
+          <div className="grid grid-flow-col auto-cols-[minmax(180px,1fr)] gap-3 overflow-x-auto pb-3 snap-x snap-mandatory">
+            {DAYS.map((day, di) => {
+              const isToday = day === currentDay;
+              const dateLabel = (() => {
+                const today = new Date();
+                const todayIdx = DAYS.indexOf(currentDay);
+                const offset = di - (todayIdx === -1 ? 0 : todayIdx);
+                const d = new Date(today);
+                d.setDate(today.getDate() + offset);
+                return d.getDate().toString().padStart(2, '0');
+              })();
+
+              type Card = { startTime: string; endTime: string; subject: string; type: string; room: string | null; borderCls: string; bgCls: string; textCls: string };
+              let cards: Card[] = [];
+              if (view === 'section' && sectionData) {
+                cards = (filteredSchedule.find(d => d.day === day)?.sessions ?? []).map(s => {
+                  const st = typeStyles[s.type] || typeStyles.LECTURE;
+                  return {
+                    startTime: s.startTime,
+                    endTime: s.endTime,
+                    subject: s.subject.split('(')[0].trim(),
+                    type: s.type,
+                    room: s.room ?? null,
+                    borderCls: st.border,
+                    bgCls: st.bg,
+                    textCls: st.text,
+                  };
+                });
+              } else if (view === 'personal') {
+                cards = (personalByDay[day] ?? []).map(e => {
+                  const c = (e.color ?? 'blue');
+                  const palette =
+                    c === 'green' ? { border: 'border-l-primary', bg: 'bg-primary/[0.06]', text: 'text-primary' }
+                    : c === 'amber' ? { border: 'border-l-amber-400', bg: 'bg-amber-400/[0.06]', text: 'text-amber-400' }
+                    : c === 'pink' ? { border: 'border-l-accent', bg: 'bg-accent/[0.06]', text: 'text-accent' }
+                    : { border: 'border-l-secondary', bg: 'bg-secondary/[0.06]', text: 'text-secondary' };
+                  return {
+                    startTime: e.start_time,
+                    endTime: e.end_time,
+                    subject: e.subject_name,
+                    type: (e.class_type ?? 'Lecture').toUpperCase(),
+                    room: e.venue ?? null,
+                    borderCls: palette.border,
+                    bgCls: palette.bg,
+                    textCls: palette.text,
+                  };
+                });
+              }
+
+              return (
+                <div
+                  key={day}
+                  className={cn(
+                    'snap-start flex flex-col rounded-xl border bg-card/20 max-h-full min-h-[280px] overflow-hidden',
+                    isToday ? 'border-primary/30 bg-primary/[0.04]' : 'border-border/[0.06]'
+                  )}
+                >
+                  <div className="flex items-center justify-between px-3 py-2 border-b border-border/[0.06] shrink-0">
+                    <div className="flex flex-col">
+                      <span className={cn('text-xs font-mono font-medium', isToday ? 'text-primary' : 'text-foreground')}>
+                        {DAY_SHORT[di]} {dateLabel}
+                      </span>
+                      <span className="text-[9px] font-mono text-muted-foreground/50">{cards.length} class{cards.length !== 1 ? 'es' : ''}</span>
+                    </div>
+                    {isToday && <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary)/0.6)]" />}
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
+                    {cards.length === 0 ? (
+                      <div className="text-[10px] font-mono text-muted-foreground/30 text-center py-6">—</div>
+                    ) : (
+                      cards.map((c, ci) => (
+                        <motion.button
+                          key={`${day}-${c.startTime}-${ci}`}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={() => { setSelectedDay(day); setViewMode('day'); }}
+                          className={cn(
+                            'w-full text-left rounded-lg border-l-[3px] bg-card/40 px-2 py-1.5 hover:bg-card/70 transition',
+                            c.borderCls
+                          )}
+                        >
+                          <div className={cn('text-[10px] font-mono font-medium', c.textCls)}>
+                            {formatTo12Hour(c.startTime)}
+                          </div>
+                          <div className="text-[11px] font-medium text-foreground truncate mt-0.5">{c.subject}</div>
+                          <div className="flex items-center gap-1 mt-1 flex-wrap">
+                            <span className={cn('text-[8px] font-mono uppercase tracking-wider px-1 py-0.5 rounded', c.bgCls, c.textCls)}>
+                              {c.type}
+                            </span>
+                            {c.room && (
+                              <span className="text-[9px] font-mono text-muted-foreground/50 truncate">{c.room}</span>
+                            )}
+                          </div>
+                        </motion.button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : view === 'personal' ? (
+          <MyTimetable
+            key={`${profile?.branch}-${profile?.section}-${profile?.semester}`}
+            selectedDay={selectedDay}
+            onEntriesChange={setPersonalEntries}
+          />
+
         ) : !profileHasSection ? (
           <div className="flex flex-col items-center justify-center h-56 gap-3 text-center px-6">
             <Clock className="w-10 h-10 text-muted-foreground/30" />
