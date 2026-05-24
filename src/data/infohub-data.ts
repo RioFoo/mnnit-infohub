@@ -1053,9 +1053,28 @@ export const TIMETABLE_DATA: Record<string, SectionData> = {
   },
 };
 
-// Semester → section timetable mapping (for future expansion)
+// Semester → section timetable mapping (1st–8th)
+const EMPTY_SCHEDULE = [
+  { day: "Monday", sessions: [] },
+  { day: "Tuesday", sessions: [] },
+  { day: "Wednesday", sessions: [] },
+  { day: "Thursday", sessions: [] },
+  { day: "Friday", sessions: [] },
+];
+
+const placeholderSemester = (sem: string): Record<string, SectionData> => ({
+  [`SEM${sem}-A`]: { id: `SEM${sem}-A`, name: `Semester ${sem} — Section A`, schedule: EMPTY_SCHEDULE },
+});
+
 export const TIMETABLE_DATA_BY_SEMESTER: Record<string, Record<string, SectionData>> = {
+  "1": placeholderSemester("1"),
   "2": TIMETABLE_DATA,
+  "3": placeholderSemester("3"),
+  "4": placeholderSemester("4"),
+  "5": placeholderSemester("5"),
+  "6": placeholderSemester("6"),
+  "7": placeholderSemester("7"),
+  "8": placeholderSemester("8"),
 };
 
 
