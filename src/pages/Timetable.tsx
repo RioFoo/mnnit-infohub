@@ -115,6 +115,13 @@ const TimetableInner = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectionIds, profile?.branch, profile?.section, semester]);
 
+  // Auto-sync semester when profile changes (no reload required)
+  useEffect(() => {
+    const fromProfile = semesterKeyFromProfile(profile?.semester);
+    if (fromProfile && fromProfile !== semester) setSemester(fromProfile);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.semester]);
+
   // Update current time every 30s
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 30000);
