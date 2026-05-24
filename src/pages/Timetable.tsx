@@ -3,7 +3,7 @@ import { TIMETABLE_DATA_BY_SEMESTER, type ClassSession } from '@/data/infohub-da
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Bell, BellOff, Clock, AlertTriangle } from 'lucide-react';
+import { Activity, Bell, BellOff, Clock, AlertTriangle, Zap, LayoutGrid, Rows3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/PageHeader';
