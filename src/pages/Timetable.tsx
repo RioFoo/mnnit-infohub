@@ -231,6 +231,52 @@ const TimetableInner = () => {
     toast.success("Class reminders enabled — you'll get notified before each class");
   };
 
+  // --- Normalized "today" sessions for Next Class countdown (section + personal merged) ---
+  type NormSession = { startMin: number; endMin: number; subject: string; room: string | null; type: string };
+  const todayCombined: NormSession[] = useMemo(() => {
+    const list: NormSession[] = [];
+    const todaySec = filteredSchedule.find(d => d.day === currentDay);
+    todaySec?.sessions.forEach(s => list.push({
+      startMin: parseTimeToMinutes(s.startTime),
+      endMin: parseTimeToMinutes(s.endTime),
+      subject: s.subject.split('(')[0].trim(),
+      room: s.room ?? null,
+      type: s.type,
+    }));
+    personalEntries
+      .filter(e => e.is_active && e.day === currentDay)
+      .forEach(e => list.push({
+        startMin: parseTimeToMinutes(e.start_time),
+        endMin: parseTimeToMinutes(e.end_time),
+        subject: e.subject_name,
+        room: e.venue ?? null,
+        type: (e.class_type ?? 'Lecture').toUpperCase(),
+      }));
+    return list.sort((a, b) => a.startMin - b.startMin);
+  }, [filteredSchedule, personalEntries, currentDay]);
+
+  const liveNow = todayCombined.find(s => nowMinutes >= s.startMin && nowMinutes < s.endMin);
+  const nextUp = todayCombined.find(s => s.startMin > nowMinutes);
+  const nextDiff = nextUp ? nextUp.startMin - nowMinutes : null;
+  const countdownLabel = nextDiff == null
+    ? ''
+    : nextDiff <= 1
+      ? 'Starting now!'
+      : nextDiff < 60
+        ? `${nextDiff} mins`
+        : `${Math.floor(nextDiff / 60)}h ${nextDiff % 60}m`;
+
+  // --- Week-view data for personal entries (grouped by day) ---
+  const personalByDay = useMemo(() => {
+    const map: Record<string, PersonalEntry[]> = {};
+    DAYS.forEach(d => { map[d] = []; });
+    personalEntries
+      .filter(e => e.is_active)
+      .forEach(e => { if (map[e.day]) map[e.day].push(e); });
+    Object.values(map).forEach(arr => arr.sort((a, b) => a.start_time.localeCompare(b.start_time)));
+    return map;
+  }, [personalEntries]);
+
   return (
     <div className="flex flex-col h-[calc(100vh-6rem)] md:h-[calc(100vh-3rem)] overflow-hidden">
       {/* Top bar with PageHeader typewriter */}
