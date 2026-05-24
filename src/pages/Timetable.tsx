@@ -3,14 +3,16 @@ import { TIMETABLE_DATA_BY_SEMESTER, type ClassSession } from '@/data/infohub-da
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Bell, BellOff, Clock } from 'lucide-react';
+import { Activity, Bell, BellOff, Clock, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/PageHeader';
 import { MyTimetable } from '@/components/timetable/MyTimetable';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 const semesterIds = Object.keys(TIMETABLE_DATA_BY_SEMESTER);
-const defaultSemester = semesterIds[0] ?? '2';
+const defaultSemester = '2';
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const DAY_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
