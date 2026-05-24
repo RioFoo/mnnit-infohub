@@ -56,7 +56,25 @@ const formatTo12Hour = (time: string) => {
   return `${hour12.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${period}`;
 };
 
+type PersonalEntry = {
+  id: string;
+  day: string;
+  start_time: string;
+  end_time: string;
+  subject_name: string;
+  class_type: string | null;
+  venue: string | null;
+  color: string | null;
+  is_active: boolean;
+};
+
+type SessionView = ClassSession & {
+  isPersonal?: boolean;
+  personalId?: string;
+};
+
 const Timetable = () => {
+  const { user } = useAuth();
   const [semester, setSemester] = useState(defaultSemester);
   const [section, setSection] = useState(() => {
     const firstSection = Object.keys(TIMETABLE_DATA_BY_SEMESTER[defaultSemester] ?? {})[0];
@@ -72,6 +90,24 @@ const Timetable = () => {
   });
   const [now, setNow] = useState(new Date());
   const [view, setView] = useState<'section' | 'personal'>('section');
+  const [personalEntries, setPersonalEntries] = useState<PersonalEntry[]>([]);
+
+  useEffect(() => {
+    if (!user) {
+      setPersonalEntries([]);
+      return;
+    }
+    let cancelled = false;
+    supabase
+      .from('timetable_entries')
+      .select('id,day,start_time,end_time,subject_name,class_type,venue,color,is_active')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .then(({ data }) => {
+        if (!cancelled) setPersonalEntries((data ?? []) as PersonalEntry[]);
+      });
+    return () => { cancelled = true; };
+  }, [user, view]);
 
   const semesterData = TIMETABLE_DATA_BY_SEMESTER[semester] ?? {};
   const sectionIds = useMemo(() => Object.keys(semesterData), [semesterData]);
