@@ -158,9 +158,24 @@ const Timetable = () => {
     }));
   }, [sectionData, batch]);
 
-  const todaySessions = useMemo(() => {
-    return filteredSchedule.find(d => d.day === selectedDay)?.sessions || [];
-  }, [filteredSchedule, selectedDay]);
+  const todaySessions = useMemo<SessionView[]>(() => {
+    const base: SessionView[] = filteredSchedule.find(d => d.day === selectedDay)?.sessions || [];
+    const mine: SessionView[] = personalEntries
+      .filter(e => e.day === selectedDay)
+      .map(e => ({
+        startTime: e.start_time,
+        endTime: e.end_time,
+        subject: e.subject_name,
+        room: e.venue ?? undefined,
+        type: ((e.class_type || 'LECTURE').toUpperCase() as ClassSession['type']),
+        batch: 'ALL',
+        isPersonal: true,
+        personalId: e.id,
+      }));
+    return [...base, ...mine].sort(
+      (a, b) => parseTimeToMinutes(a.startTime) - parseTimeToMinutes(b.startTime)
+    );
+  }, [filteredSchedule, selectedDay, personalEntries]);
 
   // Reminder notification system
   const checkReminders = useCallback(() => {
