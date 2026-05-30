@@ -89,7 +89,7 @@ class ErrorBoundary extends Component<Props, State> {
       const { correlationId, error } = this.state;
 
       return (
-        <div className="min-h-[40vh] flex items-center justify-center p-8">
+        <div className="min-h-screen w-full flex items-center justify-center p-8 bg-background">
           <div className="text-center max-w-md">
             <div className="w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-4">
               <AlertTriangle className="w-6 h-6 text-destructive" />
