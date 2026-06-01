@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
@@ -22,11 +21,11 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash].[ext]",
         manualChunks(id) {
           if (!id.includes("node_modules")) return undefined;
-
-          // React core MUST be in its own chunk and resolved first.
-          // Match react, react-dom, react/jsx-runtime, scheduler, use-sync-external-store
           if (
             id.includes("/react/") ||
             id.includes("/react-dom/") ||
@@ -37,34 +36,15 @@ export default defineConfig(({ mode }) => ({
           ) {
             return "react-vendor";
           }
-
-          // React Router depends on react — separate chunk, loaded after react-vendor
           if (id.includes("react-router")) return "react-vendor";
-
-          // Heavy data-viz library — only Grades uses it
           if (id.includes("recharts") || id.includes("d3-")) return "charts";
-
-          // Animation library — used everywhere but large
           if (id.includes("framer-motion")) return "framer";
-
-          // Supabase client
           if (id.includes("@supabase")) return "supabase";
-
-          // Radix UI primitives (shadcn)
           if (id.includes("@radix-ui")) return "radix";
-
-          // Date/calendar libraries
           if (id.includes("date-fns") || id.includes("react-day-picker")) return "dates";
-
-          // Form libs
           if (id.includes("react-hook-form") || id.includes("@hookform") || id.includes("zod")) return "forms";
-
-          // Icons
           if (id.includes("lucide-react")) return "icons";
-
-          // Tanstack
           if (id.includes("@tanstack")) return "tanstack";
-
           return "vendor";
         },
       },
