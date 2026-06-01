@@ -5,6 +5,8 @@ import "./index.css";
 import { installProductionLogger } from "./lib/productionLogger";
 import { installNavigationGuard } from "./lib/navigationGuard";
 
+console.log('InfoHub v2 loaded');
+
 installProductionLogger();
 installNavigationGuard();
 
