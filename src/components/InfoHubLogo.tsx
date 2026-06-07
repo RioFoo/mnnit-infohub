@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
-import infohubSymbolAsset from '@/assets/infohub-symbol.png.asset.json';
-const infohubSymbol = infohubSymbolAsset.url;
+const infohubSymbol = '/infohub-logo.png';
 
 interface InfoHubLogoProps {
   size?: number;
