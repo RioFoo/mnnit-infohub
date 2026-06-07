@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-const infohubSymbol = '/infohub-logo.png';
+const LOGO_VERSION = 'v3-20260607';
+const infohubSymbol = `/infohub-logo.png?${LOGO_VERSION}`;
 
 interface InfoHubLogoProps {
   size?: number;
