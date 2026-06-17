@@ -34,6 +34,14 @@ serve(async (req) => {
       });
     }
 
+    // Restrict access to MNNIT students only, matching the rest of the app's access model
+    if (!user.email || !user.email.toLowerCase().endsWith("@mnnit.ac.in")) {
+      return new Response(JSON.stringify({ error: "Forbidden: MNNIT account required" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const body = await req.json();
     const { messages, type } = body;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
