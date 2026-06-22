@@ -1,9 +1,10 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { MessageCircle, Share2, Star } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { MessageCircle, Share2, Star, Clock, Bookmark, Link2, Flame, Sparkles, BadgeCheck } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
+import { toast } from '@/hooks/use-toast';
 import MediaRenderer from './MediaRenderer';
 import EmojiReactionPicker from './EmojiReactionPicker';
 import CommentSection from './CommentSection';
@@ -65,6 +66,36 @@ const PostCard = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const [showComments, setShowComments] = useState(false);
   const [localCommentsCount, setLocalCommentsCount] = useState(post.comments_count);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [copyBurst, setCopyBurst] = useState(false);
+
+  // Load bookmark state from localStorage
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('infohub:bookmarks') || '[]');
+      setBookmarked(saved.includes(post.id));
+    } catch {}
+  }, [post.id]);
+
+  const toggleBookmark = useCallback(() => {
+    try {
+      const saved: string[] = JSON.parse(localStorage.getItem('infohub:bookmarks') || '[]');
+      const next = saved.includes(post.id) ? saved.filter(x => x !== post.id) : [...saved, post.id];
+      localStorage.setItem('infohub:bookmarks', JSON.stringify(next));
+      setBookmarked(!bookmarked);
+      toast({ title: bookmarked ? 'Removed from bookmarks' : 'Saved to bookmarks', description: bookmarked ? '' : 'Find it later from your library' });
+    } catch {}
+  }, [bookmarked, post.id]);
+
+  const totalReactions = useMemo(
+    () => reactions.reduce((a, r) => a + r.count, 0),
+    [reactions]
+  );
+
+  const ageMs = Date.now() - new Date(post.created_at).getTime();
+  const isNew = ageMs < 24 * 60 * 60 * 1000;
+  const isTrending = totalReactions >= 5 || localCommentsCount >= 5;
+  const isVerified = post.profiles?.handle?.endsWith('.mnnit') || /\d{8}$/.test(post.profiles?.handle || '');
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!cardRef.current || isMobile) return;
@@ -90,7 +121,18 @@ const PostCard = ({
       try { await navigator.share({ text, url }); } catch {}
     } else {
       await navigator.clipboard.writeText(`${text}\n${url}`);
+      toast({ title: 'Shared!', description: 'Post text copied to clipboard' });
     }
+  };
+
+  const handleCopyLink = async () => {
+    const url = `${window.location.origin}/?post=${post.id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopyBurst(true);
+      setTimeout(() => setCopyBurst(false), 900);
+      toast({ title: 'Link copied', description: 'Share it anywhere' });
+    } catch {}
   };
 
   const isOwnPost = currentUserId === post.user_id;
@@ -111,22 +153,43 @@ const PostCard = ({
         )}
         style={{ transformStyle: 'preserve-3d' }}
       >
-        {/* Favourite badge */}
-        {isFavouritePost && (
-          <div className="flex items-center gap-1.5 mb-3 text-[10px] font-mono text-yellow-500/80">
-            <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
-            <span>From your Favorites</span>
+        {/* Top badges row */}
+        {(isFavouritePost || isNew || isTrending) && (
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
+            {isFavouritePost && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                Favourite
+              </span>
+            )}
+            {isTrending && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                <Flame className="w-3 h-3" />
+                Trending
+              </span>
+            )}
+            {isNew && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono bg-primary/10 text-primary border border-primary/20">
+                <Sparkles className="w-3 h-3" />
+                New
+              </span>
+            )}
           </div>
         )}
 
         <div className="flex items-start gap-3.5">
-          <button onClick={() => navigate(`/profile/${post.user_id}`)} className="avatar-orbital shrink-0 cursor-pointer">
+          <button onClick={() => navigate(`/profile/${post.user_id}`)} className="avatar-orbital shrink-0 cursor-pointer relative">
             {post.profiles?.avatar_url ? (
               <img src={post.profiles.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
             ) : (
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
                 {(post.profiles?.name || 'U')[0].toUpperCase()}
               </div>
+            )}
+            {isVerified && (
+              <span className="absolute -bottom-0.5 -right-0.5 bg-background rounded-full p-[1px]" title="Verified MNNIT student">
+                <BadgeCheck className="w-3.5 h-3.5 text-primary fill-primary/20" />
+              </span>
             )}
           </button>
 
@@ -152,7 +215,8 @@ const PostCard = ({
                 />
               )}
 
-              <span className="text-[10px] font-mono text-muted-foreground/30 ml-auto">
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono text-muted-foreground/40 ml-auto">
+                <Clock className="w-3 h-3" />
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
               </span>
             </div>
@@ -183,24 +247,76 @@ const PostCard = ({
                 disabled={!isAuthenticated}
               />
 
-              <div className="flex items-center gap-4 ml-auto">
+              <div className="flex items-center gap-3 ml-auto">
                 <motion.button
                   whileTap={{ scale: 0.85 }}
+                  whileHover={{ y: -1 }}
                   onClick={() => setShowComments(!showComments)}
-                  className="flex items-center gap-2 text-xs text-muted-foreground hover:text-secondary transition-all"
+                  className={cn(
+                    'flex items-center gap-1.5 text-xs transition-all px-2 py-1 rounded-lg',
+                    showComments ? 'text-secondary bg-secondary/10' : 'text-muted-foreground hover:text-secondary hover:bg-secondary/5'
+                  )}
+                  title="Comments"
                 >
                   <MessageCircle className="w-4 h-4" />
                   <span className="text-[11px] font-mono tabular-nums">{localCommentsCount}</span>
                 </motion.button>
 
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.85 }}
+                  whileHover={{ y: -1 }}
+                  onClick={toggleBookmark}
+                  className={cn(
+                    'flex items-center gap-1.5 text-xs transition-all px-2 py-1 rounded-lg',
+                    bookmarked ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
+                  )}
+                  title={bookmarked ? 'Remove bookmark' : 'Save post'}
+                >
+                  <Bookmark className={cn('w-4 h-4', bookmarked && 'fill-primary')} />
+                </motion.button>
+
+                <motion.button
+                  whileTap={{ scale: 0.85 }}
+                  whileHover={{ y: -1 }}
+                  onClick={handleCopyLink}
+                  className="relative flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-all px-2 py-1 rounded-lg"
+                  title="Copy link"
+                >
+                  <Link2 className="w-4 h-4" />
+                  <AnimatePresence>
+                    {copyBurst && (
+                      <motion.span
+                        initial={{ opacity: 0, scale: 0.6, y: 0 }}
+                        animate={{ opacity: 1, scale: 1, y: -14 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="absolute -top-1 left-1/2 -translate-x-1/2 text-[10px] font-mono text-primary pointer-events-none"
+                      >
+                        ✓
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+
+                <motion.button
+                  whileTap={{ scale: 0.85 }}
+                  whileHover={{ y: -1 }}
                   onClick={handleShare}
-                  className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-all"
+                  className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-all px-2 py-1 rounded-lg"
+                  title="Share"
                 >
                   <Share2 className="w-4 h-4" />
-                </button>
+                </motion.button>
               </div>
             </div>
+
+            {/* Stats strip */}
+            {(totalReactions > 0 || localCommentsCount > 0) && (
+              <div className="flex items-center gap-3 mt-2 text-[10px] font-mono text-muted-foreground/50">
+                {totalReactions > 0 && <span>{totalReactions} reaction{totalReactions !== 1 ? 's' : ''}</span>}
+                {totalReactions > 0 && localCommentsCount > 0 && <span className="opacity-50">·</span>}
+                {localCommentsCount > 0 && <span>{localCommentsCount} comment{localCommentsCount !== 1 ? 's' : ''}</span>}
+              </div>
+            )}
 
             {/* Comments */}
             {showComments && (
