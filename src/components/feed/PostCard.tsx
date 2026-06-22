@@ -66,6 +66,36 @@ const PostCard = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const [showComments, setShowComments] = useState(false);
   const [localCommentsCount, setLocalCommentsCount] = useState(post.comments_count);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [copyBurst, setCopyBurst] = useState(false);
+
+  // Load bookmark state from localStorage
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('infohub:bookmarks') || '[]');
+      setBookmarked(saved.includes(post.id));
+    } catch {}
+  }, [post.id]);
+
+  const toggleBookmark = useCallback(() => {
+    try {
+      const saved: string[] = JSON.parse(localStorage.getItem('infohub:bookmarks') || '[]');
+      const next = saved.includes(post.id) ? saved.filter(x => x !== post.id) : [...saved, post.id];
+      localStorage.setItem('infohub:bookmarks', JSON.stringify(next));
+      setBookmarked(!bookmarked);
+      toast({ title: bookmarked ? 'Removed from bookmarks' : 'Saved to bookmarks', description: bookmarked ? '' : 'Find it later from your library' });
+    } catch {}
+  }, [bookmarked, post.id]);
+
+  const totalReactions = useMemo(
+    () => reactions.reduce((a, r) => a + r.count, 0),
+    [reactions]
+  );
+
+  const ageMs = Date.now() - new Date(post.created_at).getTime();
+  const isNew = ageMs < 24 * 60 * 60 * 1000;
+  const isTrending = totalReactions >= 5 || localCommentsCount >= 5;
+  const isVerified = post.profiles?.handle?.endsWith('.mnnit') || /\d{8}$/.test(post.profiles?.handle || '');
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!cardRef.current || isMobile) return;
@@ -91,7 +121,18 @@ const PostCard = ({
       try { await navigator.share({ text, url }); } catch {}
     } else {
       await navigator.clipboard.writeText(`${text}\n${url}`);
+      toast({ title: 'Shared!', description: 'Post text copied to clipboard' });
     }
+  };
+
+  const handleCopyLink = async () => {
+    const url = `${window.location.origin}/?post=${post.id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopyBurst(true);
+      setTimeout(() => setCopyBurst(false), 900);
+      toast({ title: 'Link copied', description: 'Share it anywhere' });
+    } catch {}
   };
 
   const isOwnPost = currentUserId === post.user_id;
