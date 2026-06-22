@@ -1,9 +1,10 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { MessageCircle, Share2, Star } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { MessageCircle, Share2, Star, Clock, Bookmark, Link2, Flame, Sparkles, BadgeCheck } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
+import { toast } from '@/hooks/use-toast';
 import MediaRenderer from './MediaRenderer';
 import EmojiReactionPicker from './EmojiReactionPicker';
 import CommentSection from './CommentSection';
