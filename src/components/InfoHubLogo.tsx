@@ -1,6 +1,12 @@
 import { motion } from 'framer-motion';
-const LOGO_VERSION = 'v4-20260622-3d';
-const infohubSymbol = `/infohub-logo.png?${LOGO_VERSION}`;
+const LOGO_VERSION = 'v5-20260627-opt';
+const LOGO_SIZES = [64, 96, 128, 192, 256, 384] as const;
+const pickLogoSrc = (renderPx: number) => {
+  // Account for high-DPR screens
+  const target = renderPx * (typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 3) : 2);
+  const chosen = LOGO_SIZES.find((s) => s >= target) ?? LOGO_SIZES[LOGO_SIZES.length - 1];
+  return `/infohub-logo-${chosen}.webp?${LOGO_VERSION}`;
+};
 
 interface InfoHubLogoProps {
   size?: number;
@@ -9,6 +15,7 @@ interface InfoHubLogoProps {
 }
 
 const InfoHubLogo = ({ size = 40, className = '', animate = true }: InfoHubLogoProps) => {
+  const infohubSymbol = pickLogoSrc(size);
   return (
     <motion.div
       className={`relative inline-flex items-center justify-center ${className}`}
@@ -37,9 +44,11 @@ const InfoHubLogo = ({ size = 40, className = '', animate = true }: InfoHubLogoP
       {/* Logo image with 3D depth shadow */}
       <motion.img
         src={infohubSymbol}
-        alt="InfoHub"
+        alt="MNNIT InfoHub logo"
         width={size}
         height={size}
+        loading="eager"
+        decoding="async"
         className="w-full h-full object-contain relative z-10"
         style={{
           filter: 'drop-shadow(0 0 12px hsl(var(--primary) / 0.5)) drop-shadow(0 4px 8px hsl(var(--primary) / 0.2))',

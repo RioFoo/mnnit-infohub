@@ -202,7 +202,7 @@ const Timetable = () => {
           if (Notification.permission === 'granted') {
             new Notification(`📚 ${session.subject} in 5 minutes`, {
               body: `${formatTo12Hour(session.startTime)} – ${formatTo12Hour(session.endTime)} · ${session.room || 'TBA'}`,
-              icon: '/favicon.ico',
+              icon: '/favicon-192.webp?v=5-20260627',
             });
           }
         }
