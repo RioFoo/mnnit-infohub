@@ -1,6 +1,12 @@
 import { motion } from 'framer-motion';
-const LOGO_VERSION = 'v4-20260622-3d';
-const infohubSymbol = `/infohub-logo.png?${LOGO_VERSION}`;
+const LOGO_VERSION = 'v5-20260627-opt';
+const LOGO_SIZES = [64, 96, 128, 192, 256, 384] as const;
+const pickLogoSrc = (renderPx: number) => {
+  // Account for high-DPR screens
+  const target = renderPx * (typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 3) : 2);
+  const chosen = LOGO_SIZES.find((s) => s >= target) ?? LOGO_SIZES[LOGO_SIZES.length - 1];
+  return `/infohub-logo-${chosen}.webp?${LOGO_VERSION}`;
+};
 
 interface InfoHubLogoProps {
   size?: number;
