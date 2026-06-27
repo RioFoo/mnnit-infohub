@@ -15,6 +15,7 @@ interface InfoHubLogoProps {
 }
 
 const InfoHubLogo = ({ size = 40, className = '', animate = true }: InfoHubLogoProps) => {
+  const infohubSymbol = pickLogoSrc(size);
   return (
     <motion.div
       className={`relative inline-flex items-center justify-center ${className}`}
