@@ -44,9 +44,11 @@ const InfoHubLogo = ({ size = 40, className = '', animate = true }: InfoHubLogoP
       {/* Logo image with 3D depth shadow */}
       <motion.img
         src={infohubSymbol}
-        alt="InfoHub"
+        alt="MNNIT InfoHub logo"
         width={size}
         height={size}
+        loading="eager"
+        decoding="async"
         className="w-full h-full object-contain relative z-10"
         style={{
           filter: 'drop-shadow(0 0 12px hsl(var(--primary) / 0.5)) drop-shadow(0 4px 8px hsl(var(--primary) / 0.2))',
