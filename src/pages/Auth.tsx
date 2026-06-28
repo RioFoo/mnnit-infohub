@@ -10,23 +10,39 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Loader2, Mail, UserPlus, Lock, LockOpen, ArrowLeft, CheckCircle2, PartyPopper } from 'lucide-react';
 import { toast } from 'sonner';
 import authIntroVideo from '@/assets/auth-intro.mp4.asset.json';
+import { supabase } from '@/integrations/supabase/client';
+
+const INTRO_DURATION_MS = 6500;
 
 const AuthIntroSplash = ({ onDone }: { onDone: () => void }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [visible, setVisible] = useState(true);
+  const [elapsed, setElapsed] = useState(0);
+  const startedAtRef = useRef<number>(performance.now());
 
   const dismiss = () => {
-    if (!visible) return;
-    setVisible(false);
-    setTimeout(onDone, 450);
+    setVisible((v) => {
+      if (!v) return v;
+      setTimeout(onDone, 450);
+      return false;
+    });
   };
 
   useEffect(() => {
-    // Hard cap so a stalled video never blocks the page
-    const cap = window.setTimeout(dismiss, 6500);
-    return () => window.clearTimeout(cap);
+    const cap = window.setTimeout(dismiss, INTRO_DURATION_MS);
+    const tick = window.setInterval(() => {
+      setElapsed(performance.now() - startedAtRef.current);
+    }, 80);
+    return () => {
+      window.clearTimeout(cap);
+      window.clearInterval(tick);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const progress = Math.min(100, (elapsed / INTRO_DURATION_MS) * 100);
+  const seconds = (elapsed / 1000).toFixed(1);
+  const remaining = Math.max(0, (INTRO_DURATION_MS - elapsed) / 1000).toFixed(1);
 
   return (
     <AnimatePresence>
@@ -49,17 +65,42 @@ const AuthIntroSplash = ({ onDone }: { onDone: () => void }) => {
             onError={dismiss}
             className="absolute inset-0 w-full h-full object-cover"
           />
-          {/* Cinematic vignette + brand glow */}
           <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/40 pointer-events-none" />
           <div
             className="absolute inset-0 pointer-events-none"
             style={{ background: 'radial-gradient(circle at 50% 60%, hsl(var(--primary) / 0.12), transparent 65%)' }}
           />
 
+          {/* Progress + elapsed indicator */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="absolute top-6 left-1/2 -translate-x-1/2 w-[min(420px,80vw)] flex flex-col items-center gap-2"
+          >
+            <div className="flex w-full items-center justify-between text-[10px] font-mono uppercase tracking-[0.25em] text-foreground/70">
+              <span className="flex items-center gap-1.5">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                </span>
+                Booting · {seconds}s
+              </span>
+              <span className="text-primary/80">{remaining}s left</span>
+            </div>
+            <div className="w-full h-1 rounded-full bg-foreground/10 overflow-hidden backdrop-blur-sm">
+              <motion.div
+                className="h-full rounded-full"
+                style={{ width: `${progress}%`, background: 'var(--gradient-primary)' }}
+                transition={{ ease: 'linear' }}
+              />
+            </div>
+          </motion.div>
+
           <motion.button
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.4 }}
+            transition={{ delay: 0.8, duration: 0.4 }}
             onClick={dismiss}
             className="absolute bottom-6 right-6 px-4 py-2 rounded-full bg-background/60 backdrop-blur-md border border-primary/30 text-xs font-mono uppercase tracking-[0.2em] text-foreground/80 hover:text-primary hover:border-primary/60 transition-colors"
           >
@@ -69,7 +110,7 @@ const AuthIntroSplash = ({ onDone }: { onDone: () => void }) => {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
             className="absolute bottom-8 left-6 flex items-center gap-3"
           >
             <InfoHubLogo size={36} animate={false} />
@@ -80,6 +121,7 @@ const AuthIntroSplash = ({ onDone }: { onDone: () => void }) => {
     </AnimatePresence>
   );
 };
+
 
 
 
