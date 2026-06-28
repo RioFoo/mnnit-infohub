@@ -177,6 +177,14 @@ const Auth = () => {
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotLoading, setForgotLoading] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [showEntryIntro, setShowEntryIntro] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      return sessionStorage.getItem('infohub:auth-intro-played') !== '1';
+    } catch {
+      return true;
+    }
+  });
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('');
