@@ -10,23 +10,39 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Loader2, Mail, UserPlus, Lock, LockOpen, ArrowLeft, CheckCircle2, PartyPopper } from 'lucide-react';
 import { toast } from 'sonner';
 import authIntroVideo from '@/assets/auth-intro.mp4.asset.json';
+import { supabase } from '@/integrations/supabase/client';
+
+const INTRO_DURATION_MS = 6500;
 
 const AuthIntroSplash = ({ onDone }: { onDone: () => void }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [visible, setVisible] = useState(true);
+  const [elapsed, setElapsed] = useState(0);
+  const startedAtRef = useRef<number>(performance.now());
 
   const dismiss = () => {
-    if (!visible) return;
-    setVisible(false);
-    setTimeout(onDone, 450);
+    setVisible((v) => {
+      if (!v) return v;
+      setTimeout(onDone, 450);
+      return false;
+    });
   };
 
   useEffect(() => {
-    // Hard cap so a stalled video never blocks the page
-    const cap = window.setTimeout(dismiss, 6500);
-    return () => window.clearTimeout(cap);
+    const cap = window.setTimeout(dismiss, INTRO_DURATION_MS);
+    const tick = window.setInterval(() => {
+      setElapsed(performance.now() - startedAtRef.current);
+    }, 80);
+    return () => {
+      window.clearTimeout(cap);
+      window.clearInterval(tick);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const progress = Math.min(100, (elapsed / INTRO_DURATION_MS) * 100);
+  const seconds = (elapsed / 1000).toFixed(1);
+  const remaining = Math.max(0, (INTRO_DURATION_MS - elapsed) / 1000).toFixed(1);
 
   return (
     <AnimatePresence>
@@ -49,17 +65,42 @@ const AuthIntroSplash = ({ onDone }: { onDone: () => void }) => {
             onError={dismiss}
             className="absolute inset-0 w-full h-full object-cover"
           />
-          {/* Cinematic vignette + brand glow */}
           <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/40 pointer-events-none" />
           <div
             className="absolute inset-0 pointer-events-none"
             style={{ background: 'radial-gradient(circle at 50% 60%, hsl(var(--primary) / 0.12), transparent 65%)' }}
           />
 
+          {/* Progress + elapsed indicator */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="absolute top-6 left-1/2 -translate-x-1/2 w-[min(420px,80vw)] flex flex-col items-center gap-2"
+          >
+            <div className="flex w-full items-center justify-between text-[10px] font-mono uppercase tracking-[0.25em] text-foreground/70">
+              <span className="flex items-center gap-1.5">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                </span>
+                Booting · {seconds}s
+              </span>
+              <span className="text-primary/80">{remaining}s left</span>
+            </div>
+            <div className="w-full h-1 rounded-full bg-foreground/10 overflow-hidden backdrop-blur-sm">
+              <motion.div
+                className="h-full rounded-full"
+                style={{ width: `${progress}%`, background: 'var(--gradient-primary)' }}
+                transition={{ ease: 'linear' }}
+              />
+            </div>
+          </motion.div>
+
           <motion.button
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.4 }}
+            transition={{ delay: 0.8, duration: 0.4 }}
             onClick={dismiss}
             className="absolute bottom-6 right-6 px-4 py-2 rounded-full bg-background/60 backdrop-blur-md border border-primary/30 text-xs font-mono uppercase tracking-[0.2em] text-foreground/80 hover:text-primary hover:border-primary/60 transition-colors"
           >
@@ -69,7 +110,7 @@ const AuthIntroSplash = ({ onDone }: { onDone: () => void }) => {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
             className="absolute bottom-8 left-6 flex items-center gap-3"
           >
             <InfoHubLogo size={36} animate={false} />
@@ -80,6 +121,7 @@ const AuthIntroSplash = ({ onDone }: { onDone: () => void }) => {
     </AnimatePresence>
   );
 };
+
 
 
 
@@ -165,9 +207,8 @@ const OrbitRing = ({ size = 200, duration = 8, delay = 0 }: { size?: number; dur
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { session, signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
+  const { session, signIn, signUp, resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
   const [userName, setUserName] = useState('');
@@ -193,12 +234,27 @@ const Auth = () => {
   const [showRegPassword, setShowRegPassword] = useState(false);
   const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [capsLockOn, setCapsLockOn] = useState(false);
 
   // Signup state
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [recoveryEmail, setRecoveryEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Password strength (0-4)
+  const passwordStrength = (() => {
+    let s = 0;
+    if (password.length >= 6) s++;
+    if (password.length >= 10) s++;
+    if (/[A-Z]/.test(password) && /[a-z]/.test(password)) s++;
+    if (/\d/.test(password) && /[^A-Za-z0-9]/.test(password)) s++;
+    return s;
+  })();
+  const strengthLabels = ['Too short', 'Weak', 'Okay', 'Strong', 'Excellent'];
+  const strengthColors = ['bg-destructive', 'bg-destructive', 'bg-yellow-500', 'bg-primary', 'bg-primary'];
+
 
 
 
@@ -222,10 +278,11 @@ const Auth = () => {
     const providerError = searchParams.get('error');
     if (providerError) {
       const decoded = decodeURIComponent(providerError.replace(/\+/g, ' '));
-      setError(`Google Sign-In failed: ${decoded}`);
-      toast.error(`Google Sign-In failed: ${decoded}`);
+      setError(`Sign-in failed: ${decoded}`);
+      toast.error(`Sign-in failed: ${decoded}`);
     }
   }, [searchParams]);
+
 
   if (session && !showIntro) return <Navigate to="/" replace />;
 
@@ -251,16 +308,33 @@ const Auth = () => {
     }
   };
 
+  const resolveLoginEmail = async (input: string): Promise<string> => {
+    const trimmed = input.trim();
+    if (!trimmed) return trimmed;
+    // If it's the primary college address, use as-is.
+    if (trimmed.toLowerCase().endsWith('@mnnit.ac.in')) return trimmed;
+    // Otherwise treat as a recovery email and look up the linked college email.
+    try {
+      const { data, error } = await supabase.rpc('email_for_recovery', { _recovery: trimmed });
+      if (!error && typeof data === 'string' && data.length > 0) return data;
+    } catch { /* ignore - fall through */ }
+    return trimmed; // signIn will surface a clear error if no match
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await signIn(loginEmail, loginPassword);
+    const resolved = await resolveLoginEmail(loginEmail);
+    const { error } = await signIn(resolved, loginPassword);
     if (error) {
-      setError(getErrorMessage(error.message));
-      toast.error(getErrorMessage(error.message));
+      const msg = error.message === 'Invalid login credentials' && resolved !== loginEmail.trim()
+        ? 'No account found for that recovery email, or the password is wrong.'
+        : getErrorMessage(error.message);
+      setError(msg);
+      toast.error(msg);
     } else {
-      runIntro(loginEmail.split('@')[0]);
+      runIntro((resolved || loginEmail).split('@')[0]);
     }
     setLoading(false);
   };
@@ -273,7 +347,10 @@ const Auth = () => {
     }
     setLoading(true);
     setError(null);
-    const { error } = await signUp(email, password, { name });
+    const meta: Record<string, string> = { name };
+    const rec = recoveryEmail.trim();
+    if (rec) meta.recovery_email = rec;
+    const { error } = await signUp(email, password, meta);
     if (error) {
       setError(getErrorMessage(error.message));
       toast.error(getErrorMessage(error.message));
@@ -283,16 +360,7 @@ const Auth = () => {
     setLoading(false);
   };
 
-  const handleGoogleLogin = async () => {
-    setGoogleLoading(true);
-    setError(null);
-    const { error } = await signInWithGoogle();
-    if (error) {
-      setError(`Google Sign-In failed: ${error.message}`);
-      toast.error(`Google Sign-In failed: ${error.message}`);
-      setGoogleLoading(false);
-    }
-  };
+
 
 
   const handleForgotPassword = async (e: React.FormEvent) => {
@@ -548,7 +616,10 @@ const Auth = () => {
                     className="group/field"
                     style={{ perspective: 800, transformStyle: 'preserve-3d' }}
                   >
-                    <Label htmlFor="login-email" className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Email</Label>
+                    <Label htmlFor="login-email" className="flex items-center justify-between text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">
+                      <span>Email</span>
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/60">college or recovery</span>
+                    </Label>
                     <motion.div
                       className="relative mt-1"
                       whileFocus={{ scale: 1.02 }}
@@ -560,10 +631,12 @@ const Auth = () => {
                         type="email"
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
-                        placeholder="you@mnnit.ac.in"
+                        placeholder="you@mnnit.ac.in  ·  or backup@gmail.com"
                         required
+                        autoComplete="username"
                         className="bg-background/50 border-border/50 focus:border-primary/60 transition-all duration-300 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 focus:translate-y-[-2px]"
                       />
+
                       <motion.div
                         className="absolute inset-0 rounded-md pointer-events-none border border-primary/0 group-focus-within/field:border-primary/30"
                         style={{ boxShadow: '0 4px 20px -4px hsl(var(--primary) / 0)' }}
@@ -588,8 +661,11 @@ const Auth = () => {
                         type={showPassword ? 'text' : 'password'}
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
+                        onKeyUp={(e) => setCapsLockOn(e.getModifierState && e.getModifierState('CapsLock'))}
+                        onKeyDown={(e) => setCapsLockOn(e.getModifierState && e.getModifierState('CapsLock'))}
                         placeholder="••••••••"
                         required
+                        autoComplete="current-password"
                         className="pr-10 bg-background/50 border-border/50 focus:border-primary/60 transition-all duration-300 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 focus:translate-y-[-2px]"
                       />
                       <motion.button
@@ -603,6 +679,19 @@ const Auth = () => {
                         {showPassword ? <LockOpen className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                       </motion.button>
                     </motion.div>
+                    <AnimatePresence>
+                      {capsLockOn && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          className="mt-1 text-[11px] font-mono text-yellow-500/90 flex items-center gap-1"
+                        >
+                          ⚠ Caps Lock is on
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+
                   </motion.div>
                   <div className="flex justify-end">
                     <motion.button
@@ -663,13 +752,35 @@ const Auth = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 10, rotateX: -15 }}
                     animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{ delay: 0.18, type: 'spring', stiffness: 200 }}
+                    className="group/field"
+                    style={{ perspective: 800 }}
+                  >
+                    <Label className="flex items-center justify-between text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">
+                      <span>Recovery Email</span>
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/60">optional · also lets you sign in</span>
+                    </Label>
+                    <motion.div className="mt-1" whileHover={{ translateZ: 8, rotateX: 2 }} style={{ transformStyle: 'preserve-3d' }}>
+                      <Input
+                        type="email"
+                        value={recoveryEmail}
+                        onChange={(e) => setRecoveryEmail(e.target.value)}
+                        placeholder="backup@gmail.com"
+                        className="bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]"
+                      />
+                    </motion.div>
+                    <p className="mt-1 text-[11px] font-mono text-muted-foreground/70">If you lose access to your college mail, you can still sign in with this address.</p>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, rotateX: -15 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
                     transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
                     className="group/field"
                     style={{ perspective: 800 }}
                   >
                     <Label className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Password</Label>
                     <motion.div className="relative mt-1" whileHover={{ scale: 1.01 }}>
-                      <Input type={showRegPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" required minLength={6} className="pr-10 bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
+                      <Input type={showRegPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" required minLength={6} autoComplete="new-password" className="pr-10 bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
                       <motion.button
                         type="button"
                         onClick={() => setShowRegPassword(!showRegPassword)}
@@ -680,7 +791,26 @@ const Auth = () => {
                         {showRegPassword ? <LockOpen className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                       </motion.button>
                     </motion.div>
+                    {password.length > 0 && (
+                      <div className="mt-2">
+                        <div className="flex gap-1">
+                          {[0, 1, 2, 3].map((i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ scaleX: 0 }}
+                              animate={{ scaleX: i < passwordStrength ? 1 : 0.15 }}
+                              transition={{ duration: 0.3 }}
+                              className={`h-1 flex-1 rounded-full origin-left ${i < passwordStrength ? strengthColors[passwordStrength] : 'bg-muted'}`}
+                            />
+                          ))}
+                        </div>
+                        <p className="mt-1 text-[11px] font-mono text-muted-foreground/80">
+                          Strength: <span className="text-primary">{strengthLabels[passwordStrength]}</span>
+                        </p>
+                      </div>
+                    )}
                   </motion.div>
+
                   <motion.div
                     initial={{ opacity: 0, y: 10, rotateX: -15 }}
                     animate={{ opacity: 1, y: 0, rotateX: 0 }}
@@ -783,44 +913,24 @@ const Auth = () => {
               )}
             </AnimatePresence>
 
-            {/* Divider */}
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border/30" />
+            {/* Trust badges replace third-party login */}
+            <div className="mt-6 grid grid-cols-3 gap-2 text-[10px] font-mono uppercase tracking-wider text-muted-foreground/70">
+              <div className="flex flex-col items-center gap-1 py-2 rounded-lg bg-muted/20 border border-border/30">
+                <span className="text-primary">🔒</span>
+                <span>Encrypted</span>
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card/80 backdrop-blur-sm px-3 text-muted-foreground font-mono tracking-wider">or continue with</span>
+              <div className="flex flex-col items-center gap-1 py-2 rounded-lg bg-muted/20 border border-border/30">
+                <span className="text-primary">🎓</span>
+                <span>MNNIT Only</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 py-2 rounded-lg bg-muted/20 border border-border/30">
+                <span className="text-primary">✉️</span>
+                <span>Recovery</span>
               </div>
             </div>
 
-            {/* Google Login */}
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                variant="outline"
-                className="w-full h-12 text-base gap-3 border-border/50 hover:bg-primary/5 hover:border-primary/40 transition-all duration-400 hover:shadow-[0_0_25px_hsl(var(--primary)/0.15)] group/google"
-                onClick={handleGoogleLogin}
-                disabled={loading || googleLoading}
-              >
-                {googleLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Redirecting to Google...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5 group-hover/google:scale-110 transition-transform duration-300" viewBox="0 0 24 24">
-                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
-                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                    </svg>
-                    Continue with Google
-                  </>
-                )}
-              </Button>
-            </motion.div>
-
             <p className="text-xs text-muted-foreground/60 text-center mt-6 font-mono tracking-wide">By signing in, you agree to our Terms of Service</p>
+
           </motion.div>
 
           {/* Forgot Password Overlay */}

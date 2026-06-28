@@ -377,6 +377,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      email_for_recovery: { Args: { _recovery: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never
