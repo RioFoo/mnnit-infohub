@@ -278,10 +278,11 @@ const Auth = () => {
     const providerError = searchParams.get('error');
     if (providerError) {
       const decoded = decodeURIComponent(providerError.replace(/\+/g, ' '));
-      setError(`Google Sign-In failed: ${decoded}`);
-      toast.error(`Google Sign-In failed: ${decoded}`);
+      setError(`Sign-in failed: ${decoded}`);
+      toast.error(`Sign-in failed: ${decoded}`);
     }
   }, [searchParams]);
+
 
   if (session && !showIntro) return <Navigate to="/" replace />;
 
