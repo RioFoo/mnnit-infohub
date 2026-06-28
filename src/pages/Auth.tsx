@@ -752,13 +752,35 @@ const Auth = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 10, rotateX: -15 }}
                     animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{ delay: 0.18, type: 'spring', stiffness: 200 }}
+                    className="group/field"
+                    style={{ perspective: 800 }}
+                  >
+                    <Label className="flex items-center justify-between text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">
+                      <span>Recovery Email</span>
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/60">optional · also lets you sign in</span>
+                    </Label>
+                    <motion.div className="mt-1" whileHover={{ translateZ: 8, rotateX: 2 }} style={{ transformStyle: 'preserve-3d' }}>
+                      <Input
+                        type="email"
+                        value={recoveryEmail}
+                        onChange={(e) => setRecoveryEmail(e.target.value)}
+                        placeholder="backup@gmail.com"
+                        className="bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]"
+                      />
+                    </motion.div>
+                    <p className="mt-1 text-[11px] font-mono text-muted-foreground/70">If you lose access to your college mail, you can still sign in with this address.</p>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, rotateX: -15 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
                     transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
                     className="group/field"
                     style={{ perspective: 800 }}
                   >
                     <Label className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Password</Label>
                     <motion.div className="relative mt-1" whileHover={{ scale: 1.01 }}>
-                      <Input type={showRegPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" required minLength={6} className="pr-10 bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
+                      <Input type={showRegPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" required minLength={6} autoComplete="new-password" className="pr-10 bg-background/50 border-border/50 focus:border-primary/60 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 transition-all duration-300 focus:translate-y-[-2px]" />
                       <motion.button
                         type="button"
                         onClick={() => setShowRegPassword(!showRegPassword)}
@@ -769,7 +791,26 @@ const Auth = () => {
                         {showRegPassword ? <LockOpen className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                       </motion.button>
                     </motion.div>
+                    {password.length > 0 && (
+                      <div className="mt-2">
+                        <div className="flex gap-1">
+                          {[0, 1, 2, 3].map((i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ scaleX: 0 }}
+                              animate={{ scaleX: i < passwordStrength ? 1 : 0.15 }}
+                              transition={{ duration: 0.3 }}
+                              className={`h-1 flex-1 rounded-full origin-left ${i < passwordStrength ? strengthColors[passwordStrength] : 'bg-muted'}`}
+                            />
+                          ))}
+                        </div>
+                        <p className="mt-1 text-[11px] font-mono text-muted-foreground/80">
+                          Strength: <span className="text-primary">{strengthLabels[passwordStrength]}</span>
+                        </p>
+                      </div>
+                    )}
                   </motion.div>
+
                   <motion.div
                     initial={{ opacity: 0, y: 10, rotateX: -15 }}
                     animate={{ opacity: 1, y: 0, rotateX: 0 }}
