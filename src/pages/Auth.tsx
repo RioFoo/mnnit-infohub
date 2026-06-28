@@ -207,9 +207,8 @@ const OrbitRing = ({ size = 200, duration = 8, delay = 0 }: { size?: number; dur
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { session, signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
+  const { session, signIn, signUp, resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
   const [userName, setUserName] = useState('');
@@ -235,12 +234,27 @@ const Auth = () => {
   const [showRegPassword, setShowRegPassword] = useState(false);
   const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [capsLockOn, setCapsLockOn] = useState(false);
 
   // Signup state
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [recoveryEmail, setRecoveryEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Password strength (0-4)
+  const passwordStrength = (() => {
+    let s = 0;
+    if (password.length >= 6) s++;
+    if (password.length >= 10) s++;
+    if (/[A-Z]/.test(password) && /[a-z]/.test(password)) s++;
+    if (/\d/.test(password) && /[^A-Za-z0-9]/.test(password)) s++;
+    return s;
+  })();
+  const strengthLabels = ['Too short', 'Weak', 'Okay', 'Strong', 'Excellent'];
+  const strengthColors = ['bg-destructive', 'bg-destructive', 'bg-yellow-500', 'bg-primary', 'bg-primary'];
+
 
 
 
