@@ -616,7 +616,10 @@ const Auth = () => {
                     className="group/field"
                     style={{ perspective: 800, transformStyle: 'preserve-3d' }}
                   >
-                    <Label htmlFor="login-email" className="text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">Email</Label>
+                    <Label htmlFor="login-email" className="flex items-center justify-between text-foreground/80 group-focus-within/field:text-primary transition-colors duration-300">
+                      <span>Email</span>
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/60">college or recovery</span>
+                    </Label>
                     <motion.div
                       className="relative mt-1"
                       whileFocus={{ scale: 1.02 }}
@@ -628,10 +631,12 @@ const Auth = () => {
                         type="email"
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
-                        placeholder="you@mnnit.ac.in"
+                        placeholder="you@mnnit.ac.in  ·  or backup@gmail.com"
                         required
+                        autoComplete="username"
                         className="bg-background/50 border-border/50 focus:border-primary/60 transition-all duration-300 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 focus:translate-y-[-2px]"
                       />
+
                       <motion.div
                         className="absolute inset-0 rounded-md pointer-events-none border border-primary/0 group-focus-within/field:border-primary/30"
                         style={{ boxShadow: '0 4px 20px -4px hsl(var(--primary) / 0)' }}
