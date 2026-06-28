@@ -661,8 +661,11 @@ const Auth = () => {
                         type={showPassword ? 'text' : 'password'}
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
+                        onKeyUp={(e) => setCapsLockOn(e.getModifierState && e.getModifierState('CapsLock'))}
+                        onKeyDown={(e) => setCapsLockOn(e.getModifierState && e.getModifierState('CapsLock'))}
                         placeholder="••••••••"
                         required
+                        autoComplete="current-password"
                         className="pr-10 bg-background/50 border-border/50 focus:border-primary/60 transition-all duration-300 focus:shadow-[0_0_25px_hsl(var(--primary)/0.2),0_8px_32px_-8px_hsl(var(--primary)/0.15)] focus:bg-background/80 hover:border-border/80 hover:bg-background/60 focus:translate-y-[-2px]"
                       />
                       <motion.button
@@ -676,6 +679,19 @@ const Auth = () => {
                         {showPassword ? <LockOpen className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                       </motion.button>
                     </motion.div>
+                    <AnimatePresence>
+                      {capsLockOn && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          className="mt-1 text-[11px] font-mono text-yellow-500/90 flex items-center gap-1"
+                        >
+                          ⚠ Caps Lock is on
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+
                   </motion.div>
                   <div className="flex justify-end">
                     <motion.button
