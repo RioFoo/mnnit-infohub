@@ -338,6 +338,15 @@ const Auth = () => {
   }
 
   return (
+    <>
+      {showEntryIntro && (
+        <AuthIntroSplash
+          onDone={() => {
+            try { sessionStorage.setItem('infohub:auth-intro-played', '1'); } catch { /* ignore */ }
+            setShowEntryIntro(false);
+          }}
+        />
+      )}
     <div ref={containerRef} className="min-h-screen flex relative overflow-x-hidden bg-background">
       {/* Animated background grid */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
