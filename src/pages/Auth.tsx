@@ -307,16 +307,33 @@ const Auth = () => {
     }
   };
 
+  const resolveLoginEmail = async (input: string): Promise<string> => {
+    const trimmed = input.trim();
+    if (!trimmed) return trimmed;
+    // If it's the primary college address, use as-is.
+    if (trimmed.toLowerCase().endsWith('@mnnit.ac.in')) return trimmed;
+    // Otherwise treat as a recovery email and look up the linked college email.
+    try {
+      const { data, error } = await supabase.rpc('email_for_recovery', { _recovery: trimmed });
+      if (!error && typeof data === 'string' && data.length > 0) return data;
+    } catch { /* ignore - fall through */ }
+    return trimmed; // signIn will surface a clear error if no match
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await signIn(loginEmail, loginPassword);
+    const resolved = await resolveLoginEmail(loginEmail);
+    const { error } = await signIn(resolved, loginPassword);
     if (error) {
-      setError(getErrorMessage(error.message));
-      toast.error(getErrorMessage(error.message));
+      const msg = error.message === 'Invalid login credentials' && resolved !== loginEmail.trim()
+        ? 'No account found for that recovery email, or the password is wrong.'
+        : getErrorMessage(error.message);
+      setError(msg);
+      toast.error(msg);
     } else {
-      runIntro(loginEmail.split('@')[0]);
+      runIntro((resolved || loginEmail).split('@')[0]);
     }
     setLoading(false);
   };
@@ -329,7 +346,10 @@ const Auth = () => {
     }
     setLoading(true);
     setError(null);
-    const { error } = await signUp(email, password, { name });
+    const meta: Record<string, string> = { name };
+    const rec = recoveryEmail.trim();
+    if (rec) meta.recovery_email = rec;
+    const { error } = await signUp(email, password, meta);
     if (error) {
       setError(getErrorMessage(error.message));
       toast.error(getErrorMessage(error.message));
@@ -339,16 +359,7 @@ const Auth = () => {
     setLoading(false);
   };
 
-  const handleGoogleLogin = async () => {
-    setGoogleLoading(true);
-    setError(null);
-    const { error } = await signInWithGoogle();
-    if (error) {
-      setError(`Google Sign-In failed: ${error.message}`);
-      toast.error(`Google Sign-In failed: ${error.message}`);
-      setGoogleLoading(false);
-    }
-  };
+
 
 
   const handleForgotPassword = async (e: React.FormEvent) => {
