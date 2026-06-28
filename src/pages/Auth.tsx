@@ -9,6 +9,77 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Loader2, Mail, UserPlus, Lock, LockOpen, ArrowLeft, CheckCircle2, PartyPopper } from 'lucide-react';
 import { toast } from 'sonner';
+import authIntroVideo from '@/assets/auth-intro.mp4.asset.json';
+
+const AuthIntroSplash = ({ onDone }: { onDone: () => void }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [visible, setVisible] = useState(true);
+
+  const dismiss = () => {
+    if (!visible) return;
+    setVisible(false);
+    setTimeout(onDone, 450);
+  };
+
+  useEffect(() => {
+    // Hard cap so a stalled video never blocks the page
+    const cap = window.setTimeout(dismiss, 6500);
+    return () => window.clearTimeout(cap);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          key="auth-intro"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, scale: 1.04, filter: 'blur(8px)' }}
+          transition={{ duration: 0.45, ease: 'easeInOut' }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-background overflow-hidden"
+        >
+          <video
+            ref={videoRef}
+            src={authIntroVideo.url}
+            autoPlay
+            muted
+            playsInline
+            preload="auto"
+            onEnded={dismiss}
+            onError={dismiss}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Cinematic vignette + brand glow */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/40 pointer-events-none" />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: 'radial-gradient(circle at 50% 60%, hsl(var(--primary) / 0.12), transparent 65%)' }}
+          />
+
+          <motion.button
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.4 }}
+            onClick={dismiss}
+            className="absolute bottom-6 right-6 px-4 py-2 rounded-full bg-background/60 backdrop-blur-md border border-primary/30 text-xs font-mono uppercase tracking-[0.2em] text-foreground/80 hover:text-primary hover:border-primary/60 transition-colors"
+          >
+            Skip intro →
+          </motion.button>
+
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="absolute bottom-8 left-6 flex items-center gap-3"
+          >
+            <InfoHubLogo size={36} animate={false} />
+            <span className="font-display text-sm font-bold tracking-[0.25em] text-foreground/90">MNNIT INFOHUB</span>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 
 
@@ -106,6 +177,14 @@ const Auth = () => {
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotLoading, setForgotLoading] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [showEntryIntro, setShowEntryIntro] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      return sessionStorage.getItem('infohub:auth-intro-played') !== '1';
+    } catch {
+      return true;
+    }
+  });
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('');
@@ -259,6 +338,15 @@ const Auth = () => {
   }
 
   return (
+    <>
+      {showEntryIntro && (
+        <AuthIntroSplash
+          onDone={() => {
+            try { sessionStorage.setItem('infohub:auth-intro-played', '1'); } catch { /* ignore */ }
+            setShowEntryIntro(false);
+          }}
+        />
+      )}
     <div ref={containerRef} className="min-h-screen flex relative overflow-x-hidden bg-background">
       {/* Animated background grid */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
@@ -783,6 +871,7 @@ const Auth = () => {
         </motion.div>
       </div>
     </div>
+    </>
   );
 };
 
