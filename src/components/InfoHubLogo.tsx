@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-const LOGO_VERSION = 'v5-20260627-opt';
+const LOGO_VERSION = 'v6-20260630-infohub';
 const LOGO_SIZES = [64, 96, 128, 192, 256, 384] as const;
 const pickLogoSrc = (renderPx: number) => {
   // Account for high-DPR screens
