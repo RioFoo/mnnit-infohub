@@ -11,8 +11,9 @@ import { Loader2, Mail, UserPlus, Lock, LockOpen, ArrowLeft, CheckCircle2, Party
 import { toast } from 'sonner';
 import authIntroVideo from '@/assets/auth-intro.mp4.asset.json';
 import { supabase } from '@/integrations/supabase/client';
+import { isProfileIncomplete } from '@/pages/Onboarding';
 
-const INTRO_DURATION_MS = 6500;
+const INTRO_DURATION_MS = 5500;
 
 const AuthIntroSplash = ({ onDone }: { onDone: () => void }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -85,7 +86,7 @@ const AuthIntroSplash = ({ onDone }: { onDone: () => void }) => {
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { session, signIn, signUp, resetPassword } = useAuth();
+  const { session, profile, signIn, signUp, resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
   const [introStep, setIntroStep] = useState(0);
@@ -95,10 +96,8 @@ const Auth = () => {
   const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotLoading, setForgotLoading] = useState(false);
-  const [showEntryIntro, setShowEntryIntro] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    try { return sessionStorage.getItem('infohub:auth-intro-played') !== '1'; } catch { return true; }
-  });
+  // Play the cinematic intro on every visit to the auth screen
+  const [showEntryIntro, setShowEntryIntro] = useState(true);
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('');
@@ -136,7 +135,10 @@ const Auth = () => {
     }
   }, [searchParams]);
 
-  if (session && !showIntro) return <Navigate to="/" replace />;
+  if (session && !showIntro) {
+    const target = isProfileIncomplete(profile ?? {}) ? '/onboarding' : '/';
+    return <Navigate to={target} replace />;
+  }
 
   const runIntro = (displayName: string) => {
     setUserName(displayName);
@@ -234,10 +236,7 @@ const Auth = () => {
   return (
     <>
       {showEntryIntro && (
-        <AuthIntroSplash onDone={() => {
-          try { sessionStorage.setItem('infohub:auth-intro-played', '1'); } catch { /* ignore */ }
-          setShowEntryIntro(false);
-        }} />
+        <AuthIntroSplash onDone={() => setShowEntryIntro(false)} />
       )}
 
       <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden p-4 sm:p-6">
