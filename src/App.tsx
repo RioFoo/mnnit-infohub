@@ -29,6 +29,7 @@ const Settings = lazy(() => import("@/pages/Settings"));
 const UserProfile = lazy(() => import("@/pages/UserProfile"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const LogViewer = lazy(() => import("@/pages/LogViewer"));
+const Onboarding = lazy(() => import("@/pages/Onboarding"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -113,6 +114,7 @@ const App = () => (
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/auth/callback" element={<AuthCallback />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/onboarding" element={<Onboarding />} />
                   <Route path="/" element={<AppLayout />}>
                     <Route index element={<ErrorBoundary><Feed /></ErrorBoundary>} />
                     <Route path="explore" element={<Explore />} />
