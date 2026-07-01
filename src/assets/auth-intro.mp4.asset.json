@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "asset_id": "8dddc409-3d24-4e94-a44d-dc39948c0201",
+  "asset_id": "62bbcb0f-673c-471b-8525-4ec0d97a882b",
   "project_id": "abcec237-3bda-4d7f-8dfc-0aeef5a41245",
-  "url": "/__l5e/assets-v1/8dddc409-3d24-4e94-a44d-dc39948c0201/auth-intro.mp4",
-  "r2_key": "a/v1/abcec237-3bda-4d7f-8dfc-0aeef5a41245/8dddc409-3d24-4e94-a44d-dc39948c0201/auth-intro.mp4",
-  "original_filename": "auth-intro.mp4",
-  "size": 2434758,
+  "url": "/__l5e/assets-v1/62bbcb0f-673c-471b-8525-4ec0d97a882b/auth-intro-v2.mp4",
+  "r2_key": "a/v1/abcec237-3bda-4d7f-8dfc-0aeef5a41245/62bbcb0f-673c-471b-8525-4ec0d97a882b/auth-intro-v2.mp4",
+  "original_filename": "auth-intro-v2.mp4",
+  "size": 2548290,
   "content_type": "video/mp4",
-  "created_at": "2026-06-28T05:15:39Z"
+  "created_at": "2026-07-01T13:38:07Z"
 }
