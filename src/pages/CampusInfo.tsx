@@ -9,7 +9,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { useAcademicsNotices, requestNoticePermission } from '@/hooks/useAcademicsNotices';
 import { toast } from 'sonner';
 
-const NOTICE_CATS = ['ALL', 'RESULT', 'EXAM', 'ACADEMIC', 'FEE', 'ADMISSION'];
+const SOURCE_URL = 'https://academics.mnnit.ac.in/new/';
 const CLUB_CATS = ['All', 'Technical', 'Cultural', 'Sports', 'Arts'];
 
 const containerVariants = {
