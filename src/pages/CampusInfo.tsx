@@ -23,12 +23,21 @@ const itemVariants = {
 };
 
 const CampusInfo = () => {
-  const [noticeCat, setNoticeCat] = useState('ALL');
   const [clubCat, setClubCat] = useState('All');
   const [aiQuery, setAiQuery] = useState('');
+  const [noticeQuery, setNoticeQuery] = useState('');
+  const { notices, loading: noticesLoading, error: noticesError, fetchedAt, newIds, refresh } = useAcademicsNotices();
 
-  const filteredNotices = noticeCat === 'ALL' ? ACADEMIC_NOTIFICATIONS : ACADEMIC_NOTIFICATIONS.filter(n => n.category === noticeCat);
+  const filteredNotices = noticeQuery.trim()
+    ? notices.filter(n => (n.title + ' ' + n.body).toLowerCase().includes(noticeQuery.trim().toLowerCase()))
+    : notices;
   const filteredClubs = clubCat === 'All' ? CLUBS_AND_SOCIETIES : CLUBS_AND_SOCIETIES.filter(c => c.category === clubCat);
+
+  const enableAlerts = async () => {
+    const perm = await requestNoticePermission();
+    if (perm === 'granted') toast.success('Notice alerts enabled', { description: "You'll be pinged when Dean Academic posts a new notice." });
+    else if (perm === 'denied') toast.error('Notifications blocked', { description: 'Enable them in browser settings to receive alerts.' });
+  };
 
   return (
     <div className="page-container">
