@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { CONTACT_DIRECTORY, ACADEMIC_NOTIFICATIONS, QUICK_LINKS, CLUBS_AND_SOCIETIES } from '@/data/infohub-data';
+import { CONTACT_DIRECTORY, QUICK_LINKS, CLUBS_AND_SOCIETIES } from '@/data/infohub-data';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ExternalLink, Mail, Phone, Search, Users, Globe, Megaphone } from 'lucide-react';
+import { ExternalLink, Mail, Phone, Search, Users, Globe, Megaphone, BellRing, RefreshCw, ExternalLink as LinkIcon, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PageHeader } from '@/components/PageHeader';
+import { useAcademicsNotices, requestNoticePermission } from '@/hooks/useAcademicsNotices';
+import { toast } from 'sonner';
 
 const NOTICE_CATS = ['ALL', 'RESULT', 'EXAM', 'ACADEMIC', 'FEE', 'ADMISSION'];
 const CLUB_CATS = ['All', 'Technical', 'Cultural', 'Sports', 'Arts'];
